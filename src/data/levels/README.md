@@ -1,5 +1,8 @@
 # Level content (translatable, extendable)
 
+For the full end-to-end level workflow (Move source + tests + web wiring), start with:
+- `LEVEL_AUTHORING_GUIDE.md`
+
 ## Adding a new level
 
 1. **Define meta** in `meta.ts`: add an entry to `LEVEL_META` with `id`, `difficulty`, and `contractCode`.

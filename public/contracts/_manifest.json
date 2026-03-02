@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-03-02T13:51:45.098Z",
+  "contracts": {
+    "count": 3,
+    "files": [
+      "fallout.move",
+      "genesis.move",
+      "lockbox.move"
+    ]
+  },
+  "solutions": {
+    "count": 3,
+    "files": [
+      "level_0_solution.move",
+      "level_1_solution.move",
+      "level_2_solution.move"
+    ]
+  }
+}

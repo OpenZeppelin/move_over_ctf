@@ -1,0 +1,59 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Header } from "@/components/Header";
+import { LevelSidebar } from "@/components/LevelSidebar";
+import { MobileLevelPicker } from "@/components/MobileLevelPicker";
+import { getLevels } from "@/data/levels";
+import { VALID_LOCALES } from "@/i18n/locales";
+import type { Locale } from "@/i18n/types";
+
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function HowToPlayPage({ params }: Props) {
+  const { locale } = await params;
+  const loc = VALID_LOCALES.includes(locale as Locale) ? (locale as Locale) : "en";
+
+  if (loc !== locale) {
+    redirect(`/${loc}/levels/how-to-play`);
+  }
+
+  const levels = getLevels(loc);
+
+  return (
+    <div className="h-screen flex flex-col min-h-0">
+      <Header />
+      <MobileLevelPicker levels={levels} />
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        <LevelSidebar levels={levels} />
+        <main className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
+          <div className="mx-auto max-w-3xl rounded-lg border border-move-border bg-move-panel p-5 sm:p-6">
+            <h1 className="font-mono text-xl sm:text-2xl font-semibold text-move-text">How to Play</h1>
+            <p className="mt-3 text-sm sm:text-base text-move-muted">
+              Welcome to a tiny on-chain heist simulator. Each level gives you a vulnerable Move module, and your job
+              is to write `run()` so it returns the glorious `Flag`.
+            </p>
+
+            <ol className="mt-5 space-y-3 text-sm sm:text-base text-move-text list-decimal list-inside">
+              <li>Read the level instructions and inspect the contract code like a detective with too much coffee.</li>
+              <li>Write only the body of `run()` in the editor.</li>
+              <li>Capture the `Flag` and return it from `run()`; no `Flag`, no victory.</li>
+              <li>Click Run, watch the verifier judge your life choices, then iterate and move to the next level.</li>
+            </ol>
+
+            <div className="mt-6">
+              <Link
+                href={`/${loc}/levels/0`}
+                className="inline-flex items-center rounded-lg border border-oz-violet/40 bg-oz-violet/20 px-4 py-2 text-sm font-medium text-oz-violet hover:bg-oz-violet/30 transition-colors"
+              >
+                Start Level 0 →
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+

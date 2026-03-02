@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "create:level": "node scripts/create-level.mjs",
+    "delete:level": "node scripts/delete-level.mjs",
+    "sync:contracts": "node scripts/sync-contracts.mjs",
+    "sync:meta": "node scripts/sync-meta-from-public.mjs",
+    "dev:next": "next dev --turbopack",
+    "dev": "node scripts/dev-with-sync.mjs",
+    "prebuild": "npm run sync:meta",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

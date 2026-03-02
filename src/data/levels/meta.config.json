@@ -1,0 +1,17 @@
+[
+  {
+    "id": 0,
+    "difficulty": "easy",
+    "module": "genesis"
+  },
+  {
+    "id": 1,
+    "difficulty": "easy",
+    "module": "lockbox"
+  },
+  {
+    "id": 2,
+    "difficulty": "easy",
+    "module": "fallout"
+  }
+]

@@ -12,5 +12,6 @@ const MODULE_REGEX = /module\s+(\S+)/;
 export function parseModulePath(contractCode: string): string {
   const firstLine = contractCode.trim().split("\n")[0];
   const match = firstLine?.match(MODULE_REGEX);
-  return match?.[1] ?? "move_over::contract";
+  const raw = match?.[1] ?? "move_over::contract";
+  return raw.replace(/[;{]+$/, "");
 }

@@ -9,39 +9,63 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { DIFFICULTY_BADGE_CLASS, LEVEL_IDS, LEVEL_RUN_CONFIG, type Level } from "@/data/levels";
 import { parseModulePath } from "@/lib/contractCode";
 import { codeStyleDark, codeStyleLight } from "@/lib/codeHighlight";
+import { runLevelInBrowser } from "@/lib/browserRunLevel";
 
 type Tab = "instructions" | "code";
+const SOLVED_STORAGE_KEY = "move-over-ctf-solved";
+const SOLUTIONS_STORAGE_KEY = "move-over-ctf-solutions";
 
-/** Build full solution module content from the editable body (same as API). Uses move_over::level_N_solution. */
-function buildFullSolutionFile(levelId: number, solutionBody: string): string {
-  const config = LEVEL_RUN_CONFIG[levelId];
-  if (!config) return "";
-  const trimmed = solutionBody.trim();
-  const body = trimmed
-    ? trimmed
-        .split("\n")
-        .map((line) => `    ${line.trim()}`)
-        .join("\n")
-    : "";
-  const mod = config.module;
-  const typ = config.typeName;
-  const fullModule = `move_over::${config.solutionModule}`;
-  return `module ${fullModule};
-
-use move_over::${mod};
-
-public fun run(t: &mut tx_context::TxContext): ${mod}::${typ} {
-${body}
+function readSolvedIdsFromStorage(): Set<number> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(SOLVED_STORAGE_KEY);
+    return new Set(raw ? (JSON.parse(raw) as number[]) : []);
+  } catch {
+    return new Set();
+  }
 }
-`;
+
+function saveSolvedIdToStorage(levelId: number): void {
+  if (typeof window === "undefined") return;
+  try {
+    const solvedIds = readSolvedIdsFromStorage();
+    solvedIds.add(levelId);
+    localStorage.setItem(SOLVED_STORAGE_KEY, JSON.stringify([...solvedIds]));
+    window.dispatchEvent(new CustomEvent("move-over-ctf-solved", { detail: levelId }));
+  } catch {
+    // ignore
+  }
+}
+
+function readSolutionFromStorage(levelId: number): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const raw = localStorage.getItem(SOLUTIONS_STORAGE_KEY);
+    const solutions = raw ? (JSON.parse(raw) as Record<string, string>) : {};
+    return typeof solutions[String(levelId)] === "string" ? solutions[String(levelId)] : "";
+  } catch {
+    return "";
+  }
+}
+
+function saveSolutionToStorage(levelId: number, solution: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = localStorage.getItem(SOLUTIONS_STORAGE_KEY);
+    const solutions = raw ? (JSON.parse(raw) as Record<string, string>) : {};
+    solutions[String(levelId)] = solution;
+    localStorage.setItem(SOLUTIONS_STORAGE_KEY, JSON.stringify(solutions));
+  } catch {
+    // ignore
+  }
 }
 
 export function LevelView({ level }: { level: Level }) {
   const [tab, setTab] = useState<Tab>("instructions");
   const [solutionCode, setSolutionCode] = useState<string>(() => "");
+  const [isCompleted, setIsCompleted] = useState(false);
   const [runResult, setRunResult] = useState<{ success: boolean; output: string } | null>(null);
   const [runLoading, setRunLoading] = useState(false);
-  const [copiedId, setCopiedId] = useState<"file" | "cmd" | null>(null);
   const solutionHighlightRef = useRef<HTMLDivElement>(null);
   const solutionWrapperRef = useRef<HTMLDivElement>(null);
   const solutionTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -54,29 +78,47 @@ export function LevelView({ level }: { level: Level }) {
   const hasRunner = runConfig != null;
   const levelIndex = LEVEL_IDS.indexOf(level.id);
   const prevLevelId = levelIndex > 0 ? LEVEL_IDS[levelIndex - 1] : undefined;
+  const prevHref =
+    levelIndex === 0
+      ? `/${locale}/levels/how-to-play`
+      : prevLevelId !== undefined
+        ? `/${locale}/levels/${prevLevelId}`
+        : undefined;
   const nextLevelId = levelIndex >= 0 ? LEVEL_IDS[levelIndex + 1] : undefined;
+  const handleSolutionChange = useCallback(
+    (value: string) => {
+      setSolutionCode(value);
+      saveSolutionToStorage(level.id, value);
+    },
+    [level.id],
+  );
 
   const handleRun = useCallback(async () => {
+    if (!runConfig) {
+      setRunResult({
+        success: false,
+        output: "Run configuration is missing for this level.",
+      });
+      return;
+    }
     setRunResult(null);
     setRunLoading(true);
     try {
-      const res = await fetch("/api/run-level", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ levelId: level.id, code: solutionCode }),
+      const result = await runLevelInBrowser({
+        levelId: level.id,
+        contractCode: level.contractCode,
+        module: runConfig.module,
+        typeName: runConfig.typeName,
+        solutionModule: runConfig.solutionModule,
+        solutionBody: solutionCode,
+        verifierModule: `level_${level.id}_verifier`,
+        cleanupFunction: runConfig.cleanupFunction,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setRunResult({
-          success: false,
-          output: data?.error ?? `Request failed: ${res.status}`,
-        });
-        return;
-      }
-      if (data.ok && typeof data.success === "boolean" && typeof data.output === "string") {
-        setRunResult({ success: data.success, output: data.output });
-      } else {
-        setRunResult({ success: false, output: data?.error ?? "Invalid response" });
+      setRunResult(result);
+      if (result.success) {
+        setIsCompleted(true);
+        saveSolvedIdToStorage(level.id);
+        saveSolutionToStorage(level.id, solutionCode);
       }
     } catch (e) {
       setRunResult({
@@ -86,21 +128,13 @@ export function LevelView({ level }: { level: Level }) {
     } finally {
       setRunLoading(false);
     }
-  }, [level.id, solutionCode]);
+  }, [level.contractCode, level.id, runConfig, solutionCode]);
 
   useEffect(() => {
-    if (!runResult?.success || typeof window === "undefined") return;
-    try {
-      const key = "move-over-ctf-solved";
-      const raw = localStorage.getItem(key);
-      const set = new Set<number>(raw ? (JSON.parse(raw) as number[]) : []);
-      set.add(level.id);
-      localStorage.setItem(key, JSON.stringify([...set]));
-      window.dispatchEvent(new CustomEvent("move-over-ctf-solved", { detail: level.id }));
-    } catch {
-      // ignore
-    }
-  }, [runResult?.success, level.id]);
+    setRunResult(null);
+    setSolutionCode(readSolutionFromStorage(level.id));
+    setIsCompleted(readSolvedIdsFromStorage().has(level.id));
+  }, [level.id]);
 
   // Expand/shrink solution textarea wrapper with content
   useEffect(() => {
@@ -142,14 +176,20 @@ export function LevelView({ level }: { level: Level }) {
           >
             {level.difficulty}
           </span>
-          {(prevLevelId !== undefined || nextLevelId !== undefined) && (
+          {isCompleted && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-300/40 bg-gradient-to-r from-emerald-500/20 to-cyan-400/20 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.3)]">
+              <span aria-hidden>✨</span>
+              Challenge Conquered
+            </span>
+          )}
+          {(prevHref !== undefined || nextLevelId !== undefined) && (
             <div className="ml-auto inline-flex items-center gap-2">
-              {prevLevelId !== undefined && (
+              {prevHref !== undefined && (
                 <Link
-                  href={`/${locale}/levels/${prevLevelId}`}
+                  href={prevHref}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors"
-                  aria-label={`Go to level ${prevLevelId}`}
-                  title={`Previous level (${prevLevelId})`}
+                  aria-label={prevLevelId !== undefined ? `Go to level ${prevLevelId}` : "Go to How to Play"}
+                  title={prevLevelId !== undefined ? `Previous level (${prevLevelId})` : "How to Play"}
                 >
                   ←
                 </Link>
@@ -172,6 +212,12 @@ export function LevelView({ level }: { level: Level }) {
           <code className="text-move-accent">{modulePath}</code>
         </p>
         <p className="mt-1 text-move-muted text-xs sm:text-sm">{level.description}</p>
+        {isCompleted && (
+          <p className="mt-2 inline-flex items-center gap-2 rounded-lg border border-emerald-300/40 bg-gradient-to-r from-emerald-500/15 to-teal-400/10 px-3 py-1.5 text-xs sm:text-sm font-medium text-emerald-100 shadow-[0_0_24px_rgba(16,185,129,0.2)]">
+            <span aria-hidden>🏆</span>
+            Flag captured. Level domination confirmed.
+          </p>
+        )}
       </div>
 
       {/* Tabs */}
@@ -336,7 +382,7 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                     <textarea
                       ref={solutionTextareaRef}
                       value={solutionCode}
-                      onChange={(e) => setSolutionCode(e.target.value)}
+                      onChange={(e) => handleSolutionChange(e.target.value)}
                       onScroll={(e) => {
                         const el = solutionHighlightRef.current;
                         if (el) {
@@ -393,62 +439,6 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                     <pre className="text-inherit overflow-x-auto">{runResult.output}</pre>
                   </div>
                 )}
-                {/* Run locally — no server cost */}
-                <div className="border-t border-move-border p-4 bg-move-dark/50">
-                  <p className="text-sm font-medium text-move-text mb-2">{t("level.runLocally")}</p>
-                  <p className="text-xs text-move-muted mb-3">{t("level.runLocallyDescription")}</p>
-                  <ol className="text-xs text-move-text space-y-2 list-decimal list-inside">
-                    <li>
-                      {t("level.runLocallyStep1")}{" "}
-                      <a
-                        href="https://docs.sui.io/build/install"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-move-accent hover:underline"
-                      >
-                        docs.sui.io/build/install
-                      </a>
-                    </li>
-                    <li>
-                      {t("level.runLocallyStep2")}{" "}
-                      <code className="text-move-accent">move_over/sources/level_{level.id}_solution.move</code>{" "}
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await navigator.clipboard.writeText(buildFullSolutionFile(level.id, solutionCode));
-                            setCopiedId("file");
-                            setTimeout(() => setCopiedId(null), 2000);
-                          } catch {
-                            // ignore
-                          }
-                        }}
-                        className="ml-1 px-2 py-0.5 rounded border border-move-border bg-move-panel text-move-accent hover:bg-move-accent/10 text-xs"
-                      >
-                        {copiedId === "file" ? t("level.runLocallyCopied") : t("level.runLocallyCopyFile")}
-                      </button>
-                    </li>
-                    <li>
-                      {t("level.runLocallyStep3")}{" "}
-                      <code className="text-move-accent">{"cd move_over && sui move test " + runConfig.testModule}</code>{" "}
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await navigator.clipboard.writeText(`cd move_over && sui move test ${runConfig.testModule}`);
-                            setCopiedId("cmd");
-                            setTimeout(() => setCopiedId(null), 2000);
-                          } catch {
-                            // ignore
-                          }
-                        }}
-                        className="ml-1 px-2 py-0.5 rounded border border-move-border bg-move-panel text-move-accent hover:bg-move-accent/10 text-xs"
-                      >
-                        {copiedId === "cmd" ? t("level.runLocallyCopied") : t("level.runLocallyCopyCmd")}
-                      </button>
-                    </li>
-                  </ol>
-                </div>
               </div>
             )}
           </div>
