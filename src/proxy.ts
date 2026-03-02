@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { VALID_LOCALES } from "@/i18n/locales";
 import { LOCALE_COOKIE } from "@/config";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const segments = pathname.split("/").filter(Boolean);
   const first = segments[0];
