@@ -4,7 +4,6 @@ A wargame to learn **Move** smart contract security on **Sui** — inspired by [
 
 ## Run locally
 
-
 ```bash
 npm install
 npm run dev
