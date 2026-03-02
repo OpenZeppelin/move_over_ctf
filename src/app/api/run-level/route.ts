@@ -12,6 +12,8 @@ import {
 } from "@/lib/runLevelLimits";
 import { LEVEL_RUN_CONFIG, SUPPORTED_LEVEL_IDS } from "@/data/levels/runConfig";
 
+export const runtime = "nodejs";
+
 const RUN_TIMEOUT_MS = 30_000;
 const SOURCES_DIR = "move_over/sources";
 
