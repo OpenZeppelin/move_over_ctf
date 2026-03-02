@@ -35,6 +35,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = replaceTemplate(t("seo.levelTitle"), { id: level.id, name: level.name });
   const description = level.description;
   const url = `${BASE_URL}/${loc}/levels/${level.id}`;
+  const languageAlternates = Object.fromEntries(
+    VALID_LOCALES.map((localeCode) => [
+      localeCode,
+      `${BASE_URL}/${localeCode}/levels/${level.id}`,
+    ])
+  );
 
   return {
     title,
@@ -51,7 +57,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
     },
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: {
+        ...languageAlternates,
+        "x-default": `${BASE_URL}/en/levels/${level.id}`,
+      },
+    },
   };
 }
 

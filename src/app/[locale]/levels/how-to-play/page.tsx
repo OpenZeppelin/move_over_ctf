@@ -1,15 +1,58 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/Header";
 import { LevelSidebar } from "@/components/LevelSidebar";
 import { MobileLevelPicker } from "@/components/MobileLevelPicker";
+import { BASE_URL } from "@/config";
 import { getLevels } from "@/data/levels";
+import { getTranslations } from "@/i18n";
 import { VALID_LOCALES } from "@/i18n/locales";
 import type { Locale } from "@/i18n/types";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const loc = VALID_LOCALES.includes(locale as Locale) ? (locale as Locale) : "en";
+  const t = getTranslations(loc);
+  const pageTitle = `How to Play | ${t("seo.siteName")}`;
+  const pageDescription =
+    "Learn the Move-over flow: inspect vulnerable contracts, write run(), return the Flag object, and pass levels in-browser.";
+  const url = `${BASE_URL}/${loc}/levels/how-to-play`;
+  const languageAlternates = Object.fromEntries(
+    VALID_LOCALES.map((localeCode) => [
+      localeCode,
+      `${BASE_URL}/${localeCode}/levels/how-to-play`,
+    ])
+  );
+
+  return {
+    title: pageTitle,
+    description: pageDescription,
+    alternates: {
+      canonical: url,
+      languages: {
+        ...languageAlternates,
+        "x-default": `${BASE_URL}/en/levels/how-to-play`,
+      },
+    },
+    openGraph: {
+      title: pageTitle,
+      description: pageDescription,
+      url,
+      siteName: t("seo.siteName"),
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description: pageDescription,
+    },
+  };
+}
 
 export default async function HowToPlayPage({ params }: Props) {
   const { locale } = await params;
@@ -31,8 +74,8 @@ export default async function HowToPlayPage({ params }: Props) {
           <div className="mx-auto max-w-3xl rounded-lg border border-move-border bg-move-panel p-5 sm:p-6">
             <h1 className="font-mono text-xl sm:text-2xl font-semibold text-move-text">How to Play</h1>
             <p className="mt-3 text-sm sm:text-base text-move-muted">
-              Welcome to a tiny on-chain heist simulator. Each level gives you a vulnerable Move module, and your job
-              is to write `run()` so it returns the glorious `Flag`.
+              Welcome to a tiny browser-based heist simulator. Each level gives you a vulnerable Move module, and your
+              job is to write `run()` so it returns the glorious `Flag`.
             </p>
 
             <ol className="mt-5 space-y-3 text-sm sm:text-base text-move-text list-decimal list-inside">

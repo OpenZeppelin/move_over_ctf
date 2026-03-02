@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
 export default function LevelsRedirectPage() {
-  redirect("/en/levels");
+  permanentRedirect("/en/levels");
 }
 

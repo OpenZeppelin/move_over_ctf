@@ -85,6 +85,7 @@ export function LevelView({ level }: { level: Level }) {
         ? `/${locale}/levels/${prevLevelId}`
         : undefined;
   const nextLevelId = levelIndex >= 0 ? LEVEL_IDS[levelIndex + 1] : undefined;
+  const hasPassed = isCompleted || runResult?.success === true;
   const handleSolutionChange = useCallback(
     (value: string) => {
       setSolutionCode(value);
@@ -176,10 +177,10 @@ export function LevelView({ level }: { level: Level }) {
           >
             {level.difficulty}
           </span>
-          {isCompleted && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-300/40 bg-gradient-to-r from-emerald-500/20 to-cyan-400/20 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.3)]">
-              <span aria-hidden>✨</span>
-              Challenge Conquered
+          {hasPassed && (
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide border border-emerald-400/55 bg-emerald-500/15 text-move-text shadow-[0_0_18px_rgba(16,185,129,0.2)]">
+              <span aria-hidden>🏁</span>
+              Level Cleared
             </span>
           )}
           {(prevHref !== undefined || nextLevelId !== undefined) && (
@@ -212,11 +213,13 @@ export function LevelView({ level }: { level: Level }) {
           <code className="text-move-accent">{modulePath}</code>
         </p>
         <p className="mt-1 text-move-muted text-xs sm:text-sm">{level.description}</p>
-        {isCompleted && (
-          <p className="mt-2 inline-flex items-center gap-2 rounded-lg border border-emerald-300/40 bg-gradient-to-r from-emerald-500/15 to-teal-400/10 px-3 py-1.5 text-xs sm:text-sm font-medium text-emerald-100 shadow-[0_0_24px_rgba(16,185,129,0.2)]">
-            <span aria-hidden>🏆</span>
-            Flag captured. Level domination confirmed.
-          </p>
+        {hasPassed && (
+          <div className="mt-3 rounded-xl border-2 border-emerald-400/55 bg-emerald-500/12 px-3 py-2.5 shadow-[0_0_20px_rgba(16,185,129,0.18)]">
+            <p className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-move-text">
+              <span aria-hidden>🏆</span>
+              Flag captured. This level is officially passed.
+            </p>
+          </div>
         )}
       </div>
 
@@ -307,13 +310,32 @@ export function LevelView({ level }: { level: Level }) {
                     <span className="text-move-muted/80">Solution:</span>{" "}
                     <span className="text-move-accent">level_{level.id}_solution.move</span>
                   </span>
+                  {hasPassed && (
+                    <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-move-text">
+                      ✓ Passed
+                    </span>
+                  )}
                   <button
                     type="button"
                     onClick={handleRun}
                     disabled={runLoading}
-                    className="ml-auto px-3 py-1.5 rounded border border-move-border bg-move-accent/20 text-move-accent hover:bg-move-accent/30 disabled:opacity-50 text-xs font-medium"
+                    className={`ml-auto inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs sm:text-sm font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60 disabled:opacity-60 disabled:cursor-not-allowed ${
+                      hasPassed
+                        ? "border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22"
+                        : "border-oz-violet/70 bg-gradient-to-r from-oz-violet to-indigo-500 text-white shadow-[0_0_18px_rgba(124,58,237,0.35)] hover:brightness-110"
+                    }`}
                   >
-                    {runLoading ? "Running…" : t("level.run")}
+                    <span
+                      aria-hidden
+                      className={`inline-flex size-4 items-center justify-center rounded-full border text-[10px] ${
+                        hasPassed
+                          ? "border-emerald-400/60 bg-emerald-500/20 text-move-text"
+                          : "border-white/35 bg-white/15 text-white"
+                      }`}
+                    >
+                      {runLoading ? "…" : hasPassed ? "✓" : "▶"}
+                    </span>
+                    {runLoading ? "Running…" : hasPassed ? "Run Again" : t("level.run")}
                   </button>
                 </div>
                 <div className="border-l-[3px] border-l-[var(--oz-violet)] bg-move-panel">
@@ -429,8 +451,8 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                   <div
                     className={`border-t border-move-border p-4 font-mono text-xs whitespace-pre-wrap ${
                       runResult.success
-                        ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-200"
-                        : "border-red-500/50 bg-red-500/10 text-red-200"
+                        ? "border-emerald-400/55 bg-emerald-500/12 text-move-text"
+                        : "border-red-400/55 bg-red-500/12 text-move-text"
                     }`}
                   >
                     <p className="font-semibold mb-1">

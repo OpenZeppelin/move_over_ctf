@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -6,5 +6,5 @@ type Props = {
 
 export default async function LevelsIndexPage({ params }: Props) {
   const { locale } = await params;
-  redirect(`/${locale}/levels/how-to-play`);
+  permanentRedirect(`/${locale}/levels/how-to-play`);
 }

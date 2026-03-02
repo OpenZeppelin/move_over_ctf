@@ -1,0 +1,19 @@
+# Move-over
+
+Move-over is a capture-the-flag wargame for Move smart contracts on Sui.
+Primary audience: developers learning Move and smart contract security.
+
+## Canonical URLs
+- https://move-over.vercel.app/en
+- https://move-over.vercel.app/en/levels/how-to-play
+- https://move-over.vercel.app/en/levels/0
+
+## Content
+- Level pages contain challenge instructions and contract code.
+- Users write a `run()` function that returns a `*Flag` proof type.
+- Verification runs client-side in browser via WebAssembly worker.
+
+## Ownership
+- Brand: OpenZeppelin
+- Website: https://www.openzeppelin.com/
+

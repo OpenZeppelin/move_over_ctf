@@ -4,8 +4,15 @@ import { getTranslations } from "@/i18n";
 import { VALID_LOCALES } from "@/i18n/locales";
 import type { Locale } from "@/i18n/types";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { BASE_URL } from "@/config";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://move-over.vercel.app";
+const SOCIAL_PROFILES = [
+  "https://x.com/openzeppelin",
+  "https://www.linkedin.com/company/openzeppelin/",
+  "https://www.youtube.com/@OpenZeppelin",
+  "https://www.facebook.com/openzeppelin/",
+  "https://www.instagram.com/openzeppelin/",
+];
 
 type Props = {
   children: React.ReactNode;
@@ -24,6 +31,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogDescription = t("seo.ogDescription");
   const siteName = t("seo.siteName");
   const localeUrl = `${BASE_URL}/${loc}`;
+  const languageAlternates = Object.fromEntries(
+    VALID_LOCALES.map((localeCode) => [localeCode, `${BASE_URL}/${localeCode}`])
+  );
 
   return {
     metadataBase: new URL(BASE_URL),
@@ -48,7 +58,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: ogTitle,
       description: ogDescription,
     },
-    alternates: { canonical: localeUrl },
+    alternates: {
+      canonical: localeUrl,
+      languages: {
+        ...languageAlternates,
+        "x-default": `${BASE_URL}/en`,
+      },
+    },
     robots: { index: true, follow: true },
   };
 }
@@ -62,10 +78,39 @@ export default async function LocaleLayout({ children, params }: Props) {
   if (!VALID_LOCALES.includes(locale as Locale)) {
     redirect("/en");
   }
+  const loc = locale as Locale;
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${BASE_URL}#organization`,
+    name: "Move-over",
+    url: BASE_URL,
+    logo: `${BASE_URL}/oz-logo.svg`,
+    sameAs: SOCIAL_PROFILES,
+  };
+
+  const webSiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${BASE_URL}#website`,
+    url: BASE_URL,
+    name: "Move-over",
+    inLanguage: loc,
+    publisher: { "@id": `${BASE_URL}#organization` },
+  };
 
   return (
-    <LocaleProvider defaultLocale={locale as Locale}>
-      {children}
-    </LocaleProvider>
+    <>
+      <LocaleProvider defaultLocale={loc}>{children}</LocaleProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
+      />
+    </>
   );
 }
