@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { VALID_LOCALES } from "@/i18n/locales";
+
 import { LOCALE_COOKIE } from "@/config";
 
 export function proxy(request: NextRequest) {
