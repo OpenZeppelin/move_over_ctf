@@ -1,0 +1,51 @@
+{
+    "theme": {
+        "label": "Tema",
+        "light": "Açık",
+        "dark": "Koyu",
+        "toggleToLight": "Açık moda geç",
+        "toggleToDark": "Koyu moda geç",
+        "system": "Sistem"
+    },
+    "header": {
+        "home": "Move-over – Ana sayfa",
+        "connectWallet": "Cüzdanı bağla",
+        "weAreHiring": "İşe alıyoruz",
+        "network": "Ağ: Devnet",
+        "language": "Dil"
+    },
+    "landing": {
+        "title": "A wargame for Move on Sui",
+        "description": "Move-over is a Web3/Move-based wargame inspired by Ethernaut and overthewire.org, played on the Sui blockchain. Each level is a smart contract that needs to be 'hacked'. The game is 100% open source and all levels are contributions made by other players. Do you have an interesting idea? PRs are welcome.",
+        "cta": "Move-over to Level 0"
+    },
+    "level": {
+        "instructions": "Talimatlar",
+        "contractCode": "Sözleşme kodu",
+        "solution": "Çözüm",
+        "run": "Çalıştır",
+        "runLocally": "Yerelde çalıştır",
+        "runLocallyDescription": "Testleri kendi makinenizde çalıştırın — sunucu yok, oran sınırı yok.",
+        "runLocallyStep1": "Sui CLI'yi yükleyin",
+        "runLocallyStep2": "Çözümünüzü şuraya koyun",
+        "runLocallyStep3": "Depo kökünden şunu çalıştırın",
+        "runLocallyCopyFile": "Çözüm dosyasını kopyala",
+        "runLocallyCopyCmd": "Komutu kopyala",
+        "runLocallyCopied": "Kopyalandı!",
+        "runSuccess": "Tüm testler geçti!",
+        "runError": "Testler başarısız oldu",
+        "runNotSupported": "Bu seviye henüz tarayıcı içi çalıştırıcı tarafından desteklenmiyor. Sui CLI'yi yükleyip seviyeyi yerelde çalıştırın veya Seviye 0'ı deneyin.",
+        "solutionPlaceholder": "// örn.: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag"
+    },
+    "sidebar": {
+        "levels": "Seviyeler"
+    },
+    "seo": {
+        "defaultTitle": "Move-over | CTF for Move on Sui",
+        "defaultDescription": "Move-over is a capture-the-flag wargame for Move smart contracts on Sui. Learn security by solving vulnerable contract challenges. Inspired by Ethernaut.",
+        "ogTitle": "Move-over | CTF for Move on Sui",
+        "ogDescription": "A wargame for Move on Sui. Learn smart contract security by solving vulnerable contract challenges. Inspired by Ethernaut.",
+        "levelTitle": "Level {id}: {name} | Move-over",
+        "siteName": "Move-over"
+    }
+}

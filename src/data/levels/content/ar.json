@@ -1,0 +1,97 @@
+{
+  "0": {
+    "name": "Genesis",
+    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
+    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+  },
+  "1": {
+    "name": "Lockbox",
+    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
+    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+  },
+  "2": {
+    "name": "Fallout",
+    "description": "The contract thinks a certain address is the owner. Time to become that address.",
+    "instructions": "# Level 2: Fallout\n\nA fallout-style contract: a vault with a get_owner function that was never properly implemented. Your job: figure out who the contract thinks the owner is, then withdraw and drain the vault.\n\n## Objectives\n\n- Drain the vault (balance = 0)"
+  },
+  "3": {
+    "name": "Blank Check",
+    "description": "The contract doesn't ask pesky questions about the amount. Use that to your advantage.",
+    "instructions": "# Level 3: Blank Check\n\nThis one will let you \"transfer\" without checking the amount. Your mission: get your balance to zero and receive the Solved object. Sometimes the move nobody thought to forbid is the one that wins.\n\n## Objectives\n\n- Reduce your balance to zero and get the Solved object"
+  },
+  "4": {
+    "name": "Open Door",
+    "description": "A flag unlocks the prize. The door check was forgotten.",
+    "instructions": "# Level 4: Open Door\n\nOpen Door: there's a flag that unlocks the Solved object. It was supposed to be admin-only, but the contract never checks who's calling. Your mission: set the flag and claim Solved.\n\n## Objectives\n\n- Set the flag and claim the Solved object"
+  },
+  "5": {
+    "name": "Double Entry",
+    "description": "The ledger has two numbers that should stay in sync. They don't.",
+    "instructions": "# Level 5: Double Entry\n\nDouble Entry: the ledger keeps a total and your balance. They're supposed to match. Your mission: withdraw in a way that leaves total at zero but your balance still positive. When the books don't add up, that's your opening.\n\n## Objectives\n\n- Get total == 0 and my_balance > 0"
+  },
+  "6": {
+    "name": "Truncation",
+    "description": "Fee math and integer division: make the numbers work in your favor.",
+    "instructions": "# Level 6: Truncation\n\nTruncation: a fee pool with integer division and rounding. Your mission: deposit and withdraw so that fee_accumulated hits zero while total_deposits is still positive, then grab Solved. When math truncates, someone wins.\n\n## Objectives\n\n- Leave fee_accumulated == 0 and total_deposits > 0, then get Solved"
+  },
+  "7": {
+    "name": "Split Ledger",
+    "description": "Registry and Wallet should agree. One of them didn't get the memo.",
+    "instructions": "# Level 7: Split Ledger\n\nSplit Ledger: a Registry and a Wallet that are supposed to stay consistent. Your mission: get the registry count to zero while your wallet balance is at least 200. Two books, one reality—make them disagree in your favor.\n\n## Objectives\n\n- Achieve registry.count == 0 and wallet.balance >= 200"
+  },
+  "8": {
+    "name": "Jackpot",
+    "description": "The claim condition sounds right on paper. The numbers say otherwise.",
+    "instructions": "# Level 8: Jackpot\n\nJackpot: the \"rewards\" pool has a condition that seems fair until you do the math. Your mission: deposit a small amount and claim until the contract gives you the Solved object. Sometimes the fine print works for you.\n\n## Objectives\n\n- Get the Solved object by claiming rewards"
+  },
+  "9": {
+    "name": "Permit",
+    "description": "The treasury accepts a permit. It doesn't bother marking it used.",
+    "instructions": "# Level 9: Permit\n\nPermit: a treasury that spends via a \"permit\"—and never marks that permit as used. Your mission: use the permit to drain the treasury and claim Solved. One permit, one (or more?) shot. The contract isn't keeping score.\n\n## Objectives\n\n- Drain the treasury (balance = 0) and claim Solved"
+  },
+  "10": {
+    "name": "Queue",
+    "description": "Empty the queue and trigger the solved condition. Work with the size limit.",
+    "instructions": "# Level 10: Queue\n\nQueue: a max-size queue and a process function that rewards you when the queue is empty. Your mission: enqueue, process, repeat until the queue is empty and you get the Solved object.\n\n## Objectives\n\n- Get the Solved object by processing until the queue is empty"
+  },
+  "11": {
+    "name": "Price Feed",
+    "description": "The pool trusts a single price. You can change who sets it.",
+    "instructions": "# Level 11: Price Feed\n\nPrice Feed: a pool that uses one price and lets someone update it. Your mission: set the price to your advantage, then swap so the reserves hit zero and the pool marks itself solved.\n\n## Objectives\n\n- Drain reserves so pool.solved = true"
+  },
+  "12": {
+    "name": "Master Key",
+    "description": "The vault is locked behind an AdminCap. The cap can change hands.",
+    "instructions": "# Level 12: Master Key\n\nMaster Key: a vault locked behind an AdminCap—and that cap is transferable. Your mission: get the cap (maybe someone transfers it to you?), unlock the vault, and drain it for the Solved object. With great capability comes great opportunity.\n\n## Objectives\n\n- Drain the vault (balance = 0) and get Solved"
+  },
+  "13": {
+    "name": "Wrapper",
+    "description": "A balance wrapper; the order of updates is wrong.",
+    "instructions": "# Level 13: Wrapper\n\nThe Wrapper lets you deposit and withdraw. The bug is in when the balance is updated versus when you \"get\" the funds. Your mission: drain the wrapper to zero and get the Solved object. Think about what happens if you withdraw twice in one transaction.\n\n## Objectives\n\n- Drain the wrapper (balance = 0) and get Solved"
+  },
+  "14": {
+    "name": "Ticket Stub",
+    "description": "Deposit gives you a ticket stub; withdraw is supposed to consume it. Does it?",
+    "instructions": "# Level 14: Ticket Stub\n\nTicket Stub: deposit locks funds and gives you a stub (Receipt). Withdraw is supposed to consume that stub and credit the vault. Your mission: get the vault balance back to 1000 or more and claim the Solved object. If the stub isn't actually consumed, one stub might go a long way.\n\n## Objectives\n\n- Get vault.balance >= 1000 and claim Solved"
+  },
+  "15": {
+    "name": "Hot Pointer",
+    "description": "Reference vs value: pointer reassignment corrupts the wrong field. Inspired by Lombard Finance.",
+    "instructions": "# Level 15: Hot Pointer\n\nHot Pointer: a treasury with limit and left. The code does a \"reset\" by reassigning a reference: \\`left = limit\\`. In Move that reassigns the pointer, not the value—so the next \\`mint\\` decrements \\`limit\\` instead of \\`left\\`. Your mission: create a treasury, then call \\`reset_and_mint\\` once with amount 1000 to corrupt \\`limit\\` and get the Solved object.\n\n## Objectives\n\n- Get the Solved object by triggering the pointer-reassignment bug"
+  },
+  "16": {
+    "name": "Wrong Pool",
+    "description": "Withdraw takes a pool and a pool_id but never checks they match. Inspired by Navi Protocol.",
+    "instructions": "# Level 16: Wrong Pool\n\nWrong Pool: the contract has a vault pool (balance 1000) and you can create your own pool (balance 0). \\`withdraw(pool, claimed_pool_id, amount)\\` drains \\`pool\\` but doesn't validate that \\`pool\\`'s id matches \\`claimed_pool_id\\`. Your mission: drain the vault by calling withdraw with the vault pool and any pool_id, then get the Solved object.\n\n## Objectives\n\n- Drain the vault pool (balance = 0) and get Solved"
+  },
+  "17": {
+    "name": "Open Gate",
+    "description": "An internal helper is marked public so anyone can set the solved flag. Inspired by Aftermath.",
+    "instructions": "# Level 17: Open Gate\n\nOpen Gate: a vault with a \\`solved\\` flag. \\`set_solved_flag\\` was meant to be internal (\\`public(package)\\`) but is \\`public\\`, so anyone can call it. Your mission: create a vault, call \\`set_solved_flag\\` on it, then \\`claim_solved\\` to get the Solved object.\n\n## Objectives\n\n- Set the flag and claim the Solved object"
+  },
+  "18": {
+    "name": "Wrong Repay",
+    "description": "The receipt stores which pool was borrowed from, but repay never checks. Inspired by Cetus.",
+    "instructions": "# Level 18: Wrong Repay\n\nWrong Repay: create a \"victim\" pool (1000) and an \"attacker\" pool (0). \\`borrow(pool, amount)\\` gives you a Receipt that stores \\`pool_id\\`. \\`repay(pool, receipt)\\` credits \\`pool\\` with the receipt's amount but never asserts \\`pool\\` matches the receipt's \\`pool_id\\`. Your mission: borrow from the victim pool, repay using your attacker pool (wrong pool), then claim Solved when your pool reaches 1000.\n\n## Objectives\n\n- Get your pool's balance >= 1000 and claim Solved"
+  }
+}

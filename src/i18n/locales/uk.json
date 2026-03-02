@@ -1,0 +1,37 @@
+{
+    "theme": {
+        "label": "Тема",
+        "light": "Світла",
+        "dark": "Темна",
+        "toggleToLight": "Перемкнути на світлу тему",
+        "toggleToDark": "Перемкнути на темну тему",
+        "system": "Системна"
+    },
+    "header": {
+        "home": "Move-over – Головна",
+        "connectWallet": "Підключити гаманець",
+        "weAreHiring": "Ми наймаємо",
+        "network": "Мережа: Devnet",
+        "language": "Мова"
+    },
+    "landing": {
+        "title": "A wargame for Move on Sui",
+        "description": "Move-over is a Web3/Move-based wargame inspired by Ethernaut and overthewire.org, played on the Sui blockchain. Each level is a smart contract that needs to be 'hacked'. The game is 100% open source and all levels are contributions made by other players. Do you have an interesting idea? PRs are welcome.",
+        "cta": "Move-over to Level 0"
+    },
+    "level": {
+        "instructions": "Інструкції",
+        "contractCode": "Код контракту"
+    },
+    "sidebar": {
+        "levels": "Рівні"
+    },
+    "seo": {
+        "defaultTitle": "Move-over | CTF for Move on Sui",
+        "defaultDescription": "Move-over is a capture-the-flag wargame for Move smart contracts on Sui. Learn security by solving vulnerable contract challenges. Inspired by Ethernaut.",
+        "ogTitle": "Move-over | CTF for Move on Sui",
+        "ogDescription": "A wargame for Move on Sui. Learn smart contract security by solving vulnerable contract challenges. Inspired by Ethernaut.",
+        "levelTitle": "Level {id}: {name} | Move-over",
+        "siteName": "Move-over"
+    }
+}

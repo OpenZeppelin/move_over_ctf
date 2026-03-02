@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* OpenZeppelin: Violet #4F56FA – same in both themes */
+  --oz-violet: #4F56FA;
+  --oz-grey: #15193A;
+  --oz-white: #FFFFFF;
+  --oz-black: #000000;
+  /* Light theme (default) */
+  --move-dark: #f0f2f8;
+  --move-panel: #ffffff;
+  --move-border: #e2e6f0;
+  --move-accent: #4F56FA;
+  --move-text: #15193A;
+  --move-muted: #5c6280;
+  --code-border: #e2e6f0;
+  --code-text: #15193A;
+  --code-bg: #e4e8f2;
+}
+
+.dark {
+  --move-dark: #15193A;
+  --move-panel: #1e2240;
+  --move-border: #2a2f5c;
+  --move-accent: #4F56FA;
+  --move-text: #e8eaf0;
+  --move-muted: #8b92b8;
+  --code-border: #2a2f5c;
+  --code-text: #e8eaf0;
+  --code-bg: #15193A;
+}
+
+body {
+  background-color: var(--move-dark);
+  color: var(--move-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar – dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--move-panel);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--move-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--move-muted);
+}
+
+/* Code blocks in instructions – match level header/title theme */
+.prose pre {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+  background: var(--move-panel) !important;
+  border: 1px solid var(--move-border) !important;
+  border-left: 3px solid var(--oz-violet) !important;
+  color: var(--code-text) !important;
+  border-radius: 0 6px 6px 0 !important;
+  padding: 1rem 1.25rem !important;
+  margin: 1rem 0 !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.6 !important;
+}
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+  background: var(--move-dark) !important;
+  color: var(--code-text) !important;
+  border: 1px solid var(--move-border) !important;
+  border-radius: 4px !important;
+  padding: 0.2em 0.4em !important;
+  font-size: 0.875em !important;
+}
