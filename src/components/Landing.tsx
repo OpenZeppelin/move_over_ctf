@@ -147,6 +147,53 @@ export function Landing() {
                   </div>
                 </div>
               </div>
+
+              <section className="mt-6 rounded-lg border border-move-border bg-move-dark/45 p-4 sm:p-6 text-left">
+                <h2 className="text-base sm:text-lg font-semibold text-move-text">
+                  Move Smart Contract Security in a Browser Runtime
+                </h2>
+                <p className="mt-2 text-sm text-move-muted leading-relaxed">
+                  Move-over is a browser-based security playground where you learn by doing. Instead of reading theory
+                  only, you inspect vulnerable contract code, write an exploit flow, run it instantly, and verify that
+                  your solution can return the expected proof object. The core loop is practical: read, write, run,
+                  return, and improve.
+                </p>
+
+                <h3 className="mt-4 text-sm sm:text-base font-semibold text-move-text">
+                  How the Move-over Browser Workflow Operates
+                </h3>
+                <p className="mt-2 text-sm text-move-muted leading-relaxed">
+                  Every level runs in an in-browser runtime, so there is no wallet setup, chain state dependency, or
+                  local VM requirement to start practicing. You focus on Move security logic: ownership checks,
+                  capability misuse, object state transitions, and how to craft a safe, reproducible exploit path that
+                  passes verification.
+                </p>
+
+                <h4 className="mt-4 text-sm font-semibold text-move-text">
+                  Write `run()`, Return the `Flag`, and Pass the Level
+                </h4>
+                <p className="mt-2 text-sm text-move-muted leading-relaxed">
+                  Your target is explicit: write the `run()` body so it can return the correct `*Flag` object for the
+                  challenge. If the return type and behavior match the level contract requirements, the level is
+                  cleared and your progress is saved.
+                </p>
+
+                <h5 className="mt-4 text-xs uppercase tracking-wide text-move-muted">Core Skills You Practice</h5>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-move-text/90">
+                  <li>Read and reason about Move smart contract security behavior.</li>
+                  <li>Write exploit-oriented logic in a controlled browser environment.</li>
+                  <li>Return proof objects correctly and validate deterministic outcomes.</li>
+                </ul>
+
+                <h6 className="mt-4 text-xs uppercase tracking-wide text-move-muted">
+                  Recommended Starting Path
+                </h6>
+                <p className="mt-2 text-sm text-move-muted leading-relaxed">
+                  Start with Genesis for fundamentals, continue with Lockbox for object manipulation patterns, and then
+                  tackle Fallout for deeper exploit reasoning. This sequence builds practical Move security intuition
+                  step by step.
+                </p>
+              </section>
             </div>
 
             <div className="border-t border-move-border px-4 sm:px-6 py-4 sm:py-5">
