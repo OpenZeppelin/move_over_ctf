@@ -7,9 +7,8 @@ import { MobileLevelPicker } from "@/components/MobileLevelPicker";
 import { getLevel, getLevels } from "@/data/levels";
 import { getTranslations } from "@/i18n";
 import { replaceTemplate } from "@/i18n/utils";
-import { VALID_LOCALES } from "@/i18n/locales";
 import { BASE_URL } from "@/config";
-import type { Locale } from "@/i18n/types";
+import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale } from "@/i18n/locales";
 
 type Props = {
   params: Promise<{ locale: string; id: string }>;
@@ -28,7 +27,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
-  const loc = VALID_LOCALES.includes(locale as Locale) ? (locale as Locale) : "en";
+  const loc = getSafeLocale(locale);
   const levels = getLevels(loc);
   const level = levels.find((l) => String(l.id) === id) ?? levels[0];
   const t = getTranslations(loc);
@@ -61,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: url,
       languages: {
         ...languageAlternates,
-        "x-default": `${BASE_URL}/en/levels/${level.id}`,
+        "x-default": `${BASE_URL}/${DEFAULT_LOCALE}/levels/${level.id}`,
       },
     },
   };
@@ -69,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LevelPage({ params }: Props) {
   const { locale, id } = await params;
-  const loc = VALID_LOCALES.includes(locale as Locale) ? (locale as Locale) : "en";
+  const loc = getSafeLocale(locale);
   const numId = Number(id);
   const levels = getLevels(loc);
   const validId =

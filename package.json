@@ -12,7 +12,7 @@
     "prebuild": "npm run sync:meta",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "next": "^16.1.6",

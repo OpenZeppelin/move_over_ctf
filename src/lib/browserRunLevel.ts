@@ -10,6 +10,10 @@ type WorkerResponse =
 export interface BrowserRunLevelInput {
   levelId: number;
   contractCode: string;
+  contractModules?: Array<{
+    module: string;
+    contractCode?: string;
+  }>;
   module: string;
   typeName: string;
   solutionModule: string;
@@ -30,7 +34,7 @@ const pending = new Map<
 >();
 
 const WORKER_TIMEOUT_MS = 120_000;
-const WORKER_URL = "/workers/move_runner.worker.js?v=20260302_return_proof_verifier";
+const WORKER_URL = "/workers/move_runner.worker.js?v=20260303_multi_module_levels";
 
 function getWorker(): Worker {
   if (typeof window === "undefined") {

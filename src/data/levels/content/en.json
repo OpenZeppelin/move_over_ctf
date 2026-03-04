@@ -13,5 +13,10 @@
     "name": "Fallout",
     "description": "The contract thinks a certain address is the owner. Time to become that address.",
     "instructions": "# Level 2: Fallout\n\nA fallout-style contract: a vault with a get_owner function that was never properly implemented. Your job: figure out who the contract thinks the owner is, then withdraw and drain the vault.\n\n## Objectives\n\n- Drain the vault (balance = 0)"
+  },
+  "3": {
+    "name": "Relay Gateway",
+    "description": "A two-module challenge where gateway logic depends on relay_core.",
+    "instructions": "# Level 3: Relay Gateway\n\nThis level uses **two challenge modules**:\n\n- `move_over::relay_gateway`\n- `move_over::relay_core`\n\nThe gateway module calls into relay_core before it can return the flag.\n\n## Objectives\n\n1. Create a `RelayVault`\n2. Open it with the correct pin so internal cross-module call succeeds\n3. Return `RelayFlag` from your `run()` implementation\n\n## Hint\n\n`relay_gateway::open` depends on `relay_core::issue_permit`."
   }
 }

@@ -19,6 +19,19 @@ export const VALID_LOCALES: Locale[] = [
   "ko",
 ];
 
+/** Fallback locale used when route params are invalid. */
+export const DEFAULT_LOCALE: Locale = "en";
+
+const localeSet = new Set<Locale>(VALID_LOCALES);
+
+export function isValidLocale(locale: string): locale is Locale {
+  return localeSet.has(locale as Locale);
+}
+
+export function getSafeLocale(locale: string): Locale {
+  return isValidLocale(locale) ? locale : DEFAULT_LOCALE;
+}
+
 /** Display label for each locale (native name) – used in the language dropdown */
 export const LOCALE_OPTIONS: { code: Locale; label: string }[] = [
   { code: "en", label: "English" },

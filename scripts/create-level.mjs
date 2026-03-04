@@ -89,6 +89,17 @@ function isValidModuleName(value) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(String(value || "").trim());
 }
 
+function levelModulesFromMetaEntry(entry) {
+  const primary = String(entry?.module ?? "").trim();
+  const modules = Array.isArray(entry?.modules)
+    ? entry.modules
+        .map((moduleName) => String(moduleName ?? "").trim())
+        .filter(Boolean)
+    : [];
+  if (primary && !modules.includes(primary)) modules.unshift(primary);
+  return [...new Set(modules)];
+}
+
 function parseRunConfigMap(fileText) {
   const marker = "export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = ";
   const markerIndex = fileText.indexOf(marker);
@@ -189,6 +200,50 @@ async function askRequired(rl, label, validate) {
   }
 }
 
+async function askWithDefault(rl, label, defaultValue, validate) {
+  while (true) {
+    const raw = await rl.question(`${label}${defaultValue ? ` [${defaultValue}]` : ""}: `);
+    const value = raw.trim() || String(defaultValue || "").trim();
+    const error = validate ? validate(value) : value ? null : "Value is required.";
+    if (!error) return value;
+    output.write(`${error}\n`);
+  }
+}
+
+async function askYesNo(rl, label, defaultYes = false) {
+  const defaultLabel = defaultYes ? "Y/n" : "y/N";
+  while (true) {
+    const raw = (await rl.question(`${label} (${defaultLabel}): `)).trim().toLowerCase();
+    if (!raw) return defaultYes;
+    if (["y", "yes"].includes(raw)) return true;
+    if (["n", "no"].includes(raw)) return false;
+    output.write("Please answer y or n.\n");
+  }
+}
+
+async function askModuleMoveCode(rl, moduleIndex) {
+  const moveCode = await askMultilineRequired(rl, `Move code for module #${moduleIndex}:`);
+  const normalizedMoveCode = `${normalizeNewlines(moveCode).trim()}\n`;
+
+  const parsedModule = parseModuleName(normalizedMoveCode);
+  let moduleName = parsedModule?.moduleName ?? "";
+
+  if (parsedModule?.packageName && parsedModule.packageName !== "move_over") {
+    output.write(
+      `Warning: module address is '${parsedModule.packageName}' (expected 'move_over'). Saving anyway.\n`
+    );
+  }
+
+  if (!moduleName) {
+    output.write("Could not auto-detect module name from Move code.\n");
+    moduleName = await askRequired(rl, "Module name (e.g. nebula_relay): ", (value) =>
+      isValidModuleName(value) ? null : "Module name must be a valid Move identifier."
+    );
+  }
+
+  return { moduleName, moveCode: normalizedMoveCode };
+}
+
 async function askMultilineRequired(rl, label) {
   const collectLinesUntilEnd = () =>
     new Promise((resolve) => {
@@ -242,7 +297,8 @@ function printHelp() {
   output.write("  - Name\n");
   output.write("  - Difficulty (easy|medium|hard)\n");
   output.write("  - Instructions (multiline, end with END)\n");
-  output.write("  - Move code (multiline, end with END)\n");
+  output.write("  - One or more challenge module Move files (multiline each, end with END)\n");
+  output.write("  - Primary module for runConfig (when multiple modules)\n");
 }
 
 async function run() {
@@ -255,7 +311,7 @@ async function run() {
   let name = "";
   let difficulty = "";
   let instructions = "";
-  let moveCode = "";
+  const moduleEntries = [];
 
   try {
     name = await askRequired(rl, "Level name: ", (value) =>
@@ -270,39 +326,85 @@ async function run() {
       })
     ).toLowerCase();
     instructions = await askMultilineRequired(rl, "Instructions markdown:");
-    moveCode = await askMultilineRequired(rl, "Move code:");
+
+    output.write("\nEnter one or more challenge modules for this level.\n");
+    let moduleIndex = 1;
+    while (true) {
+      const moduleEntry = await askModuleMoveCode(rl, moduleIndex);
+      if (moduleEntries.some((entry) => entry.moduleName === moduleEntry.moduleName)) {
+        output.write(
+          `Module '${moduleEntry.moduleName}' was already added for this level. Enter a different module.\n`
+        );
+        continue;
+      }
+      moduleEntries.push(moduleEntry);
+      moduleIndex += 1;
+
+      const addAnother = await askYesNo(rl, "Add another challenge module", false);
+      if (!addAnother) break;
+    }
   } finally {
     rl.close();
   }
 
-  const normalizedMoveCode = `${normalizeNewlines(moveCode).trim()}\n`;
+  const moduleNames = moduleEntries.map((entry) => entry.moduleName);
+  assert(moduleNames.length > 0, "At least one challenge module is required.");
 
-  const parsedModule = parseModuleName(normalizedMoveCode);
-  let moduleName = parsedModule?.moduleName ?? "";
-  if (parsedModule?.packageName && parsedModule.packageName !== "move_over") {
-    output.write(
-      `Warning: module address is '${parsedModule.packageName}' (expected 'move_over'). Saving anyway.\n`
+  const metaConfigRaw = await fs.readFile(metaConfigPath, "utf8");
+  const metaConfig = JSON.parse(metaConfigRaw);
+  assert(Array.isArray(metaConfig), "meta.config.json must contain an array.");
+  const existingModules = new Set(metaConfig.flatMap((entry) => levelModulesFromMetaEntry(entry)));
+  for (const moduleName of moduleNames) {
+    assert(
+      !existingModules.has(moduleName),
+      `Module '${moduleName}' already exists in meta.config.json.`
     );
   }
-  if (!moduleName) {
-    const moduleRl = readline.createInterface({ input, output });
+  const nextId =
+    metaConfig.reduce((maxId, entry) => Math.max(maxId, Number(entry?.id ?? -1)), -1) + 1;
+
+  for (const moduleName of moduleNames) {
+    const contractPath = path.join(contractsDir, `${moduleName}.move`);
     try {
-      output.write("Could not auto-detect module name from Move code.\n");
-      moduleName = await askRequired(moduleRl, "Module name (e.g. nebula_relay): ", (value) =>
-        isValidModuleName(value) ? null : "Module name must be a valid Move identifier."
-      );
-    } finally {
-      moduleRl.close();
+      await fs.access(contractPath);
+      throw new Error(`Contract file already exists: public/contracts/${moduleName}.move`);
+    } catch (err) {
+      if (!String(err?.message || "").includes("already exists") && err?.code !== "ENOENT") {
+        throw err;
+      }
+      if (String(err?.message || "").includes("already exists")) throw err;
     }
   }
 
-  const expectedTypeName = `${toPascalCase(moduleName)}Flag`;
-  let typeName = parseFlagType(normalizedMoveCode, moduleName);
+  let runModuleName = moduleNames[0];
+  if (moduleNames.length > 1) {
+    const pickModuleRl = readline.createInterface({ input, output });
+    try {
+      output.write(`\nModules detected: ${moduleNames.join(", ")}\n`);
+      const autoPrimary =
+        moduleEntries.find((entry) => parseFlagType(entry.moveCode, entry.moduleName))?.moduleName ||
+        moduleNames[0];
+      runModuleName = await askWithDefault(
+        pickModuleRl,
+        "Primary module for runConfig.module",
+        autoPrimary,
+        (value) => (moduleNames.includes(value) ? null : `Choose one of: ${moduleNames.join(", ")}`)
+      );
+    } finally {
+      pickModuleRl.close();
+    }
+  }
+
+  const runModuleEntry = moduleEntries.find((entry) => entry.moduleName === runModuleName);
+  assert(runModuleEntry, `Primary run module '${runModuleName}' not found.`);
+
+  const expectedTypeName = `${toPascalCase(runModuleName)}Flag`;
+  let typeName = parseFlagType(runModuleEntry.moveCode, runModuleName);
   if (!typeName) {
     const fallbackRl = readline.createInterface({ input, output });
     try {
       output.write(
-        `Could not auto-detect Flag type. Enter it manually (example: ${expectedTypeName}).\n`
+        `Could not auto-detect Flag type from '${runModuleName}'. Enter it manually (example: ${expectedTypeName}).\n`
       );
       typeName = await askRequired(fallbackRl, "Flag type name: ", (value) =>
         isValidTypeName(value) ? null : "Type name must be a valid Move identifier."
@@ -312,31 +414,10 @@ async function run() {
     }
   }
 
-  const metaConfigRaw = await fs.readFile(metaConfigPath, "utf8");
-  const metaConfig = JSON.parse(metaConfigRaw);
-  assert(Array.isArray(metaConfig), "meta.config.json must contain an array.");
-  assert(
-    !metaConfig.some((entry) => String(entry?.module ?? "") === moduleName),
-    `Module '${moduleName}' already exists in meta.config.json.`
-  );
-  const nextId =
-    metaConfig.reduce((maxId, entry) => Math.max(maxId, Number(entry?.id ?? -1)), -1) + 1;
-
-  const contractPath = path.join(contractsDir, `${moduleName}.move`);
-  try {
-    await fs.access(contractPath);
-    throw new Error(`Contract file already exists: public/contracts/${moduleName}.move`);
-  } catch (err) {
-    if (!String(err?.message || "").includes("already exists") && err?.code !== "ENOENT") {
-      throw err;
-    }
-    if (String(err?.message || "").includes("already exists")) throw err;
-  }
-
   const runConfigRaw = await fs.readFile(runConfigPath, "utf8");
   const runConfigMap = parseRunConfigMap(runConfigRaw);
   runConfigMap[nextId] = {
-    module: moduleName,
+    module: runModuleName,
     typeName,
     solutionModule: `level_${nextId}_solution`,
   };
@@ -347,12 +428,16 @@ async function run() {
   assert(!Object.prototype.hasOwnProperty.call(enContent, String(nextId)), `en.json already contains level ${nextId}.`);
 
   await fs.mkdir(contractsDir, { recursive: true });
-  await fs.writeFile(contractPath, normalizedMoveCode, "utf8");
+  for (const entry of moduleEntries) {
+    const contractPath = path.join(contractsDir, `${entry.moduleName}.move`);
+    await fs.writeFile(contractPath, entry.moveCode, "utf8");
+  }
 
   metaConfig.push({
     id: nextId,
     difficulty,
-    module: moduleName,
+    module: runModuleName,
+    modules: moduleNames,
   });
   metaConfig.sort((a, b) => Number(a.id) - Number(b.id));
   await fs.writeFile(metaConfigPath, `${JSON.stringify(metaConfig, null, 2)}\n`, "utf8");
@@ -377,9 +462,12 @@ async function run() {
 
   output.write("\nLevel created successfully.\n");
   output.write(`- id: ${nextId}\n`);
-  output.write(`- module: move_over::${moduleName}\n`);
+  output.write(`- primary module: move_over::${runModuleName}\n`);
+  output.write(`- modules: ${moduleNames.map((name) => `move_over::${name}`).join(", ")}\n`);
   output.write(`- typeName: ${typeName}\n`);
-  output.write(`- contract: public/contracts/${moduleName}.move\n`);
+  for (const moduleName of moduleNames) {
+    output.write(`- contract: public/contracts/${moduleName}.move\n`);
+  }
   output.write(`- runConfig solutionModule: level_${nextId}_solution\n`);
 }
 

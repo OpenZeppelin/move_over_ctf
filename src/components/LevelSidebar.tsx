@@ -5,18 +5,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { DIFFICULTY_DOTS, DIFFICULTY_TEXT_CLASS, type Level } from "@/data/levels";
-
-const SOLVED_STORAGE_KEY = "move-over-ctf-solved";
-
-function getSolvedIds(): Set<number> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = localStorage.getItem(SOLVED_STORAGE_KEY);
-    return new Set(raw ? (JSON.parse(raw) as number[]) : []);
-  } catch {
-    return new Set();
-  }
-}
+import { LEVEL_SOLVED_EVENT, getSolvedIdsFromStorage } from "@/lib/progressStorage";
 
 export function LevelSidebar({ levels }: { levels: Level[] }) {
   const params = useParams();
@@ -27,10 +16,13 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
   const [solvedIds, setSolvedIds] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
-    setSolvedIds(getSolvedIds());
-    const handler = () => setSolvedIds(getSolvedIds());
-    window.addEventListener("move-over-ctf-solved", handler);
-    return () => window.removeEventListener("move-over-ctf-solved", handler);
+    const syncSolvedIds = () => setSolvedIds(getSolvedIdsFromStorage());
+    const frame = window.requestAnimationFrame(syncSolvedIds);
+    window.addEventListener(LEVEL_SOLVED_EVENT, syncSolvedIds);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener(LEVEL_SOLVED_EVENT, syncSolvedIds);
+    };
   }, []);
 
   return (

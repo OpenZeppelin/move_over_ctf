@@ -28,6 +28,11 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "FalloutFlag",
     solutionModule: "level_2_solution",
   },
+  3: {
+    module: "relay_gateway",
+    typeName: "RelayFlag",
+    solutionModule: "level_3_solution",
+  },
 };
 
 export const SUPPORTED_LEVEL_IDS = Object.keys(LEVEL_RUN_CONFIG).map(Number);

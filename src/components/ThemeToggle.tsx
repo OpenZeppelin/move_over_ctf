@@ -1,17 +1,21 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useEffect, useState } from "react";
+
+const EMPTY_SUBSCRIBE = () => () => {};
+
+function useHasHydrated() {
+  return useSyncExternalStore(EMPTY_SUBSCRIBE, () => true, () => false);
+}
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const { t } = useLocale();
-  const [mounted, setMounted] = useState(false);
+  const hasHydrated = useHasHydrated();
 
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
+  if (!hasHydrated || resolvedTheme === undefined) {
     return (
       <span
         className="inline-flex size-10 items-center justify-center rounded-lg border border-move-border bg-move-panel"

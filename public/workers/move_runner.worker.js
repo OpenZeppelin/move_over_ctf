@@ -1042,43 +1042,7 @@ ${body}
 `;
   }
 
-  function escapeRegex(text) {
-    return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  function moduleHasFunction(contractSource, functionName) {
-    const source = String(contractSource || "");
-    const fn = String(functionName || "").trim();
-    if (!source || !fn) return false;
-    const pattern = new RegExp(
-      `\\b(?:public(?:\\s*\\([^)]*\\))?\\s+)?(?:entry\\s+)?fun\\s+${escapeRegex(fn)}\\s*\\(`,
-      "m"
-    );
-    return pattern.test(source);
-  }
-
-  function resolveCleanupCallLine(payload, contractSource) {
-    const preferred = String(payload.cleanupFunction || "").trim();
-    const moduleName = String(payload.module || "").trim();
-    const candidates = [];
-    if (preferred) candidates.push(preferred);
-    candidates.push("delete", "delete_vault", "delete_treasury", "delete_permit");
-
-    const seen = new Set();
-    for (const candidate of candidates) {
-      const fn = String(candidate || "").trim();
-      if (!fn || seen.has(fn)) continue;
-      seen.add(fn);
-      if (moduleHasFunction(contractSource, fn)) {
-        return `${moduleName}::${fn}(result);`;
-      }
-    }
-
-    // Fallback that consumes the value when no module-specific cleanup exists.
-    return "sui::transfer::public_transfer(result, @0x0);";
-  }
-
-  function buildVerifierSource(payload, _contractSource) {
+  function buildVerifierSource(payload) {
     return `module move_over::${payload.verifierModule} {
 
 use move_over::${payload.module};
@@ -1092,8 +1056,54 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
 `;
   }
 
-  async function resolveCanonicalContractSource(payload) {
-    const moduleName = String(payload && payload.module ? payload.module : "").trim();
+  function parseModuleNameFromSource(sourceText) {
+    const source = String(sourceText || "");
+    const match =
+      /\bmodule\s+[A-Za-z_][A-Za-z0-9_]*::([A-Za-z_][A-Za-z0-9_]*)\s*(?:;|\{)/.exec(source);
+    return match ? String(match[1]) : "";
+  }
+
+  function normalizePayloadContractModules(payload) {
+    const rawModules = Array.isArray(payload && payload.contractModules) ? payload.contractModules : [];
+    const modules = [];
+    const seen = new Set();
+
+    const addModule = (moduleName, contractCode) => {
+      const moduleLabel = String(moduleName || "").trim();
+      if (!moduleLabel || seen.has(moduleLabel)) return;
+      seen.add(moduleLabel);
+      modules.push({
+        module: moduleLabel,
+        contractCode: String(contractCode || "").trim(),
+      });
+    };
+
+    for (const item of rawModules) {
+      if (!item || typeof item !== "object") continue;
+      const inferredName = parseModuleNameFromSource(item.contractCode);
+      addModule(item.module || inferredName, item.contractCode);
+    }
+
+    const primaryModule = String(payload && payload.module ? payload.module : "").trim();
+    const fallbackContract = String(payload && payload.contractCode ? payload.contractCode : "").trim();
+
+    if (!modules.length) {
+      const inferredPrimary = primaryModule || parseModuleNameFromSource(fallbackContract);
+      addModule(inferredPrimary, fallbackContract);
+    } else if (primaryModule && !seen.has(primaryModule)) {
+      const primaryItem = rawModules.find(
+        (item) =>
+          item &&
+          typeof item === "object" &&
+          String(item.module || "").trim() === primaryModule
+      );
+      addModule(primaryModule, primaryItem && primaryItem.contractCode ? primaryItem.contractCode : fallbackContract);
+    }
+
+    return modules;
+  }
+
+  async function fetchCanonicalContractSource(moduleName) {
     if (!moduleName) return "";
     const encoded = encodeURIComponent(moduleName);
     const url = `/contracts/${encoded}.move`;
@@ -1105,6 +1115,29 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     } catch (_err) {
       return "";
     }
+  }
+
+  async function resolveContractSources(payload) {
+    const modules = normalizePayloadContractModules(payload);
+    if (!modules.length) {
+      throw new Error(
+        `Missing challenge contract source for module '${String(payload && payload.module ? payload.module : "")}'.`
+      );
+    }
+
+    const resolved = [];
+    for (const item of modules) {
+      const canonicalContract = await fetchCanonicalContractSource(item.module);
+      const contractCodeRaw = canonicalContract || String(item.contractCode || "").trim();
+      if (!contractCodeRaw) {
+        throw new Error(`Missing challenge contract source for module '${item.module}'.`);
+      }
+      resolved.push({
+        module: item.module,
+        contractCode: normalizeMoveSourceForWebCompile(contractCodeRaw),
+      });
+    }
+    return resolved;
   }
 
   function normalizeModuleToBlockSyntax(sourceText) {
@@ -1139,19 +1172,494 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     return normalizeStructVisibilityForMove2024(moduleBlock);
   }
 
+  function countSourceLines(text) {
+    return String(text || "").split("\n").length;
+  }
+
   async function buildCombinedSource(payload) {
-    const canonicalContract = await resolveCanonicalContractSource(payload);
-    const fallbackContract = String(payload.contractCode || "").trim();
-    const contractCodeRaw = canonicalContract || fallbackContract;
-    if (!contractCodeRaw) {
-      throw new Error(
-        `Missing challenge contract source for module '${String(payload && payload.module ? payload.module : "")}'.`
+    const contractModules = await resolveContractSources(payload);
+    const solutionCode = normalizeMoveSourceForWebCompile(buildSolutionSource(payload));
+    const verifierCode = normalizeMoveSourceForWebCompile(buildVerifierSource(payload));
+    const parts = [
+      ...contractModules.map((item) => ({
+        kind: "contract",
+        module: item.module,
+        source: item.contractCode,
+      })),
+      {
+        kind: "solution",
+        module: String(payload && payload.solutionModule ? payload.solutionModule : "solution"),
+        source: solutionCode,
+      },
+      {
+        kind: "verifier",
+        module: String(payload && payload.verifierModule ? payload.verifierModule : "verifier"),
+        source: verifierCode,
+      },
+    ];
+
+    const segments = [];
+    let nextLine = 1;
+    for (let i = 0; i < parts.length; i += 1) {
+      const part = parts[i];
+      const sourceText = String(part.source || "");
+      const lineCount = countSourceLines(sourceText);
+      const startLine = nextLine;
+      const endLine = startLine + lineCount - 1;
+      segments.push({
+        kind: part.kind,
+        module: part.module,
+        source: sourceText,
+        startLine,
+        endLine,
+      });
+      nextLine = endLine + 1;
+      if (i < parts.length - 1) nextLine += 2; // "\n\n" separators
+    }
+
+    return {
+      source: parts.map((part) => part.source).join("\n\n"),
+      segments,
+      challengeModules: contractModules.map((item) => item.module),
+    };
+  }
+
+  function findSourceSegmentForLine(segments, line) {
+    const n = toNumberMaybe(line);
+    if (!Number.isInteger(n) || n <= 0) return null;
+    for (const segment of Array.isArray(segments) ? segments : []) {
+      if (!segment) continue;
+      if (n >= segment.startLine && n <= segment.endLine) return segment;
+    }
+    return null;
+  }
+
+  function extractLineHintsFromText(text, maxHints) {
+    const source = String(text || "");
+    if (!source.trim()) return [];
+
+    const hints = [];
+    const seen = new Set();
+    const limit = Number.isInteger(maxHints) && maxHints > 0 ? maxHints : 3;
+    const push = (rawLine, rawColumn) => {
+      const line = toNumberMaybe(rawLine);
+      if (!Number.isInteger(line) || line <= 0) return;
+      const col = toNumberMaybe(rawColumn);
+      const column = Number.isInteger(col) && col > 0 ? col : null;
+      const key = `${line}:${column === null ? "" : column}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      hints.push({ line, column });
+    };
+
+    let match;
+    const linePattern = /\bline\s+(\d+)(?:\s*(?:,|:)?\s*(?:col(?:umn)?\.?\s*)?(\d+))?/gi;
+    while ((match = linePattern.exec(source)) !== null) {
+      push(match[1], match[2]);
+      if (hints.length >= limit) return hints;
+    }
+
+    const pointerPattern = /(?:^|\n)\s*┌─\s*[^:\n]*:(\d+):(\d+)/g;
+    while ((match = pointerPattern.exec(source)) !== null) {
+      push(match[1], match[2]);
+      if (hints.length >= limit) return hints;
+    }
+
+    const filePattern = /(?:^|[\s(])(?:[A-Za-z0-9_./<>\-]+\.move|<stdin>|stdin|source):(\d+):(\d+)/gi;
+    while ((match = filePattern.exec(source)) !== null) {
+      push(match[1], match[2]);
+      if (hints.length >= limit) return hints;
+    }
+
+    return hints;
+  }
+
+  function extractLineHintsFromObject(value, maxHints) {
+    const hints = [];
+    const seen = new Set();
+    const visited = new Set();
+    const limit = Number.isInteger(maxHints) && maxHints > 0 ? maxHints : 3;
+
+    const push = (rawLine, rawColumn) => {
+      const line = toNumberMaybe(rawLine);
+      if (!Number.isInteger(line) || line <= 0) return;
+      const col = toNumberMaybe(rawColumn);
+      const column = Number.isInteger(col) && col > 0 ? col : null;
+      const key = `${line}:${column === null ? "" : column}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      hints.push({ line, column });
+    };
+
+    const visit = (node, depth) => {
+      if (hints.length >= limit) return;
+      if (node === null || node === undefined || depth > 4) return;
+
+      if (typeof node === "string") {
+        for (const hint of extractLineHintsFromText(node, limit - hints.length)) {
+          push(hint.line, hint.column);
+          if (hints.length >= limit) return;
+        }
+        return;
+      }
+
+      if (typeof node !== "object") return;
+      if (visited.has(node)) return;
+      visited.add(node);
+
+      if (Array.isArray(node)) {
+        for (const item of node) {
+          visit(item, depth + 1);
+          if (hints.length >= limit) return;
+        }
+        return;
+      }
+
+      const line =
+        node.line ??
+        node.lineNumber ??
+        node.startLine ??
+        (node.loc && (node.loc.line ?? node.loc.startLine)) ??
+        (node.location && (node.location.line ?? node.location.startLine));
+      const column =
+        node.column ??
+        node.col ??
+        node.columnNumber ??
+        node.startColumn ??
+        (node.loc && (node.loc.column ?? node.loc.col ?? node.loc.startColumn)) ??
+        (node.location && (node.location.column ?? node.location.col ?? node.location.startColumn));
+      push(line, column);
+      if (hints.length >= limit) return;
+
+      const likelyChildren = [
+        "loc",
+        "location",
+        "span",
+        "start",
+        "end",
+        "at",
+        "position",
+        "pos",
+        "details",
+        "error",
+        "raw",
+      ];
+      for (const key of likelyChildren) {
+        if (Object.prototype.hasOwnProperty.call(node, key)) {
+          visit(node[key], depth + 1);
+          if (hints.length >= limit) return;
+        }
+      }
+    };
+
+    visit(value, 0);
+    return hints;
+  }
+
+  function formatLineContext(sourceText, targetLine) {
+    const source = String(sourceText || "");
+    if (!source.trim()) return "";
+    const lines = source.split("\n");
+    const line = toNumberMaybe(targetLine);
+    if (!Number.isInteger(line) || line <= 0 || line > lines.length) return "";
+    const start = Math.max(1, line - 2);
+    const end = Math.min(lines.length, line + 2);
+    const width = String(end).length;
+    const out = [];
+    for (let i = start; i <= end; i += 1) {
+      const prefix = i === line ? ">" : " ";
+      out.push(`${String(i).padStart(width, " ")} | ${prefix}${lines[i - 1]}`);
+    }
+    return out.join("\n");
+  }
+
+  function segmentLabel(segment) {
+    if (!segment || typeof segment !== "object") return "combined source";
+    if (segment.kind === "solution") return `solution module '${segment.module}'`;
+    if (segment.kind === "verifier") return `verifier module '${segment.module}'`;
+    return `contract module '${segment.module}'`;
+  }
+
+  function buildLineDiagnostics(messageText, details, segments) {
+    const merged = [];
+    const seen = new Set();
+    const push = (hint) => {
+      if (!hint || !Number.isInteger(hint.line) || hint.line <= 0) return;
+      const col = Number.isInteger(hint.column) && hint.column > 0 ? hint.column : null;
+      const key = `${hint.line}:${col === null ? "" : col}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      merged.push({ line: hint.line, column: col });
+    };
+
+    for (const hint of extractLineHintsFromObject(details, 3)) push(hint);
+    for (const hint of extractLineHintsFromText(messageText, 3)) push(hint);
+    if (!merged.length) return "";
+
+    const bullets = [];
+    for (const hint of merged.slice(0, 3)) {
+      const segment = findSourceSegmentForLine(segments, hint.line);
+      if (!segment) {
+        bullets.push(
+          `- combined source line ${hint.line}${hint.column ? `:${hint.column}` : ""}`
+        );
+        continue;
+      }
+      const localLine = hint.line - segment.startLine + 1;
+      bullets.push(
+        `- ${segmentLabel(segment)} line ${localLine}${hint.column ? `:${hint.column}` : ""} (combined line ${hint.line})`
       );
     }
-    const contractCode = normalizeMoveSourceForWebCompile(contractCodeRaw);
-    const solutionCode = normalizeMoveSourceForWebCompile(buildSolutionSource(payload));
-    const verifierCode = normalizeMoveSourceForWebCompile(buildVerifierSource(payload, contractCode));
-    return [contractCode, solutionCode, verifierCode].join("\n\n");
+
+    const first = merged[0];
+    const firstSegment = findSourceSegmentForLine(segments, first.line);
+    const firstLocalLine = firstSegment ? first.line - firstSegment.startLine + 1 : null;
+    const context =
+      firstSegment && Number.isInteger(firstLocalLine)
+        ? formatLineContext(firstSegment.source, firstLocalLine)
+        : "";
+
+    return [
+      "Likely failing location(s):",
+      bullets.join("\n"),
+      context ? `Context:\n${context}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  function escapeRegex(text) {
+    return String(text || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function parseRuntimeAbortTrace(logText) {
+    const frameToFunction = Object.create(null);
+    const entries = [];
+    const lines = String(logText || "").split("\n");
+
+    for (const rawLine of lines) {
+      const callMatch = /Call\s*->\s*([A-Za-z0-9_:]+)\s+\(frame\s*#(\d+)/.exec(rawLine);
+      if (callMatch) {
+        frameToFunction[String(Number(callMatch[2]))] = String(callMatch[1] || "");
+      }
+
+      const opcodeMatch =
+        /\bf#(\d+)\s+pc=(\d+)\s+\[(\d+)\]\s+0x([0-9A-Fa-f]{2}):\s+([A-Z0-9_]+)/.exec(rawLine);
+      if (!opcodeMatch) continue;
+      entries.push({
+        frame: Number(opcodeMatch[1]),
+        pc: Number(opcodeMatch[2]),
+        opcodePosition: Number(opcodeMatch[3]),
+        opcodeHex: String(opcodeMatch[4] || "").toUpperCase(),
+        mnemonic: String(opcodeMatch[5] || "").toUpperCase(),
+        rawLine,
+      });
+    }
+
+    for (let i = entries.length - 1; i >= 0; i -= 1) {
+      const current = entries[i];
+      if (current.mnemonic !== "ABORT") continue;
+      let abortCode = null;
+      for (let j = i - 1; j >= 0; j -= 1) {
+        const prev = entries[j];
+        if (prev.frame !== current.frame) continue;
+        if (prev.mnemonic === "LD_U64") {
+          const codeMatch = /LD_U64\s+0x([0-9A-Fa-f]+)/.exec(prev.rawLine);
+          if (codeMatch) {
+            try {
+              abortCode = BigInt(`0x${codeMatch[1]}`).toString(10);
+            } catch (_err) {
+              abortCode = null;
+            }
+          }
+          break;
+        }
+      }
+
+      return {
+        ...current,
+        functionName: frameToFunction[String(current.frame)] || "",
+        abortCode,
+      };
+    }
+
+    return null;
+  }
+
+  function moduleLeafName(moduleLabel) {
+    const parts = String(moduleLabel || "")
+      .split("::")
+      .map((part) => part.trim())
+      .filter(Boolean);
+    return parts.length ? parts[parts.length - 1].toLowerCase() : "";
+  }
+
+  function normalizeRuntimeFunctionToken(rawName) {
+    const parts = String(rawName || "")
+      .split("::")
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (!parts.length) return { functionName: "", moduleHint: "" };
+    return {
+      functionName: parts[parts.length - 1].toLowerCase(),
+      moduleHint: parts.length >= 2 ? parts[parts.length - 2].toLowerCase() : "",
+    };
+  }
+
+  function findFunctionModelForRuntimeName(model, runtimeName) {
+    const functions = Array.isArray(model && model.functions) ? model.functions : [];
+    const token = normalizeRuntimeFunctionToken(runtimeName);
+    if (!token.functionName) return null;
+
+    const byName = functions.filter(
+      (fn) => String((fn && fn.name) || "").toLowerCase() === token.functionName
+    );
+    if (!byName.length) return null;
+    if (!token.moduleHint) return byName[0];
+
+    const narrowed = byName.filter(
+      (fn) => moduleLeafName(fn && fn.moduleLabel) === token.moduleHint
+    );
+    return narrowed.length ? narrowed[0] : byName[0];
+  }
+
+  function findSourceSegmentForFunction(segments, functionModel, fallbackFunctionName) {
+    const sourceSegments = Array.isArray(segments) ? segments : [];
+    const fnName = String(
+      (functionModel && functionModel.name) || fallbackFunctionName || ""
+    ).trim();
+    const moduleHint = moduleLeafName(functionModel && functionModel.moduleLabel);
+
+    if (moduleHint) {
+      const exact = sourceSegments.find(
+        (segment) => String((segment && segment.module) || "").trim().toLowerCase() === moduleHint
+      );
+      if (exact) return exact;
+    }
+
+    if (fnName) {
+      const fnPattern = new RegExp(`\\bfun\\s+${escapeRegex(fnName)}\\s*\\(`);
+      const byBody = sourceSegments.find((segment) =>
+        fnPattern.test(String((segment && segment.source) || ""))
+      );
+      if (byBody) return byBody;
+    }
+
+    return null;
+  }
+
+  function findFunctionRegionInSource(sourceText, functionName) {
+    const source = String(sourceText || "");
+    const fn = String(functionName || "").trim();
+    if (!source || !fn) return null;
+
+    const signature = new RegExp(
+      `\\b(?:public(?:\\s*\\([^)]*\\))?\\s+)?(?:entry\\s+)?fun\\s+${escapeRegex(fn)}\\s*\\(`,
+      "m"
+    );
+    const sigMatch = signature.exec(source);
+    if (!sigMatch) return null;
+
+    const fromSig = source.slice(sigMatch.index);
+    const openRel = fromSig.indexOf("{");
+    if (openRel < 0) return null;
+    const openAbs = sigMatch.index + openRel;
+
+    let depth = 0;
+    let endAbs = -1;
+    for (let i = openAbs; i < source.length; i += 1) {
+      const ch = source[i];
+      if (ch === "{") depth += 1;
+      else if (ch === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          endAbs = i;
+          break;
+        }
+      }
+    }
+    if (endAbs < 0) return null;
+
+    const startLine = countSourceLines(source.slice(0, sigMatch.index));
+    const endLine = countSourceLines(source.slice(0, endAbs + 1));
+    return { startLine, endLine };
+  }
+
+  function findLikelyAbortLineInFunction(sourceText, functionName, abortCode) {
+    const source = String(sourceText || "");
+    const region = findFunctionRegionInSource(source, functionName);
+    if (!region) return null;
+    const lines = source.split("\n");
+
+    const assertLines = [];
+    const abortLines = [];
+    for (let line = region.startLine; line <= region.endLine; line += 1) {
+      const row = String(lines[line - 1] || "");
+      if (/\bassert!\s*\(/.test(row)) assertLines.push(line);
+      if (/\babort\b/.test(row)) abortLines.push(line);
+    }
+
+    if (abortCode !== null && abortCode !== undefined) {
+      const code = String(abortCode);
+      const codedAsserts = assertLines.filter((line) => {
+        const row = String(lines[line - 1] || "");
+        const codeRe = new RegExp(`,\\s*${escapeRegex(code)}\\s*\\)`);
+        return codeRe.test(row);
+      });
+      if (codedAsserts.length === 1) return codedAsserts[0];
+    }
+
+    if (assertLines.length === 1) return assertLines[0];
+    if (abortLines.length === 1) return abortLines[0];
+    return region.startLine;
+  }
+
+  function buildRuntimeAbortDiagnostics(logText, model, segments) {
+    const trace = parseRuntimeAbortTrace(logText);
+    if (!trace) return "";
+
+    const functionModel = findFunctionModelForRuntimeName(model, trace.functionName);
+    const segment = findSourceSegmentForFunction(
+      segments,
+      functionModel,
+      trace.functionName
+    );
+    const functionName = String(
+      (functionModel && functionModel.name) || trace.functionName || ""
+    ).trim();
+    const functionLabel =
+      functionModel && functionModel.moduleLabel
+        ? `${functionModel.moduleLabel}::${functionName}`
+        : functionName || `frame #${trace.frame}`;
+
+    let sourceLine = null;
+    let sourceContext = "";
+    if (segment && functionName) {
+      sourceLine = findLikelyAbortLineInFunction(segment.source, functionName, trace.abortCode);
+      if (Number.isInteger(sourceLine)) {
+        sourceContext = formatLineContext(segment.source, sourceLine);
+      }
+    }
+
+    const instruction =
+      functionModel && Array.isArray(functionModel.instructions)
+        ? functionModel.instructions.find(
+            (ins) => Number.isInteger(ins.codeIndex) && ins.codeIndex === trace.opcodePosition
+          ) || null
+        : null;
+
+    const header = [
+      `${functionLabel}: ABORT at opcode position ${trace.opcodePosition} (pc=${trace.pc})`,
+      trace.abortCode !== null ? `Abort code: ${trace.abortCode}` : "",
+      instruction && instruction.text ? `Instruction: ${instruction.text}` : "",
+      segment && Number.isInteger(sourceLine)
+        ? `Likely source: ${segmentLabel(segment)} line ${sourceLine}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    return [header, sourceContext].filter(Boolean).join("\n\n");
   }
 
   function defaultSystemInputs() {
@@ -1201,171 +1709,6 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     throw new Error("Verifier function not found in compiled modules.");
   }
 
-  function normalizeModuleLabelForCompare(raw) {
-    const text = String(raw || "").trim();
-    if (!text) return "";
-    const parts = text.split("::");
-    if (parts.length < 2) return text.toLowerCase();
-    const addr = normalizeAddressCanonical(parts.shift());
-    return `${addr || "0x0"}::${parts.join("::").toLowerCase()}`;
-  }
-
-  function resolveCallHandleIndex(model, instruction) {
-    if (!instruction || !Array.isArray(instruction.operands) || !instruction.operands.length) return null;
-    const op = String(instruction.mnemonic || "").toUpperCase();
-    const first = parseOperandIndex(instruction.operands[0]);
-    if (!Number.isInteger(first)) return null;
-    if (op === "CALL") return first;
-    if (op === "CALL_GENERIC") {
-      const instantiations = Array.isArray(model && model.functionInstantiations)
-        ? model.functionInstantiations
-        : [];
-      const inst = instantiations[first];
-      const handleIdx = inst && Number.isInteger(inst.funcHandleIdx) ? inst.funcHandleIdx : null;
-      return Number.isInteger(handleIdx) ? handleIdx : null;
-    }
-    return null;
-  }
-
-  function normalizeTemplateCheckModule(rawModule) {
-    const text = String(rawModule || "").trim();
-    if (!text) return "";
-    if (text.includes("::")) return normalizeModuleLabelForCompare(text);
-    return normalizeModuleLabelForCompare(`0x0::${text}`);
-  }
-
-  function normalizeTemplateChecks(rawChecks) {
-    return Array.isArray(rawChecks)
-      ? rawChecks
-          .map((item) => ({
-            moduleNorm: normalizeTemplateCheckModule(item && item.module),
-            moduleRaw: String(item && item.module ? item.module : "").trim(),
-            functionName: String(item && item.function ? item.function : "").trim().toLowerCase(),
-          }))
-          .filter((item) => item.moduleNorm && item.functionName)
-      : [];
-  }
-
-  function runTemplateChecks(model, payload, rawChecks) {
-    const checks = normalizeTemplateChecks(rawChecks);
-    if (!checks.length) return null;
-
-    const functions = Array.isArray(model && model.functions) ? model.functions : [];
-    const targetSolutionModule = normalizeModuleLabelForCompare(`0x0::${payload.solutionModule}`);
-    const runFn = functions.find((fn) => {
-      const moduleNorm = normalizeModuleLabelForCompare(fn && fn.moduleLabel);
-      const name = String((fn && fn.name) || "").toLowerCase();
-      return moduleNorm === targetSolutionModule && name === "run";
-    });
-    if (!runFn || !Array.isArray(runFn.instructions)) {
-      return {
-        success: false,
-        output: 
-          "Template check failed: could not find `<solution_module>::run` in compiled output.",
-      };
-    }
-
-    const handles = Array.isArray(model && model.functionHandles) ? model.functionHandles : [];
-    for (const check of checks) {
-      const matched = runFn.instructions.some((instruction) => {
-        const handleIdx = resolveCallHandleIndex(model, instruction);
-        if (!Number.isInteger(handleIdx)) return false;
-        const handle = handles[handleIdx];
-        if (!handle) return false;
-        const moduleNorm = normalizeModuleLabelForCompare(handle.moduleLabel);
-        const nameNorm = String(handle.name || "").toLowerCase();
-        return moduleNorm === check.moduleNorm && nameNorm === check.functionName;
-      });
-      if (!matched) {
-        return {
-          success: false,
-          output: `Template check failed: run() must call ${check.moduleRaw || check.moduleNorm}::${check.functionName}(...).`,
-        };
-      }
-    }
-
-    return {
-      success: true,
-      output: "Passed template checks in browser mode.",
-    };
-  }
-
-  function parseUseAliasMap(sourceText) {
-    const map = Object.create(null);
-    const source = String(sourceText || "");
-    const re = /^\s*use\s+([A-Za-z_][A-Za-z0-9_]*)::([A-Za-z_][A-Za-z0-9_]*)(?:\s+as\s+([A-Za-z_][A-Za-z0-9_]*))?\s*;/gm;
-    let match;
-    while ((match = re.exec(source)) !== null) {
-      const addr = String(match[1] || "").trim().toLowerCase();
-      const moduleName = String(match[2] || "").trim();
-      const alias = String(match[3] || moduleName).trim();
-      if (!alias || !moduleName) continue;
-      if (addr === "move_over" || addr === "0x0") {
-        map[alias] = moduleName;
-      }
-    }
-    return map;
-  }
-
-  function extractFunctionBody(sourceText, functionName) {
-    const source = String(sourceText || "");
-    const fn = String(functionName || "").trim();
-    if (!source || !fn) return "";
-    const signature = new RegExp(`\\bfun\\s+${escapeRegex(fn)}\\s*\\(`, "m");
-    const sigMatch = signature.exec(source);
-    if (!sigMatch) return "";
-    const fromSig = source.slice(sigMatch.index);
-    const openIdx = fromSig.indexOf("{");
-    if (openIdx < 0) return "";
-    let depth = 0;
-    let end = -1;
-    for (let i = openIdx; i < fromSig.length; i += 1) {
-      const ch = fromSig[i];
-      if (ch === "{") depth += 1;
-      else if (ch === "}") {
-        depth -= 1;
-        if (depth === 0) {
-          end = i;
-          break;
-        }
-      }
-    }
-    if (end < 0) return "";
-    return fromSig.slice(openIdx + 1, end).trim();
-  }
-
-  async function deriveTemplateChecksFromCanonicalSolution(payload) {
-    const levelId = Number(payload && payload.levelId);
-    if (!Number.isInteger(levelId) || levelId < 0) return [];
-    const fileName = `level_${levelId}_solution.move`;
-    try {
-      const response = await fetch(`/solutions/${encodeURIComponent(fileName)}`, { cache: "no-store" });
-      if (!response.ok) return [];
-      const source = await response.text();
-      const body = extractFunctionBody(source, "run");
-      if (!body) return [];
-      const aliasMap = parseUseAliasMap(source);
-      const callRe = /\b([A-Za-z_][A-Za-z0-9_]*)::([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
-      const checks = [];
-      const seen = new Set();
-      let match;
-      while ((match = callRe.exec(body)) !== null) {
-        const alias = String(match[1] || "").trim();
-        const fn = String(match[2] || "").trim();
-        if (!alias || !fn) continue;
-        const moduleName = aliasMap[alias] || (alias === String(payload.module || "").trim() ? alias : "");
-        if (!moduleName) continue;
-        const key = `${moduleName.toLowerCase()}::${fn.toLowerCase()}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        checks.push({ module: moduleName, function: fn });
-      }
-      return checks;
-    } catch (_err) {
-      return [];
-    }
-  }
-
   function parseBooleanResult(returnValues) {
     if (!Array.isArray(returnValues) || !returnValues.length) return null;
     const raw = String(returnValues[0] || "").trim().toLowerCase();
@@ -1393,12 +1736,24 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
       }
     }
 
-    const source = await buildCombinedSource(payload);
+    const combined = await buildCombinedSource(payload);
+    const source = combined.source;
+    const sourceSegments = Array.isArray(combined.segments) ? combined.segments : [];
     let compileRaw;
     try {
       compileRaw = wasm_bindgen.compile_move_source(source);
     } catch (err) {
-      throw new Error(normalizeErrorMessage(err, "Move compilation failed in WASM."));
+      const message = normalizeErrorMessage(err, "Move compilation failed in WASM.");
+      const lineInfo = buildLineDiagnostics(message, err, sourceSegments);
+      throw new Error(
+        [
+          "Move compilation failed in browser VM.",
+          message,
+          lineInfo,
+        ]
+          .filter(Boolean)
+          .join("\n\n")
+      );
     }
 
     const compilePayload = parseJsonSafe(compileRaw);
@@ -1439,7 +1794,17 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     try {
       startRaw = wasm_bindgen.debugger_call("/api/debugger/start", JSON.stringify(startReq));
     } catch (err) {
-      throw new Error(normalizeErrorMessage(err, "Failed to start browser debugger session."));
+      const message = normalizeErrorMessage(err, "Failed to start browser debugger session.");
+      const lineInfo = buildLineDiagnostics(message, err, sourceSegments);
+      throw new Error(
+        [
+          "Failed to start browser debugger session.",
+          message === "Failed to start browser debugger session." ? "" : message,
+          lineInfo,
+        ]
+          .filter(Boolean)
+          .join("\n\n")
+      );
     }
     const startPayload = parseJsonSafe(startRaw);
     if (!startPayload || typeof startPayload !== "object" || !String(startPayload.sessionId || "").trim()) {
@@ -1456,7 +1821,17 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
         })
       );
     } catch (err) {
-      throw new Error(normalizeErrorMessage(err, "Failed to run browser debugger session."));
+      const message = normalizeErrorMessage(err, "Failed to run browser debugger session.");
+      const lineInfo = buildLineDiagnostics(message, err, sourceSegments);
+      throw new Error(
+        [
+          "Failed to run browser debugger session.",
+          message === "Failed to run browser debugger session." ? "" : message,
+          lineInfo,
+        ]
+          .filter(Boolean)
+          .join("\n\n")
+      );
     }
     const runPayload = parseJsonSafe(runRaw);
     if (!runPayload || typeof runPayload !== "object" || !runPayload.state) {
@@ -1467,22 +1842,38 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     const vmError = state.vmError || null;
     const haltReason = String(state.haltReason || "");
     const boolResult = parseBooleanResult(state.lastReturnValues);
+    const fullLogText = Array.isArray(state.logs) ? state.logs.join("\n") : "";
     const logTail = Array.isArray(state.logs) ? state.logs.slice(-8).join("\n") : "";
 
     if (vmError) {
       const vmMessage = typeof vmError.message === "string" ? vmError.message : JSON.stringify(vmError);
+      const lineInfo = buildLineDiagnostics(`${vmMessage}\n${logTail}`, vmError, sourceSegments);
+      const runtimeInfo = buildRuntimeAbortDiagnostics(fullLogText, model, sourceSegments);
+      const diagnostics = runtimeInfo || lineInfo;
       return {
         success: false,
-        output: `Execution failed.\n${vmMessage}${logTail ? `\n\nRecent logs:\n${logTail}` : ""}`,
+        output: [
+          "Execution failed in browser VM.",
+          diagnostics,
+          !diagnostics ? vmMessage : "",
+          !runtimeInfo && logTail ? `Recent logs:\n${logTail}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
       };
     }
 
     if (haltReason !== "return") {
+      const lineInfo = buildLineDiagnostics(logTail, state, sourceSegments);
       return {
         success: false,
-        output: `Execution did not return normally (haltReason=${haltReason || "unknown"}).${
-          logTail ? `\n\nRecent logs:\n${logTail}` : ""
-        }`,
+        output: [
+          `Execution did not return normally (haltReason=${haltReason || "unknown"}).`,
+          lineInfo,
+          logTail ? `Recent logs:\n${logTail}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
       };
     }
 
@@ -1490,28 +1881,41 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
       const returned = Array.isArray(state.lastReturnValues)
         ? state.lastReturnValues.join(", ")
         : "(none)";
+      const lineInfo = buildLineDiagnostics(logTail, state, sourceSegments);
       if (Array.isArray(state.lastReturnValues) && state.lastReturnValues.some(isSymbolicFieldPlaceholder)) {
         return {
           success: false,
-          output:
-            `Web runner limitation: this level execution produced symbolic struct field values (${returned}) ` +
-            `instead of a concrete bool. This WASM debugger build is not a full Sui Move VM for all object/field semantics.\n\n` +
-            `Use Move CLI tests as the authoritative result for this level, or switch to a full-runtime WASM backend.${
-              logTail ? `\n\nRecent logs:\n${logTail}` : ""
-            }`,
+          output: [
+            `Web runner limitation: this level execution produced symbolic struct field values (${returned}) instead of a concrete bool.`,
+            "This WASM debugger build is not a full Sui Move VM for all object/field semantics.",
+            "Use Move CLI tests as the authoritative result for this level, or switch to a full-runtime WASM backend.",
+            lineInfo,
+            logTail ? `Recent logs:\n${logTail}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n\n"),
         };
       }
       return {
         success: false,
-        output: `Verifier returned ${returned || "false"}.${logTail ? `\n\nRecent logs:\n${logTail}` : ""}`,
+        output: [
+          `Verifier returned ${returned || "false"}.`,
+          lineInfo,
+          logTail ? `Recent logs:\n${logTail}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
       };
     }
 
     return {
       success: true,
-      output: `All tests passed in browser VM.${
-        logTail ? `\n\nRecent logs:\n${logTail}` : ""
-      }`,
+      output: [
+        "✅ Level passed in browser VM.",
+        `Verifier check: ${payload.verifierModule}::verify returned true.`,
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
     };
   }
 

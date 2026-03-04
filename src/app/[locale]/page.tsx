@@ -3,8 +3,7 @@ import { Header } from "@/components/Header";
 import { Landing } from "@/components/Landing";
 import { BASE_URL } from "@/config";
 import { getTranslations } from "@/i18n";
-import { VALID_LOCALES } from "@/i18n/locales";
-import type { Locale } from "@/i18n/types";
+import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale } from "@/i18n/locales";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -12,7 +11,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const loc = VALID_LOCALES.includes(locale as Locale) ? (locale as Locale) : "en";
+  const loc = getSafeLocale(locale);
   const t = getTranslations(loc);
   const title = `${t("seo.siteName")}: Move Smart Contract Security CTF`;
   const description =
@@ -39,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: url,
       languages: {
         ...languageAlternates,
-        "x-default": `${BASE_URL}/en`,
+        "x-default": `${BASE_URL}/${DEFAULT_LOCALE}`,
       },
     },
     openGraph: {

@@ -13,5 +13,14 @@
     "id": 2,
     "difficulty": "easy",
     "module": "fallout"
+  },
+  {
+    "id": 3,
+    "difficulty": "medium",
+    "module": "relay_gateway",
+    "modules": [
+      "relay_core",
+      "relay_gateway"
+    ]
   }
 ]

@@ -16,6 +16,17 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function levelModulesFromMetaEntry(entry) {
+  const primary = String(entry?.module ?? "").trim();
+  const modules = Array.isArray(entry?.modules)
+    ? entry.modules
+        .map((moduleName) => String(moduleName ?? "").trim())
+        .filter(Boolean)
+    : [];
+  if (primary && !modules.includes(primary)) modules.unshift(primary);
+  return [...new Set(modules)];
+}
+
 function parseRunConfigMap(fileText) {
   const marker = "export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = ";
   const markerIndex = fileText.indexOf(marker);
@@ -193,7 +204,8 @@ async function run() {
   const levels = metaConfig
     .map((entry) => ({
       id: Number(entry.id),
-      module: String(entry.module),
+      module: String(entry.module ?? ""),
+      modules: levelModulesFromMetaEntry(entry),
       difficulty: String(entry.difficulty),
       name:
         typeof enContent[String(entry.id)]?.name === "string"
@@ -205,7 +217,7 @@ async function run() {
   output.write("Available levels:\n");
   for (const level of levels) {
     output.write(
-      `- ${level.id}: ${level.name} (module: ${level.module}, difficulty: ${level.difficulty})\n`
+      `- ${level.id}: ${level.name} (modules: ${level.modules.join(", ") || level.module}, difficulty: ${level.difficulty})\n`
     );
   }
   output.write("\n");
@@ -240,7 +252,8 @@ async function run() {
 
   const targetMeta = metaConfig.find((entry) => Number(entry.id) === levelId);
   assert(targetMeta, `Level id ${levelId} not found in meta config.`);
-  const targetModule = String(targetMeta.module);
+  const targetModules = levelModulesFromMetaEntry(targetMeta);
+  const targetModuleLabel = targetModules.join(", ");
 
   const runConfigRaw = await fs.readFile(runConfigPath, "utf8");
   const runConfigMap = parseRunConfigMap(runConfigRaw);
@@ -265,9 +278,12 @@ async function run() {
     await fs.writeFile(localeFile, `${JSON.stringify(shifted, null, 2)}\n`, "utf8");
   }
 
-  const moduleStillUsed = nextMeta.some((entry) => String(entry.module) === targetModule);
-  const contractPath = path.join(contractsDir, `${targetModule}.move`);
-  if (!moduleStillUsed) {
+  for (const moduleName of targetModules) {
+    const moduleStillUsed = nextMeta.some((entry) =>
+      levelModulesFromMetaEntry(entry).includes(moduleName)
+    );
+    if (moduleStillUsed) continue;
+    const contractPath = path.join(contractsDir, `${moduleName}.move`);
     try {
       await fs.unlink(contractPath);
     } catch (err) {
@@ -282,7 +298,7 @@ async function run() {
 
   output.write("\nLevel deleted successfully.\n");
   output.write(`- removed id: ${levelId}\n`);
-  output.write(`- removed module: move_over::${targetModule}\n`);
+  output.write(`- removed modules: move_over::${targetModuleLabel}\n`);
   output.write("- reindexed higher level ids by -1\n");
 }
 

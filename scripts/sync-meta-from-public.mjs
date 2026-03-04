@@ -7,6 +7,7 @@ const contractsDir = path.join(root, "public", "contracts");
 const metaPath = path.join(root, "src", "data", "levels", "meta.ts");
 
 const VALID_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
+const MODULE_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
 function escapeTemplateLiteral(text) {
   return String(text)
@@ -17,6 +18,33 @@ function escapeTemplateLiteral(text) {
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function normalizeModulesForConfigEntry(item, id) {
+  const primary = String(item?.module ?? "").trim();
+  const rawModules = Array.isArray(item?.modules) ? item.modules : [];
+  const modules = rawModules
+    .map((moduleName) => String(moduleName ?? "").trim())
+    .filter(Boolean);
+
+  if (primary && !modules.includes(primary)) {
+    modules.unshift(primary);
+  }
+  if (!modules.length) {
+    assert(primary, `Missing module/modules for level ${id}`);
+    modules.push(primary);
+  }
+
+  const uniqueModules = [...new Set(modules)];
+  for (const moduleName of uniqueModules) {
+    assert(
+      MODULE_NAME_RE.test(moduleName),
+      `Invalid module '${moduleName}' in meta.config.json for level ${id}`
+    );
+  }
+
+  const primaryModule = primary && uniqueModules.includes(primary) ? primary : uniqueModules[0];
+  return { primaryModule, modules: uniqueModules };
 }
 
 async function run() {
@@ -30,30 +58,47 @@ async function run() {
   for (const item of config) {
     const id = Number(item?.id);
     const difficulty = String(item?.difficulty ?? "");
-    const module = String(item?.module ?? "");
 
     assert(Number.isInteger(id) && id >= 0, `Invalid id in meta.config.json: ${String(item?.id)}`);
     assert(!seenIds.has(id), `Duplicate level id in meta.config.json: ${id}`);
     seenIds.add(id);
 
     assert(VALID_DIFFICULTIES.has(difficulty), `Invalid difficulty for level ${id}: ${difficulty}`);
-    assert(/^[A-Za-z_][A-Za-z0-9_]*$/.test(module), `Invalid module for level ${id}: ${module}`);
+    const { primaryModule, modules } = normalizeModulesForConfigEntry(item, id);
 
-    const contractPath = path.join(contractsDir, `${module}.move`);
-    const contractRaw = await fs.readFile(contractPath, "utf8");
-    const contractCode = contractRaw.replaceAll("\r\n", "\n").trimEnd();
+    const contractModules = [];
+    for (const moduleName of modules) {
+      const contractPath = path.join(contractsDir, `${moduleName}.move`);
+      const contractRaw = await fs.readFile(contractPath, "utf8");
+      const contractCode = contractRaw.replaceAll("\r\n", "\n").trimEnd();
+      contractModules.push({ module: moduleName, contractCode });
+    }
 
-    entries.push({ id, difficulty, module, contractCode });
+    const primaryContract =
+      contractModules.find((mod) => mod.module === primaryModule) ?? contractModules[0];
+    assert(primaryContract, `Missing contract code for level ${id}.`);
+
+    entries.push({ id, difficulty, contractCode: primaryContract.contractCode, contractModules });
   }
 
   entries.sort((a, b) => a.id - b.id);
 
   const levelBlocks = entries
     .map(
-      ({ id, difficulty, contractCode }) => `  {
+      ({ id, difficulty, contractCode, contractModules }) => `  {
     id: ${id},
     difficulty: "${difficulty}",
     contractCode: \`${escapeTemplateLiteral(contractCode)}\`,
+    contractModules: [
+${contractModules
+  .map(
+    (mod) => `      {
+        module: ${JSON.stringify(mod.module)},
+        contractCode: \`${escapeTemplateLiteral(mod.contractCode)}\`,
+      },`
+  )
+  .join("\n")}
+    ],
   },`
     )
     .join("\n");
@@ -64,6 +109,10 @@ export interface LevelMeta {
   id: number;
   difficulty: Difficulty;
   contractCode: string;
+  contractModules: Array<{
+    module: string;
+    contractCode: string;
+  }>;
 }
 
 export const LEVEL_META: LevelMeta[] = [

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "@/i18n";
-import { VALID_LOCALES } from "@/i18n/locales";
-import type { Locale } from "@/i18n/types";
+import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale, isValidLocale } from "@/i18n/locales";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { BASE_URL } from "@/config";
 
@@ -21,8 +20,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const valid = VALID_LOCALES.includes(locale as Locale);
-  const loc = valid ? (locale as Locale) : "en";
+  const loc = getSafeLocale(locale);
   const t = getTranslations(loc);
 
   const title = t("seo.defaultTitle");
@@ -62,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: localeUrl,
       languages: {
         ...languageAlternates,
-        "x-default": `${BASE_URL}/en`,
+        "x-default": `${BASE_URL}/${DEFAULT_LOCALE}`,
       },
     },
     robots: { index: true, follow: true },
@@ -75,10 +73,10 @@ export function generateStaticParams() {
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
-  if (!VALID_LOCALES.includes(locale as Locale)) {
-    redirect("/en");
+  if (!isValidLocale(locale)) {
+    redirect(`/${DEFAULT_LOCALE}`);
   }
-  const loc = locale as Locale;
+  const loc = locale;
 
   const organizationSchema = {
     "@context": "https://schema.org",

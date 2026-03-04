@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -10,62 +10,28 @@ import { DIFFICULTY_BADGE_CLASS, LEVEL_IDS, LEVEL_RUN_CONFIG, type Level } from 
 import { parseModulePath } from "@/lib/contractCode";
 import { codeStyleDark, codeStyleLight } from "@/lib/codeHighlight";
 import { runLevelInBrowser } from "@/lib/browserRunLevel";
+import {
+  getSolutionForLevel,
+  getSolvedIdsFromStorage,
+  markLevelSolved,
+  saveSolutionForLevel,
+} from "@/lib/progressStorage";
 
 type Tab = "instructions" | "code";
-const SOLVED_STORAGE_KEY = "move-over-ctf-solved";
-const SOLUTIONS_STORAGE_KEY = "move-over-ctf-solutions";
-
-function readSolvedIdsFromStorage(): Set<number> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = localStorage.getItem(SOLVED_STORAGE_KEY);
-    return new Set(raw ? (JSON.parse(raw) as number[]) : []);
-  } catch {
-    return new Set();
-  }
-}
-
-function saveSolvedIdToStorage(levelId: number): void {
-  if (typeof window === "undefined") return;
-  try {
-    const solvedIds = readSolvedIdsFromStorage();
-    solvedIds.add(levelId);
-    localStorage.setItem(SOLVED_STORAGE_KEY, JSON.stringify([...solvedIds]));
-    window.dispatchEvent(new CustomEvent("move-over-ctf-solved", { detail: levelId }));
-  } catch {
-    // ignore
-  }
-}
-
-function readSolutionFromStorage(levelId: number): string {
-  if (typeof window === "undefined") return "";
-  try {
-    const raw = localStorage.getItem(SOLUTIONS_STORAGE_KEY);
-    const solutions = raw ? (JSON.parse(raw) as Record<string, string>) : {};
-    return typeof solutions[String(levelId)] === "string" ? solutions[String(levelId)] : "";
-  } catch {
-    return "";
-  }
-}
-
-function saveSolutionToStorage(levelId: number, solution: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    const raw = localStorage.getItem(SOLUTIONS_STORAGE_KEY);
-    const solutions = raw ? (JSON.parse(raw) as Record<string, string>) : {};
-    solutions[String(levelId)] = solution;
-    localStorage.setItem(SOLUTIONS_STORAGE_KEY, JSON.stringify(solutions));
-  } catch {
-    // ignore
-  }
-}
+type ScrollSnapshot = {
+  panelTop: number | null;
+  editorTop: number | null;
+  editorLeft: number | null;
+};
 
 export function LevelView({ level }: { level: Level }) {
   const [tab, setTab] = useState<Tab>("instructions");
+  const [activeContractIndex, setActiveContractIndex] = useState(0);
   const [solutionCode, setSolutionCode] = useState<string>(() => "");
   const [isCompleted, setIsCompleted] = useState(false);
   const [runResult, setRunResult] = useState<{ success: boolean; output: string } | null>(null);
   const [runLoading, setRunLoading] = useState(false);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
   const solutionHighlightRef = useRef<HTMLDivElement>(null);
   const solutionWrapperRef = useRef<HTMLDivElement>(null);
   const solutionTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -73,9 +39,28 @@ export function LevelView({ level }: { level: Level }) {
   const { t, locale } = useLocale();
   const isDark = resolvedTheme !== "light";
   const codeStyle = isDark ? codeStyleDark : codeStyleLight;
-  const modulePath = parseModulePath(level.contractCode);
   const runConfig = LEVEL_RUN_CONFIG[level.id];
   const hasRunner = runConfig != null;
+  const contractModules = useMemo(() => {
+    if (Array.isArray(level.contractModules) && level.contractModules.length) {
+      return level.contractModules.map((item) => ({
+        module: String(item.module || "").trim(),
+        contractCode: String(item.contractCode || ""),
+      }));
+    }
+    const fallbackCode = String(level.contractCode || "");
+    const parsedPath = parseModulePath(fallbackCode);
+    const fallbackModule = parsedPath.includes("::") ? parsedPath.split("::").pop() || "contract" : parsedPath;
+    return [
+      {
+        module: fallbackModule.replace(/[;{]+$/, ""),
+        contractCode: fallbackCode,
+      },
+    ];
+  }, [level.contractCode, level.contractModules]);
+  const activeContract = contractModules[activeContractIndex] ?? contractModules[0];
+  const activeContractCode = activeContract?.contractCode || level.contractCode;
+  const modulePath = parseModulePath(activeContractCode);
   const levelIndex = LEVEL_IDS.indexOf(level.id);
   const prevLevelId = levelIndex > 0 ? LEVEL_IDS[levelIndex - 1] : undefined;
   const prevHref =
@@ -89,10 +74,46 @@ export function LevelView({ level }: { level: Level }) {
   const handleSolutionChange = useCallback(
     (value: string) => {
       setSolutionCode(value);
-      saveSolutionToStorage(level.id, value);
+      saveSolutionForLevel(level.id, value);
     },
     [level.id],
   );
+
+  const captureScrollSnapshot = useCallback((): ScrollSnapshot => {
+    const panel = contentScrollRef.current;
+    const editor = solutionTextareaRef.current;
+    return {
+      panelTop: panel ? panel.scrollTop : null,
+      editorTop: editor ? editor.scrollTop : null,
+      editorLeft: editor ? editor.scrollLeft : null,
+    };
+  }, []);
+
+  const restoreScrollSnapshot = useCallback((snapshot: ScrollSnapshot) => {
+    requestAnimationFrame(() => {
+      if (snapshot.panelTop !== null) {
+        const panel = contentScrollRef.current;
+        if (panel) {
+          const max = Math.max(0, panel.scrollHeight - panel.clientHeight);
+          panel.scrollTop = Math.min(snapshot.panelTop, max);
+        }
+      }
+
+      if (snapshot.editorTop !== null || snapshot.editorLeft !== null) {
+        const editor = solutionTextareaRef.current;
+        if (editor) {
+          if (snapshot.editorTop !== null) editor.scrollTop = snapshot.editorTop;
+          if (snapshot.editorLeft !== null) editor.scrollLeft = snapshot.editorLeft;
+        }
+
+        const highlight = solutionHighlightRef.current;
+        if (highlight) {
+          if (snapshot.editorTop !== null) highlight.scrollTop = snapshot.editorTop;
+          if (snapshot.editorLeft !== null) highlight.scrollLeft = snapshot.editorLeft;
+        }
+      }
+    });
+  }, []);
 
   const handleRun = useCallback(async () => {
     if (!runConfig) {
@@ -102,12 +123,17 @@ export function LevelView({ level }: { level: Level }) {
       });
       return;
     }
-    setRunResult(null);
+    const scrollSnapshot = captureScrollSnapshot();
     setRunLoading(true);
+    restoreScrollSnapshot(scrollSnapshot);
     try {
       const result = await runLevelInBrowser({
         levelId: level.id,
         contractCode: level.contractCode,
+        contractModules: contractModules.map((contract) => ({
+          module: contract.module,
+          contractCode: contract.contractCode,
+        })),
         module: runConfig.module,
         typeName: runConfig.typeName,
         solutionModule: runConfig.solutionModule,
@@ -116,25 +142,43 @@ export function LevelView({ level }: { level: Level }) {
         cleanupFunction: runConfig.cleanupFunction,
       });
       setRunResult(result);
+      restoreScrollSnapshot(scrollSnapshot);
       if (result.success) {
         setIsCompleted(true);
-        saveSolvedIdToStorage(level.id);
-        saveSolutionToStorage(level.id, solutionCode);
+        markLevelSolved(level.id);
+        saveSolutionForLevel(level.id, solutionCode);
       }
     } catch (e) {
       setRunResult({
         success: false,
         output: e instanceof Error ? e.message : "Network error",
       });
+      restoreScrollSnapshot(scrollSnapshot);
     } finally {
       setRunLoading(false);
+      restoreScrollSnapshot(scrollSnapshot);
     }
-  }, [level.contractCode, level.id, runConfig, solutionCode]);
+  }, [
+    captureScrollSnapshot,
+    contractModules,
+    level.contractCode,
+    level.id,
+    restoreScrollSnapshot,
+    runConfig,
+    solutionCode,
+  ]);
+
+  useEffect(() => {
+    const preferredIndex = runConfig
+      ? contractModules.findIndex((contract) => contract.module === runConfig.module)
+      : -1;
+    setActiveContractIndex(preferredIndex >= 0 ? preferredIndex : 0);
+  }, [contractModules, level.id, runConfig]);
 
   useEffect(() => {
     setRunResult(null);
-    setSolutionCode(readSolutionFromStorage(level.id));
-    setIsCompleted(readSolvedIdsFromStorage().has(level.id));
+    setSolutionCode(getSolutionForLevel(level.id));
+    setIsCompleted(getSolvedIdsFromStorage().has(level.id));
   }, [level.id]);
 
   // Expand/shrink solution textarea wrapper with content
@@ -250,7 +294,7 @@ export function LevelView({ level }: { level: Level }) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
+      <div ref={contentScrollRef} className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
         {tab === "instructions" && (
           <article className="prose prose-sm max-w-none text-move-text prose-headings:text-move-text prose-p:text-move-text prose-li:text-move-text">
             <ReactMarkdown
@@ -273,6 +317,28 @@ export function LevelView({ level }: { level: Level }) {
                   <span className="text-move-accent">{modulePath}.move</span>
                 </span>
               </div>
+              {contractModules.length > 1 && (
+                <div className="flex flex-wrap gap-1 border-b border-move-border bg-move-panel/60 px-2 py-1.5">
+                  {contractModules.map((contract, idx) => {
+                    const isActive = idx === activeContractIndex;
+                    return (
+                      <button
+                        key={`${contract.module}-${idx}`}
+                        type="button"
+                        onClick={() => setActiveContractIndex(idx)}
+                        className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-mono transition-colors ${
+                          isActive
+                            ? "border-oz-violet/45 bg-oz-violet/15 text-oz-violet"
+                            : "border-move-border bg-move-dark text-move-muted hover:text-move-text"
+                        }`}
+                        title={`Open ${contract.module}.move`}
+                      >
+                        {contract.module}.move
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
               <div className="border-l-[3px] border-l-[var(--oz-violet)] bg-move-panel">
                 <SyntaxHighlighter
                   language="rust"
@@ -294,7 +360,7 @@ export function LevelView({ level }: { level: Level }) {
                   showLineNumbers={false}
                   PreTag="div"
                 >
-                  {level.contractCode}
+                  {activeContractCode}
                 </SyntaxHighlighter>
               </div>
             </div>
@@ -451,11 +517,15 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                   <div
                     className={`border-t border-move-border p-4 font-mono text-xs whitespace-pre-wrap ${
                       runResult.success
-                        ? "border-emerald-400/55 bg-emerald-500/12 text-move-text"
-                        : "border-red-400/55 bg-red-500/12 text-move-text"
+                        ? "border-emerald-400/55 bg-emerald-500/12 text-emerald-200"
+                        : "border-red-400/55 bg-red-500/12 text-red-200"
                     }`}
                   >
-                    <p className="font-semibold mb-1">
+                    <p
+                      className={`mb-1 font-semibold ${
+                        runResult.success ? "text-emerald-300" : "text-red-300"
+                      }`}
+                    >
                       {runResult.success ? t("level.runSuccess") : t("level.runError")}
                     </p>
                     <pre className="text-inherit overflow-x-auto">{runResult.output}</pre>
