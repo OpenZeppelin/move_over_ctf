@@ -18,9 +18,10 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
         <Link
           href={`/${locale}/levels/how-to-play`}
           className={`
-            shrink-0 min-h-[44px] inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
+            shrink-0 min-h-[44px] inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60
             ${isHowToPlayActive ? "bg-oz-violet text-white" : "text-move-text bg-white/5 hover:bg-white/10"}
           `}
+          aria-current={isHowToPlayActive ? "page" : undefined}
         >
           How to Play
         </Link>
@@ -31,9 +32,10 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
               key={level.id}
               href={`/${locale}/levels/${level.id}`}
               className={`
-                shrink-0 min-h-[44px] inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
+                shrink-0 min-h-[44px] inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60
                 ${isActive ? "bg-oz-violet text-white" : "text-move-text bg-white/5 hover:bg-white/10"}
               `}
+              aria-current={isActive ? "page" : undefined}
             >
               {level.id}: {level.name}
             </Link>

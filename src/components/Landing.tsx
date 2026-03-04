@@ -87,8 +87,19 @@ export function Landing() {
                   Move-over is a browser-first CTF for Move security. Read vulnerable contracts, write the `run()`
                   exploit path, and return the right `*Flag` to clear each level.
                 </p>
+                <p className="mt-3 text-xs sm:text-sm text-move-muted">
+                  Move-over is open source. Explore the code on{" "}
+                  <a
+                    href="https://github.com/OpenZeppelin/move_over_ctf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-oz-violet hover:underline"
+                  >
+                    GitHub
+                  </a>
+                  .
+                </p>
               </div>
-
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
                   <p className="font-mono text-[10px] uppercase tracking-wide text-move-muted">Format</p>

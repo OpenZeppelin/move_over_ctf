@@ -11,8 +11,11 @@ import { parseModulePath } from "@/lib/contractCode";
 import { codeStyleDark, codeStyleLight } from "@/lib/codeHighlight";
 import { runLevelInBrowser } from "@/lib/browserRunLevel";
 import {
+  getRevealedHintCountForLevel,
   getSolutionForLevel,
   getSolvedIdsFromStorage,
+  setLastVisitedLevel,
+  setRevealedHintCountForLevel,
   markLevelSolved,
   saveSolutionForLevel,
 } from "@/lib/progressStorage";
@@ -31,6 +34,7 @@ export function LevelView({ level }: { level: Level }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [runResult, setRunResult] = useState<{ success: boolean; output: string } | null>(null);
   const [runLoading, setRunLoading] = useState(false);
+  const [revealedHintCount, setRevealedHintCount] = useState(0);
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const solutionHighlightRef = useRef<HTMLDivElement>(null);
   const solutionWrapperRef = useRef<HTMLDivElement>(null);
@@ -41,6 +45,15 @@ export function LevelView({ level }: { level: Level }) {
   const codeStyle = isDark ? codeStyleDark : codeStyleLight;
   const runConfig = LEVEL_RUN_CONFIG[level.id];
   const hasRunner = runConfig != null;
+  const hints = useMemo(
+    () =>
+      Array.isArray(level.hints)
+        ? level.hints
+            .map((hint) => String(hint).trim())
+            .filter((hint) => hint.length > 0)
+        : [],
+    [level.hints],
+  );
   const contractModules = useMemo(() => {
     if (Array.isArray(level.contractModules) && level.contractModules.length) {
       return level.contractModules.map((item) => ({
@@ -115,6 +128,17 @@ export function LevelView({ level }: { level: Level }) {
     });
   }, []);
 
+  const handleRevealNextHint = useCallback(() => {
+    if (!hints.length) return;
+    setRevealedHintCount((prev) => {
+      const next = Math.min(prev + 1, hints.length);
+      if (next !== prev) {
+        setRevealedHintCountForLevel(level.id, next);
+      }
+      return next;
+    });
+  }, [hints.length, level.id]);
+
   const handleRun = useCallback(async () => {
     if (!runConfig) {
       setRunResult({
@@ -145,7 +169,7 @@ export function LevelView({ level }: { level: Level }) {
       restoreScrollSnapshot(scrollSnapshot);
       if (result.success) {
         setIsCompleted(true);
-        markLevelSolved(level.id);
+        markLevelSolved(level.id, { usedHint: revealedHintCount > 0 });
         saveSolutionForLevel(level.id, solutionCode);
       }
     } catch (e) {
@@ -163,6 +187,7 @@ export function LevelView({ level }: { level: Level }) {
     contractModules,
     level.contractCode,
     level.id,
+    revealedHintCount,
     restoreScrollSnapshot,
     runConfig,
     solutionCode,
@@ -179,7 +204,10 @@ export function LevelView({ level }: { level: Level }) {
     setRunResult(null);
     setSolutionCode(getSolutionForLevel(level.id));
     setIsCompleted(getSolvedIdsFromStorage().has(level.id));
-  }, [level.id]);
+    setLastVisitedLevel(level.id);
+    const persistedHints = getRevealedHintCountForLevel(level.id);
+    setRevealedHintCount(Math.min(persistedHints, hints.length));
+  }, [hints.length, level.id]);
 
   // Expand/shrink solution textarea wrapper with content
   useEffect(() => {
@@ -216,47 +244,59 @@ export function LevelView({ level }: { level: Level }) {
           <h1 className="font-mono text-base sm:text-lg font-semibold text-move-text bg-move-dark/80 border border-move-border rounded px-3 py-1.5 inline-block">
             {level.name}
           </h1>
+          <div className="ml-auto inline-flex items-center gap-2">
+            {prevHref !== undefined && (
+              <Link
+                href={prevHref}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60"
+                aria-label={prevLevelId !== undefined ? `Go to level ${prevLevelId}` : "Go to How to Play"}
+                title={prevLevelId !== undefined ? `Previous level (${prevLevelId})` : "How to Play"}
+              >
+                ←
+              </Link>
+            )}
+            {nextLevelId !== undefined && (
+              <Link
+                href={`/${locale}/levels/${nextLevelId}`}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60"
+                aria-label={`Go to level ${nextLevelId}`}
+                title={`Next level (${nextLevelId})`}
+              >
+                →
+              </Link>
+            )}
+          </div>
+        </div>
+        <p className="mt-2 flex flex-wrap items-center gap-2 font-mono text-xs text-move-muted">
           <span
-            className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${DIFFICULTY_BADGE_CLASS[level.difficulty]}`}
+            className={`px-2 py-0.5 rounded text-[10px] font-medium capitalize ${DIFFICULTY_BADGE_CLASS[level.difficulty]}`}
           >
             {level.difficulty}
           </span>
-          {hasPassed && (
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide border border-emerald-400/55 bg-emerald-500/15 text-move-text shadow-[0_0_18px_rgba(16,185,129,0.2)]">
-              <span aria-hidden>🏁</span>
-              Level Cleared
-            </span>
-          )}
-          {(prevHref !== undefined || nextLevelId !== undefined) && (
-            <div className="ml-auto inline-flex items-center gap-2">
-              {prevHref !== undefined && (
-                <Link
-                  href={prevHref}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors"
-                  aria-label={prevLevelId !== undefined ? `Go to level ${prevLevelId}` : "Go to How to Play"}
-                  title={prevLevelId !== undefined ? `Previous level (${prevLevelId})` : "How to Play"}
-                >
-                  ←
-                </Link>
-              )}
-              {nextLevelId !== undefined && (
-                <Link
-                  href={`/${locale}/levels/${nextLevelId}`}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors"
-                  aria-label={`Go to level ${nextLevelId}`}
-                  title={`Next level (${nextLevelId})`}
-                >
-                  →
-                </Link>
-              )}
-            </div>
-          )}
-        </div>
-        <p className="mt-2 font-mono text-xs text-move-muted">
-          <span className="text-move-muted/80">Contract:</span>{" "}
+          <span className="text-move-muted/70" aria-hidden>
+            ·
+          </span>
+          <span className="text-move-muted/80">Contract:</span>
           <code className="text-move-accent">{modulePath}</code>
         </p>
         <p className="mt-1 text-move-muted text-xs sm:text-sm">{level.description}</p>
+        {level.author && (
+          <p className="mt-1 text-move-muted text-xs sm:text-sm">
+            <span className="text-move-muted/80">Author:</span>{" "}
+            {level.author.github ? (
+              <a
+                href={level.author.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-oz-violet hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60 rounded"
+              >
+                {level.author.name}
+              </a>
+            ) : (
+              <span className="text-move-text">{level.author.name}</span>
+            )}
+          </p>
+        )}
         {hasPassed && (
           <div className="mt-3 rounded-xl border-2 border-emerald-400/55 bg-emerald-500/12 px-3 py-2.5 shadow-[0_0_20px_rgba(16,185,129,0.18)]">
             <p className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-move-text">
@@ -268,10 +308,18 @@ export function LevelView({ level }: { level: Level }) {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-move-border bg-move-panel/80 overflow-x-auto">
+      <div
+        className="flex border-b border-move-border bg-move-panel/80 overflow-x-auto"
+        role="tablist"
+        aria-label="Level content tabs"
+      >
         <button
           type="button"
           onClick={() => setTab("instructions")}
+          id="tab-instructions"
+          role="tab"
+          aria-selected={tab === "instructions"}
+          aria-controls="panel-instructions"
           className={`shrink-0 min-h-[48px] px-4 sm:px-6 py-3 text-sm font-medium border-b-2 transition-colors touch-manipulation ${
             tab === "instructions"
               ? "border-move-accent text-move-accent"
@@ -283,6 +331,10 @@ export function LevelView({ level }: { level: Level }) {
         <button
           type="button"
           onClick={() => setTab("code")}
+          id="tab-code"
+          role="tab"
+          aria-selected={tab === "code"}
+          aria-controls="panel-code"
           className={`shrink-0 min-h-[48px] px-4 sm:px-6 py-3 text-sm font-medium border-b-2 transition-colors touch-manipulation ${
             tab === "code"
               ? "border-move-accent text-move-accent"
@@ -296,16 +348,50 @@ export function LevelView({ level }: { level: Level }) {
       {/* Content */}
       <div ref={contentScrollRef} className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
         {tab === "instructions" && (
-          <article className="prose prose-sm max-w-none text-move-text prose-headings:text-move-text prose-p:text-move-text prose-li:text-move-text">
-            <ReactMarkdown
-              className="[&_h1]:text-lg [&_h1]:font-semibold [&_h2]:text-base [&_h2]:mt-6 [&_h3]:text-sm [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:leading-relaxed [&_pre]:font-mono [&_code]:font-mono"
-            >
-              {level.instructions}
-            </ReactMarkdown>
-          </article>
+          <div id="panel-instructions" role="tabpanel" aria-labelledby="tab-instructions" className="space-y-5">
+            <article className="prose prose-sm max-w-none text-move-text prose-headings:text-move-text prose-p:text-move-text prose-li:text-move-text">
+              <ReactMarkdown
+                className="[&_h1]:text-lg [&_h1]:font-semibold [&_h2]:text-base [&_h2]:mt-6 [&_h3]:text-sm [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:leading-relaxed [&_pre]:font-mono [&_code]:font-mono"
+              >
+                {level.instructions}
+              </ReactMarkdown>
+            </article>
+            {hints.length > 0 && (
+              <section className="rounded-lg border border-move-border bg-move-panel/60 p-4" aria-label="Hints">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-sm font-semibold text-move-text">Hints</h2>
+                    <p className="mt-1 text-xs sm:text-sm text-move-muted">
+                      Reveal hints one by one. Solving without revealing hints unlocks a no-hint achievement.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRevealNextHint}
+                    disabled={revealedHintCount >= hints.length}
+                    className="inline-flex shrink-0 items-center rounded-md border border-oz-violet/40 bg-oz-violet/15 px-3 py-1.5 text-xs sm:text-sm font-medium text-oz-violet hover:bg-oz-violet/25 disabled:cursor-not-allowed disabled:opacity-60"
+                    aria-label={
+                      revealedHintCount >= hints.length
+                        ? "All hints already revealed"
+                        : `Reveal hint ${revealedHintCount + 1}`
+                    }
+                  >
+                    {revealedHintCount >= hints.length ? "All hints shown" : "Reveal next hint"}
+                  </button>
+                </div>
+                {revealedHintCount > 0 && (
+                  <ol className="mt-3 space-y-2 list-decimal pl-5 text-sm text-move-text">
+                    {hints.slice(0, revealedHintCount).map((hint, idx) => (
+                      <li key={`${level.id}-hint-${idx}`}>{hint}</li>
+                    ))}
+                  </ol>
+                )}
+              </section>
+            )}
+          </div>
         )}
         {tab === "code" && (
-          <div className="flex flex-col gap-4">
+          <div id="panel-code" role="tabpanel" aria-labelledby="tab-code" className="flex flex-col gap-4">
             {/* Contract code */}
             <div className="rounded-lg border border-move-border overflow-hidden bg-move-panel text-sm shadow-sm">
               <div className="flex items-center gap-2 px-3 py-2 border-b border-move-border bg-move-dark/80 font-mono text-xs text-move-muted">
@@ -326,12 +412,14 @@ export function LevelView({ level }: { level: Level }) {
                         key={`${contract.module}-${idx}`}
                         type="button"
                         onClick={() => setActiveContractIndex(idx)}
-                        className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-mono transition-colors ${
+                        className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60 ${
                           isActive
                             ? "border-oz-violet/45 bg-oz-violet/15 text-oz-violet"
                             : "border-move-border bg-move-dark text-move-muted hover:text-move-text"
                         }`}
                         title={`Open ${contract.module}.move`}
+                        aria-label={`Open ${contract.module}.move`}
+                        aria-pressed={isActive}
                       >
                         {contract.module}.move
                       </button>
@@ -372,9 +460,10 @@ export function LevelView({ level }: { level: Level }) {
                   <span className="w-2 h-2 rounded-full bg-red-500/80" aria-hidden />
                   <span className="w-2 h-2 rounded-full bg-amber-500/80" aria-hidden />
                   <span className="w-2 h-2 rounded-full bg-emerald-500/80" aria-hidden />
-                  <span className="ml-2">
+                  <span className="ml-2 inline-flex items-center gap-2">
                     <span className="text-move-muted/80">Solution:</span>{" "}
                     <span className="text-move-accent">level_{level.id}_solution.move</span>
+                    <span className="hidden sm:inline text-[10px] text-move-muted/80">Cmd/Ctrl+Enter to run</span>
                   </span>
                   {hasPassed && (
                     <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-move-text">
@@ -390,6 +479,13 @@ export function LevelView({ level }: { level: Level }) {
                         ? "border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22"
                         : "border-oz-violet/70 bg-gradient-to-r from-oz-violet to-indigo-500 text-white shadow-[0_0_18px_rgba(124,58,237,0.35)] hover:brightness-110"
                     }`}
+                    aria-label={
+                      runLoading
+                        ? "Running solution"
+                        : hasPassed
+                          ? "Run solution again"
+                          : "Run solution with Cmd or Control plus Enter shortcut"
+                    }
                   >
                     <span
                       aria-hidden
@@ -471,6 +567,12 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                       ref={solutionTextareaRef}
                       value={solutionCode}
                       onChange={(e) => handleSolutionChange(e.target.value)}
+                      onKeyDown={(e) => {
+                        if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && hasRunner && !runLoading) {
+                          e.preventDefault();
+                          void handleRun();
+                        }
+                      }}
                       onScroll={(e) => {
                         const el = solutionHighlightRef.current;
                         if (el) {
@@ -480,6 +582,8 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                       }}
                       placeholder={t("level.solutionPlaceholder")}
                       spellCheck={false}
+                      aria-label={`Solution editor for level ${level.id}`}
+                      aria-keyshortcuts="Control+Enter Meta+Enter"
                       className="absolute inset-0 w-full min-h-full overflow-auto resize-none border-0 focus:ring-0 focus:outline-none focus:bg-move-dark/30 placeholder:text-move-muted/60 caret-[var(--code-text)] z-10 bg-transparent"
                       style={{
                         padding: "0.25rem 1rem 0.25rem calc(1rem + 4ch)",
@@ -520,6 +624,8 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
                         ? "border-emerald-400/55 bg-emerald-500/12 text-emerald-200"
                         : "border-red-400/55 bg-red-500/12 text-red-200"
                     }`}
+                    role="status"
+                    aria-live="polite"
                   >
                     <p
                       className={`mb-1 font-semibold ${

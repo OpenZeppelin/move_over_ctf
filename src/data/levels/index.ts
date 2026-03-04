@@ -38,13 +38,27 @@ export function getLevels(locale: Locale): Level[] {
   const content = contentByLocale[locale] ?? contentByLocale.en;
   const fallback = contentByLocale.en;
   return LEVEL_META.map((meta) => {
-    const c = content[String(meta.id)] ?? fallback[String(meta.id)];
-    if (!c) throw new Error(`Missing level content for level ${meta.id} and locale ${locale}`);
+    const localeEntry = content[String(meta.id)];
+    const fallbackEntry = fallback[String(meta.id)];
+    if (!fallbackEntry) throw new Error(`Missing fallback level content for level ${meta.id}`);
+    const c = {
+      ...fallbackEntry,
+      ...(localeEntry ?? {}),
+    };
+    if (!c.name || !c.description || !c.instructions) {
+      throw new Error(`Missing level content for level ${meta.id} and locale ${locale}`);
+    }
     return {
       ...meta,
       name: c.name,
       description: c.description,
       instructions: c.instructions,
+      author: c.author,
+      hints: Array.isArray(c.hints)
+        ? c.hints
+            .map((hint) => String(hint).trim())
+            .filter((hint) => hint.length > 0)
+        : [],
     };
   });
 }

@@ -5,10 +5,17 @@ export interface LevelContractModule {
   contractCode: string;
 }
 
+export interface LevelAuthor {
+  name: string;
+  github: string;
+}
+
 export interface LevelContent {
   name: string;
   description: string;
   instructions: string;
+  author?: LevelAuthor;
+  hints?: string[];
 }
 
 export interface Level extends LevelContent {

@@ -2,21 +2,53 @@
   "0": {
     "name": "Genesis",
     "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true",
+    "author": {
+      "name": "OpenZeppelin",
+      "github": "https://github.com/OpenZeppelin"
+    },
+    "hints": [
+      "Look at the function signatures first and keep the flow minimal: create, then solve.",
+      "The `solve` function expects the exact number checked by the contract assertion."
+    ]
   },
   "1": {
     "name": "Lockbox",
     "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero",
+    "author": {
+      "name": "OpenZeppelin",
+      "github": "https://github.com/OpenZeppelin"
+    },
+    "hints": [
+      "Inspect all public functions carefully. One of them leaks data you can reuse.",
+      "You do not need brute force; the contract exposes enough information for a direct path."
+    ]
   },
   "2": {
     "name": "Fallout",
     "description": "The contract thinks a certain address is the owner. Time to become that address.",
-    "instructions": "# Level 2: Fallout\n\nA fallout-style contract: a vault with a get_owner function that was never properly implemented. Your job: figure out who the contract thinks the owner is, then withdraw and drain the vault.\n\n## Objectives\n\n- Drain the vault (balance = 0)"
+    "instructions": "# Level 2: Fallout\n\nA fallout-style contract: a vault with a get_owner function that was never properly implemented. Your job: figure out who the contract thinks the owner is, then withdraw and drain the vault.\n\n## Objectives\n\n- Drain the vault (balance = 0)",
+    "author": {
+      "name": "OpenZeppelin",
+      "github": "https://github.com/OpenZeppelin"
+    },
+    "hints": [
+      "There is a function that should tell ownership state. Use what the contract gives you.",
+      "The winning path is to satisfy owner checks before attempting to drain."
+    ]
   },
   "3": {
     "name": "Relay Gateway",
     "description": "A two-module challenge where gateway logic depends on relay_core.",
-    "instructions": "# Level 3: Relay Gateway\n\nThis level uses **two challenge modules**:\n\n- `move_over::relay_gateway`\n- `move_over::relay_core`\n\nThe gateway module calls into relay_core before it can return the flag.\n\n## Objectives\n\n1. Create a `RelayVault`\n2. Open it with the correct pin so internal cross-module call succeeds\n3. Return `RelayFlag` from your `run()` implementation\n\n## Hint\n\n`relay_gateway::open` depends on `relay_core::issue_permit`."
+    "instructions": "# Level 3: Relay Gateway\n\nThis level uses **two challenge modules**:\n\n- `move_over::relay_gateway`\n- `move_over::relay_core`\n\nThe gateway module calls into relay_core before it can return the flag.\n\n## Objectives\n\n1. Create a `RelayVault`\n2. Open it with the correct pin so internal cross-module call succeeds\n3. Return `RelayFlag` from your `run()` implementation\n\n## Hint\n\n`relay_gateway::open` depends on `relay_core::issue_permit`.",
+    "author": {
+      "name": "OpenZeppelin",
+      "github": "https://github.com/OpenZeppelin"
+    },
+    "hints": [
+      "The level has two modules and one gateway call depends on a permit from core.",
+      "Make sure your flow creates the right object first, then unlocks with the right input."
+    ]
   }
 }

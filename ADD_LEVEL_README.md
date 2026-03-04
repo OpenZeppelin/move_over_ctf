@@ -23,7 +23,7 @@ The script will automatically:
 - Create `public/contracts/<module>.move` from your Move code
 - Add a new level entry to `src/data/levels/meta.config.json`
 - Add a new level entry to `src/data/levels/runConfig.ts`
-- Add English content to `src/data/levels/content/en.json`
+- Add English content to `src/data/levels/content/en.json` (including optional author + hints metadata)
 - Run `node scripts/sync-meta-from-public.mjs`
 
 After that, start dev/build as usual.
@@ -55,7 +55,7 @@ When adding a level, you usually touch these files:
 1. `public/contracts/<module>.move` (new challenge contract)
 2. `src/data/levels/meta.config.json` (id + difficulty + module mapping)
 3. `src/data/levels/runConfig.ts` (runner module + expected return type)
-4. `src/data/levels/content/en.json` (name, description, instructions)
+4. `src/data/levels/content/en.json` (name, description, instructions, optional author, optional hints)
 5. Optional: other `src/data/levels/content/<locale>.json` files
 
 ## Contract conventions
@@ -131,7 +131,15 @@ Add key `"3"` in `src/data/levels/content/en.json`:
 "3": {
   "name": "My Level",
   "description": "Short teaser.",
-  "instructions": "# Level 3: My Level\n\nYour mission..."
+  "instructions": "# Level 3: My Level\n\nYour mission...",
+  "author": {
+    "name": "OpenZeppelin",
+    "github": "https://github.com/OpenZeppelin"
+  },
+  "hints": [
+    "Hint 1",
+    "Hint 2"
+  ]
 }
 ```
 

@@ -36,7 +36,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
         <Link
           href={`/${locale}/levels/how-to-play`}
           className={`
-            w-full text-left px-3 py-2.5 rounded-lg mb-1 flex items-center gap-3
+            w-full text-left px-3 py-2.5 rounded-lg mb-1 flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60
             transition-colors block
             ${
               isHowToPlayActive
@@ -44,6 +44,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
                 : "text-move-text hover:bg-white/5 border border-transparent"
             }
           `}
+          aria-current={isHowToPlayActive ? "page" : undefined}
         >
           <span className="text-move-muted font-mono text-sm w-6">?</span>
           <span className="flex-1 truncate font-medium">How to Play</span>
@@ -56,7 +57,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
               key={level.id}
               href={`/${locale}/levels/${level.id}`}
               className={`
-                w-full text-left px-3 py-2.5 rounded-lg mb-0.5 flex items-center gap-3
+                w-full text-left px-3 py-2.5 rounded-lg mb-0.5 flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60
                 transition-colors block
                 ${
                   isActive
@@ -64,6 +65,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
                     : "text-move-text hover:bg-white/5 border border-transparent"
                 }
               `}
+              aria-current={isActive ? "page" : undefined}
             >
               <span className="text-move-muted font-mono text-sm w-6">
                 {level.id}

@@ -1,37 +1,77 @@
 # Move-over CTF
 
-A wargame to learn **Move** smart contract security on **Sui** — inspired by [OpenZeppelin Ethernaut](https://ethernaut.openzeppelin.com/).
+Move-over is an open-source, browser-first CTF for learning Move smart contract security, inspired by [OpenZeppelin Ethernaut](https://ethernaut.openzeppelin.com/).
+
+You inspect vulnerable contracts, write the `run()` exploit path, and return the expected `*Flag` object to clear each level.
 
 ## Run locally
-
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Then open [http://localhost:3000](http://localhost:3000).
 
-## Browser-only mode
+## How it works
 
-- Level runs execute fully in the browser (WASM), no API backend required.
-- `npm run build` generates a static export (`out/`) that you can host on any static provider.
+- The level runtime executes fully in the browser (WASM), so no API backend is required.
+- The app is configured for static export (`output: "export"`).
+- `npm run build` creates an `out/` directory that can be hosted on static hosting providers.
+- Progress is stored locally and shown as a dynamic progress bar in the header.
+- Level pages support shareable deep links (`/{locale}/levels/{id}`).
+- In the in-browser runner, `Cmd/Ctrl + Enter` runs your solution from the editor.
 
-## Scripts
+To preview the static output locally:
 
-- **`npm run dev`** — Start dev server with automatic Move source sync
-- **`npm run build`** — Production build
-- **`npm run start`** — Run production server
-- **`npm run lint`** — Run ESLint
-- **`npm run sync:contracts`** — Sync challenge + level solution Move sources into `public/contracts/` and `public/solutions/` for browser runner
+```bash
+npm run build
+npx serve out
+```
 
-## Layout
+## Available scripts
 
-- **Header** — Branding, network label, language and theme toggles
-- **Sidebar** — Level list with difficulty (● easy, ●● medium, ●●● hard)
-- **Main** — Level instructions (markdown) and contract code (Move) tabs
+- `npm run dev` - Runs metadata sync, watches `public/contracts/*.move`, and starts Next.js dev mode.
+- `npm run dev:next` - Starts Next.js dev server directly.
+- `npm run build` - Production build (runs `sync:meta` first via `prebuild`).
+- `npm run start` - Runs `next start` (not required for static-export hosting flow).
+- `npm run lint` - Runs ESLint.
+- `npm run sync:meta` - Rebuilds `src/data/levels/meta.ts` from contracts in `public/contracts`.
+- `npm run create:level` - Interactive level creation flow.
+- `npm run delete:level` - Interactive level deletion and reindexing flow.
+- `npm run sync:contracts` - Legacy sync from `move_over/sources` into `public/contracts` and `public/solutions`.
 
-Levels and contract code live in `src/data/levels/` (meta + per-locale content).
-For adding new levels, see `ADD_LEVEL_README.md`.
-For level creation, use `LEVEL_AUTHORING_GUIDE.md` (streamlined templates + checklist).
-For general contribution setup, see `CONTRIBUTING.md`.
+## Project structure (key paths)
+
+- `src/app` - App routes (landing page, levels, localized pages).
+- `src/components` - UI components.
+- `src/data/levels/meta.config.json` - Level id/difficulty/module source config.
+- `src/data/levels/meta.ts` - Generated level metadata used by the app.
+- `src/data/levels/content/*.json` - Localized level text content.
+- `src/data/levels/runConfig.ts` - Runner module and expected return type per level.
+- `public/contracts` - Move contract files used as source of truth for browser level content.
+
+## Adding levels
+
+Use the automated flow:
+
+```bash
+npm run create:level
+```
+
+For full details (including manual steps and conventions), see `ADD_LEVEL_README.md`.
+
+## Contributing
+
+Everyone is welcome to contribute - new levels, fixes, docs, and UX improvements are all appreciated.
+
+If you want to contribute:
+
+1. Fork the repo and create a branch.
+2. Make your changes.
+3. Run:
+   ```bash
+   npm run lint
+   npm run build
+   ```
+4. Open a pull request with a short explanation of the change.

@@ -83,6 +83,21 @@ export default async function HowToPlayPage({ params }: Props) {
               <li>Capture the `Flag` and return it from `run()`; no `Flag`, no victory.</li>
               <li>Click Run, watch the verifier judge your life choices, then iterate and move to the next level.</li>
             </ol>
+            <section className="mt-6 rounded-lg border border-move-border bg-move-dark/40 p-4">
+              <h2 className="text-sm sm:text-base font-semibold text-move-text">Want to add a level?</h2>
+              <p className="mt-2 text-sm text-move-muted leading-relaxed">
+                Move-over is open source and everyone is welcome to contribute. If you want to create a new challenge,
+                follow the add-level guide and submit a PR:
+              </p>
+              <a
+                href="https://github.com/OpenZeppelin/move_over_ctf/blob/main/ADD_LEVEL_README.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center text-sm font-medium text-oz-violet hover:underline"
+              >
+                How to add a new level on GitHub
+              </a>
+            </section>
 
             <div className="mt-6">
               <Link
