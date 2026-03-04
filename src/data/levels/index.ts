@@ -74,9 +74,7 @@ export function getLevel(locale: Locale, id: number): Level | null {
 /** Level ids in order (for generateStaticParams, sitemap, etc.) */
 export const LEVEL_IDS = LEVEL_META.map((m) => m.id);
 
-export type { Level, LevelContent };
-export { LEVEL_META };
-export type { Difficulty } from "./types";
+export type { Level };
 export { DIFFICULTY_DOTS, DIFFICULTY_TEXT_CLASS, DIFFICULTY_BADGE_CLASS } from "./difficulty";
-export { LEVEL_RUN_CONFIG, SUPPORTED_LEVEL_IDS } from "./runConfig";
+export { LEVEL_RUN_CONFIG } from "./runConfig";
 export type { LevelRunConfig } from "./runConfig";

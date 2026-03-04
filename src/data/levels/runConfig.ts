@@ -34,5 +34,3 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     solutionModule: "level_3_solution",
   },
 };
-
-export const SUPPORTED_LEVEL_IDS = Object.keys(LEVEL_RUN_CONFIG).map(Number);

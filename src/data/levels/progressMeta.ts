@@ -1,7 +1,7 @@
 import metaConfig from "./meta.config.json";
 import type { Difficulty } from "./types";
 
-export interface LevelProgressMeta {
+interface LevelProgressMeta {
   id: number;
   difficulty: Difficulty;
 }

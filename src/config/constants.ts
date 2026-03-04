@@ -4,7 +4,7 @@
  */
 
 /** App name (used in cookies, storage, SEO) */
-export const APP_NAME = "move-over";
+const APP_NAME = "move-over";
 
 /** Cookie name for persisting locale */
 export const LOCALE_COOKIE = `${APP_NAME}-locale`;

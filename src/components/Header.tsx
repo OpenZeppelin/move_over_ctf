@@ -91,7 +91,7 @@ export function Header() {
             </span>
             <div className="h-1 w-14 sm:w-16 overflow-hidden rounded-full bg-move-panel">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-oz-violet to-indigo-500 transition-all"
+                className="h-full rounded-full bg-gradient-to-r from-oz-violet to-indigo-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>

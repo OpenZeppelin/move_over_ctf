@@ -1,5 +1,4 @@
 const SOLVED_STORAGE_KEY = "move-over-ctf-solved";
-const NO_HINT_SOLVED_STORAGE_KEY = "move-over-ctf-no-hint-solved";
 const HINT_REVEAL_STORAGE_KEY = "move-over-ctf-hints-revealed";
 const LAST_LEVEL_STORAGE_KEY = "move-over-ctf-last-level";
 const SOLUTIONS_STORAGE_KEY = "move-over-ctf-solutions";
@@ -49,18 +48,7 @@ export function getSolvedIdsFromStorage(): Set<number> {
   }
 }
 
-export function getNoHintSolvedIdsFromStorage(): Set<number> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = localStorage.getItem(NO_HINT_SOLVED_STORAGE_KEY);
-    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-    return parseIntegerSet(parsed);
-  } catch {
-    return new Set();
-  }
-}
-
-export function markLevelSolved(levelId: number, options?: { usedHint?: boolean }): void {
+export function markLevelSolved(levelId: number): void {
   if (typeof window === "undefined") return;
   if (!Number.isInteger(levelId) || levelId < 0) return;
   try {
@@ -68,14 +56,8 @@ export function markLevelSolved(levelId: number, options?: { usedHint?: boolean 
     solvedIds.add(levelId);
     localStorage.setItem(SOLVED_STORAGE_KEY, JSON.stringify([...solvedIds]));
 
-    if (!options?.usedHint) {
-      const noHintSolvedIds = getNoHintSolvedIdsFromStorage();
-      noHintSolvedIds.add(levelId);
-      localStorage.setItem(NO_HINT_SOLVED_STORAGE_KEY, JSON.stringify([...noHintSolvedIds]));
-    }
-
     window.dispatchEvent(new CustomEvent(LEVEL_SOLVED_EVENT, { detail: levelId }));
-    dispatchProgressUpdated({ type: "solved", levelId, usedHint: Boolean(options?.usedHint) });
+    dispatchProgressUpdated({ type: "solved", levelId });
   } catch {
     // ignore
   }
@@ -87,15 +69,6 @@ export function getRevealedHintCountForLevel(levelId: number): number {
   const hints = getHintRevealMapFromStorage();
   const value = hints[String(levelId)];
   return Number.isInteger(value) && value >= 0 ? value : 0;
-}
-
-export function getHintViewedIdsFromStorage(): Set<number> {
-  const hintMap = getHintRevealMapFromStorage();
-  const ids = Object.entries(hintMap)
-    .filter(([, count]) => Number.isInteger(count) && count > 0)
-    .map(([id]) => Number(id))
-    .filter((id) => Number.isInteger(id) && id >= 0);
-  return new Set(ids);
 }
 
 export function setRevealedHintCountForLevel(levelId: number, count: number): void {
@@ -112,7 +85,7 @@ export function setRevealedHintCountForLevel(levelId: number, count: number): vo
   }
 }
 
-export function getLastVisitedLevelFromStorage(): number | null {
+function getLastVisitedLevelFromStorage(): number | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(LAST_LEVEL_STORAGE_KEY);

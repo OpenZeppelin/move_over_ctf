@@ -1,6 +1,6 @@
 import type { Difficulty } from "./types";
 
-export interface LevelMeta {
+interface LevelMeta {
   id: number;
   difficulty: Difficulty;
   contractCode: string;

@@ -7,7 +7,7 @@ type WorkerResponse =
   | { id: number; ok: true; result: WorkerSuccess }
   | { id: number; ok: false; error?: { code?: string; message?: string } };
 
-export interface BrowserRunLevelInput {
+interface BrowserRunLevelInput {
   levelId: number;
   contractCode: string;
   contractModules?: Array<{

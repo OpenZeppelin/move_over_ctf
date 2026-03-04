@@ -1,8 +1,5 @@
 import type { Locale } from "./types";
 
-/** Re-export from config so i18n stays the single place for "locale" options; storage key lives in config. */
-export { LOCALE_STORAGE_KEY } from "@/config";
-
 /** All valid locale codes (for middleware and layout validation) */
 export const VALID_LOCALES: Locale[] = [
   "en",

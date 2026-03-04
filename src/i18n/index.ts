@@ -50,5 +50,4 @@ export function getTranslations(locale: Locale) {
   };
 }
 
-export type { Locale, TranslationKey, Translations };
-export { messages };
+export type { Locale, TranslationKey };
