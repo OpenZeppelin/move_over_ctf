@@ -34,7 +34,7 @@ const pending = new Map<
 >();
 
 const WORKER_TIMEOUT_MS = 120_000;
-const WORKER_URL = "/workers/move_runner.worker.js?v=20260303_multi_module_levels";
+const WORKER_URL = "/workers/move_runner.worker.js?v=20260305_dataflow_primitives";
 
 function getWorker(): Worker {
   if (typeof window === "undefined") {

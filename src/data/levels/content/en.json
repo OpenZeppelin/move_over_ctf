@@ -9,7 +9,7 @@
     },
     "hints": [
       "Look at the function signatures first and keep the flow minimal: create, then solve.",
-      "The `solve` function expects the exact number checked by the contract assertion."
+      "The `solve` assertion now checks the value stored inside the `Genesis` object."
     ]
   },
   "1": {

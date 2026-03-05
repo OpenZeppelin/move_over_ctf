@@ -2,20 +2,22 @@ module move_over::genesis;
 
 public struct Genesis has key {
     id: UID,
+    value: u64,
 }
 
 public struct GenesisFlag has copy, drop {}
 
-public fun create(ctx: &mut tx_context::TxContext): Genesis {
+public fun create(number: u64, ctx: &mut tx_context::TxContext): Genesis {
     Genesis {
         id: object::new(ctx),
+        value: number,
     }
 }
 
-public fun solve(flag: Genesis, number: u64): GenesisFlag {
-    assert!(number == 1, 1);
+public fun solve(flag: Genesis): GenesisFlag {
+    let Genesis { id, value } = flag;
+    assert!(value == 2, 1);
 
-    let Genesis { id } = flag;
     id.delete();
     GenesisFlag {}
 }
