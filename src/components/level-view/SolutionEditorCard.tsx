@@ -2,6 +2,9 @@ import type { CSSProperties, RefObject } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import type { LevelRunConfig } from "@/data/levels";
 import { CodeWindowHeader } from "@/components/ui/CodeWindowHeader";
+import { Button } from "@/components/ui/Button";
+import { PanelCard } from "@/components/ui/PanelCard";
+import { Typography } from "@/components/ui/Typography";
 
 type RunResult = { success: boolean; output: string } | null;
 
@@ -43,30 +46,31 @@ export function SolutionEditorCard({
   solutionTextareaRef,
 }: Props) {
   return (
-    <div className="rounded-lg border border-move-border overflow-hidden bg-move-panel text-sm shadow-sm">
+    <PanelCard>
       <CodeWindowHeader
         label="Solution:"
         value={`level_${levelId}_solution.move`}
         metaContent={
           <>
             {hasPassed && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-move-text">
+              <Typography.Span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-move-text">
                 ✓ Passed
-              </span>
+              </Typography.Span>
             )}
-            <span className="hidden lg:inline text-[10px] text-move-muted/80">Cmd/Ctrl+Enter to run</span>
+            <Typography.Span className="hidden lg:inline text-[10px] text-move-muted/80">
+              Cmd/Ctrl+Enter to run
+            </Typography.Span>
           </>
         }
         rightContent={
           <>
-            <button
-              type="button"
+            <Button
               onClick={onRun}
               disabled={runLoading}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs sm:text-sm font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60 disabled:opacity-60 disabled:cursor-not-allowed ${
-                hasPassed
-                  ? "border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22"
-                  : "border-oz-violet/70 bg-gradient-to-r from-oz-violet to-indigo-500 text-white shadow-[0_0_18px_rgba(124,58,237,0.35)] hover:brightness-110"
+              variant={hasPassed ? "unstyled" : "accent"}
+              size="none"
+              className={`gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold tracking-wide ${
+                hasPassed ? "rounded-lg border border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22" : ""
               }`}
               aria-label={
                 runLoading
@@ -76,7 +80,7 @@ export function SolutionEditorCard({
                     : "Run solution with Cmd or Control plus Enter shortcut"
               }
             >
-              <span
+              <Typography.Span
                 aria-hidden
                 className={`inline-flex size-4 items-center justify-center rounded-full border text-[10px] ${
                   hasPassed
@@ -85,9 +89,9 @@ export function SolutionEditorCard({
                 }`}
               >
                 {runLoading ? "…" : hasPassed ? "✓" : "▶"}
-              </span>
+              </Typography.Span>
               {runLoading ? "Running…" : hasPassed ? "Run Again" : runLabel}
-            </button>
+            </Button>
           </>
         }
       />
@@ -217,12 +221,15 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
           role="status"
           aria-live="polite"
         >
-          <p className={`mb-1 font-semibold ${runResult.success ? "text-emerald-300" : "text-red-300"}`}>
+          <Typography.P
+            variant="unstyled"
+            className={`mb-1 font-semibold ${runResult.success ? "text-emerald-300" : "text-red-300"}`}
+          >
             {runResult.success ? runSuccessLabel : runErrorLabel}
-          </p>
+          </Typography.P>
           <pre className="text-inherit overflow-x-auto">{runResult.output}</pre>
         </div>
       )}
-    </div>
+    </PanelCard>
   );
 }

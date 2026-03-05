@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import type { LevelContractModule } from "@/data/levels/types";
 import { CodeWindowHeader } from "@/components/ui/CodeWindowHeader";
+import { Button } from "@/components/ui/Button";
+import { PanelCard } from "@/components/ui/PanelCard";
 
 type Props = {
   modulePath: string;
@@ -21,18 +23,19 @@ export function ContractCodeCard({
   codeStyle,
 }: Props) {
   return (
-    <div className="rounded-lg border border-move-border overflow-hidden bg-move-panel text-sm shadow-sm">
+    <PanelCard>
       <CodeWindowHeader label="Contract:" value={`${modulePath}.move`} />
       {contractModules.length > 1 && (
         <div className="flex flex-wrap gap-1 border-b border-move-border bg-move-panel/60 px-2 py-1.5">
           {contractModules.map((contract, idx) => {
             const isActive = idx === activeContractIndex;
             return (
-              <button
+              <Button
                 key={`${contract.module}-${idx}`}
-                type="button"
                 onClick={() => onSelectContract(idx)}
-                className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60 ${
+                variant="unstyled"
+                size="none"
+                className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-mono ${
                   isActive
                     ? "border-oz-violet/45 bg-oz-violet/15 text-oz-violet"
                     : "border-move-border bg-move-dark text-move-muted hover:text-move-text"
@@ -42,7 +45,7 @@ export function ContractCodeCard({
                 aria-pressed={isActive}
               >
                 {contract.module}.move
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -71,6 +74,6 @@ export function ContractCodeCard({
           {activeContractCode}
         </SyntaxHighlighter>
       </div>
-    </div>
+    </PanelCard>
   );
 }

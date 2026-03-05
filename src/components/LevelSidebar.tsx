@@ -6,6 +6,7 @@ import { useParams, usePathname } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { DIFFICULTY_DOTS, DIFFICULTY_TEXT_CLASS, type Level } from "@/data/levels";
 import { LEVEL_SOLVED_EVENT, getSolvedIdsFromStorage } from "@/lib/progressStorage";
+import { Typography } from "@/components/ui/Typography";
 
 export function LevelSidebar({ levels }: { levels: Level[] }) {
   const params = useParams();
@@ -28,9 +29,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
   return (
     <aside className="hidden md:flex w-64 shrink-0 border-r border-move-border bg-move-panel flex-col">
       <div className="p-4 border-b border-move-border">
-        <h2 className="text-sm font-semibold text-move-muted uppercase tracking-wider">
-          {t("sidebar.levels")}
-        </h2>
+        <Typography.H2 variant="sidebar">{t("sidebar.levels")}</Typography.H2>
       </div>
       <nav className="flex-1 overflow-y-auto p-2" aria-label="Level list">
         <Link
@@ -46,8 +45,8 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
           `}
           aria-current={isHowToPlayActive ? "page" : undefined}
         >
-          <span className="text-move-muted font-mono text-sm w-6">?</span>
-          <span className="flex-1 truncate font-medium">How to Play</span>
+          <Typography.Span className="text-move-muted font-mono text-sm w-6">?</Typography.Span>
+          <Typography.Span className="flex-1 truncate font-medium">How to Play</Typography.Span>
         </Link>
         {levels.map((level) => {
           const isActive = !isHowToPlayActive && level.id === currentId;
@@ -67,24 +66,24 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
               `}
               aria-current={isActive ? "page" : undefined}
             >
-              <span className="text-move-muted font-mono text-sm w-6">
+              <Typography.Span className="text-move-muted font-mono text-sm w-6">
                 {level.id}
-              </span>
-              <span className="flex-1 truncate font-medium">{level.name}</span>
-              <span
+              </Typography.Span>
+              <Typography.Span className="flex-1 truncate font-medium">{level.name}</Typography.Span>
+              <Typography.Span
                 className={`flex gap-0.5 ${DIFFICULTY_TEXT_CLASS[level.difficulty]}`}
                 title={level.difficulty}
               >
                 {Array.from({ length: dotCount }).map((_, i) => (
-                  <span key={i} className="text-xs">
+                  <Typography.Span key={i} className="text-xs">
                     ●
-                  </span>
+                  </Typography.Span>
                 ))}
-              </span>
+              </Typography.Span>
               {level.completed || solvedIds.has(level.id) ? (
-                <span className="text-move-success text-sm" title="Completed">
+                <Typography.Span className="text-move-success text-sm" title="Completed">
                   ✓
-                </span>
+                </Typography.Span>
               ) : null}
             </Link>
           );

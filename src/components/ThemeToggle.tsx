@@ -3,6 +3,8 @@
 import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { useLocale } from "@/contexts/LocaleContext";
+import { Button } from "@/components/ui/Button";
+import { Typography } from "@/components/ui/Typography";
 
 const EMPTY_SUBSCRIBE = () => () => {};
 
@@ -17,12 +19,12 @@ export function ThemeToggle() {
 
   if (!hasHydrated || resolvedTheme === undefined) {
     return (
-      <span
+      <Typography.Span
         className="inline-flex size-10 items-center justify-center rounded-lg border border-move-border bg-move-panel"
         aria-hidden
       >
-        <span className="size-5 rounded-full bg-move-muted/30" />
-      </span>
+        <Typography.Span className="size-5 rounded-full bg-move-muted/30" />
+      </Typography.Span>
     );
   }
 
@@ -30,10 +32,11 @@ export function ThemeToggle() {
   const label = isDark ? t("theme.toggleToLight") : t("theme.toggleToDark");
 
   return (
-    <button
-      type="button"
+    <Button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="inline-flex size-10 items-center justify-center rounded-lg border border-move-border bg-move-panel text-move-text hover:bg-move-border/50 active:scale-[0.98] transition-colors touch-manipulation"
+      variant="panel"
+      size="icon"
+      className="hover:bg-move-border/50"
       aria-label={label}
       title={label}
     >
@@ -42,7 +45,7 @@ export function ThemeToggle() {
       ) : (
         <MoonIcon className="size-5 text-move-muted" />
       )}
-    </button>
+    </Button>
   );
 }
 

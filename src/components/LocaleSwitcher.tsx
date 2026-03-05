@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { LOCALE_OPTIONS } from "@/i18n/locales";
 import type { Locale } from "@/i18n/types";
+import { Button } from "@/components/ui/Button";
+import { Typography } from "@/components/ui/Typography";
 
 export function LocaleSwitcher() {
   const { locale, setLocale, t } = useLocale();
@@ -27,17 +29,18 @@ export function LocaleSwitcher() {
 
   return (
     <div className="relative" ref={ref}>
-      <button
-        type="button"
+      <Button
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-move-border bg-move-panel px-3 py-2 text-sm font-medium text-move-text hover:bg-move-border/30 active:scale-[0.98] transition-colors touch-manipulation"
+        variant="panel"
+        size="md"
+        className="min-h-[40px] gap-1.5"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t("header.language")}
       >
-        <span className="max-w-[120px] truncate sm:max-w-[140px]" dir="auto">
+        <Typography.Span className="max-w-[120px] truncate sm:max-w-[140px]" dir="auto">
           {currentLabel}
-        </span>
+        </Typography.Span>
         <svg
           className="size-4 shrink-0 text-move-muted"
           fill="none"
@@ -47,7 +50,7 @@ export function LocaleSwitcher() {
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
-      </button>
+      </Button>
       {open && (
         <ul
           role="listbox"
@@ -56,8 +59,7 @@ export function LocaleSwitcher() {
         >
           {LOCALE_OPTIONS.map((option) => (
             <li key={option.code} role="option" aria-selected={locale === option.code}>
-              <button
-                type="button"
+              <Button
                 onClick={() => {
                   const newLocale = option.code as Locale;
                   setLocale(newLocale);
@@ -65,13 +67,15 @@ export function LocaleSwitcher() {
                   const pathWithoutLocale = pathname.replace(/^\/[^/]+/, "") || "/";
                   router.push(`/${newLocale}${pathWithoutLocale}`);
                 }}
-                className={`w-full px-3 py-2.5 text-left text-sm transition-colors hover:bg-move-border/50 ${
+                variant="unstyled"
+                size="none"
+                className={`w-full justify-start px-3 py-2.5 text-left text-sm transition-colors hover:bg-move-border/50 ${
                   locale === option.code ? "bg-oz-violet/15 text-oz-violet font-medium" : "text-move-text"
                 }`}
                 dir="auto"
               >
                 {option.label}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Header } from "@/components/Header";
 import { LevelSidebar } from "@/components/LevelSidebar";
 import { MobileLevelPicker } from "@/components/MobileLevelPicker";
+import { Typography } from "@/components/ui/Typography";
 import { BASE_URL } from "@/config";
 import { getLevels } from "@/data/levels";
 import { getTranslations } from "@/i18n";
@@ -71,11 +72,11 @@ export default async function HowToPlayPage({ params }: Props) {
         <LevelSidebar levels={levels} />
         <main className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
           <div className="mx-auto max-w-3xl rounded-lg border border-move-border bg-move-panel p-5 sm:p-6">
-            <h1 className="font-mono text-xl sm:text-2xl font-semibold text-move-text">How to Play</h1>
-            <p className="mt-3 text-sm sm:text-base text-move-muted">
+            <Typography.H1 variant="page">How to Play</Typography.H1>
+            <Typography.P variant="muted" className="mt-3">
               Welcome to a tiny browser-based heist simulator. Each level gives you a vulnerable Move module, and your
               job is to write `run()` so it returns the glorious `Flag`.
-            </p>
+            </Typography.P>
 
             <ol className="mt-5 space-y-3 text-sm sm:text-base text-move-text list-decimal list-inside">
               <li>Read the level instructions and inspect the contract code like a detective with too much coffee.</li>
@@ -84,11 +85,11 @@ export default async function HowToPlayPage({ params }: Props) {
               <li>Click Run, watch the verifier judge your life choices, then iterate and move to the next level.</li>
             </ol>
             <section className="mt-6 rounded-lg border border-move-border bg-move-dark/40 p-4">
-              <h2 className="text-sm sm:text-base font-semibold text-move-text">Want to add a level?</h2>
-              <p className="mt-2 text-sm text-move-muted leading-relaxed">
+              <Typography.H2 variant="compact">Want to add a level?</Typography.H2>
+              <Typography.P className="mt-2">
                 Move-over is open source and everyone is welcome to contribute. If you want to create a new challenge,
                 follow the add-level guide and submit a PR:
-              </p>
+              </Typography.P>
               <a
                 href="https://github.com/OpenZeppelin/move_over_ctf/blob/main/ADD_LEVEL_README.md"
                 target="_blank"

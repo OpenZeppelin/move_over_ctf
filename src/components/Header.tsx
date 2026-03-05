@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -11,13 +11,17 @@ import {
   PROGRESS_UPDATED_EVENT,
   getSolvedIdsFromStorage,
 } from "@/lib/progressStorage";
+import { Typography } from "@/components/ui/Typography";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+
+const EMPTY_SUBSCRIBE = () => () => {};
 
 export function Header() {
   const { t, locale } = useLocale();
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme !== "light";
+  const hasHydrated = useSyncExternalStore(EMPTY_SUBSCRIBE, () => true, () => false);
+  const isDark = hasHydrated ? resolvedTheme !== "light" : true;
   const [solvedIds, setSolvedIds] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
@@ -56,12 +60,12 @@ export function Header() {
               priority
             />
           </Link>
-          <span className="text-move-muted font-medium hidden sm:inline">·</span>
+          <Typography.Span className="text-move-muted font-medium hidden sm:inline">·</Typography.Span>
           <Link
             href={`/${locale}`}
             className="text-lg sm:text-xl font-bold text-move-text tracking-tight hover:opacity-90 transition-opacity shrink-0"
           >
-            Move<span className="text-oz-violet">-over</span>
+            Move<Typography.Span className="text-oz-violet">-over</Typography.Span>
           </Link>
           <a
             href="https://www.openzeppelin.com/careers"
@@ -69,11 +73,11 @@ export function Header() {
             rel="noopener noreferrer"
             className="group hidden sm:inline-flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gradient-to-r from-oz-violet to-indigo-500 text-white text-sm font-semibold shadow-lg shadow-oz-violet/25 hover:shadow-oz-violet/40 active:scale-[0.98] transition-all min-h-[44px]"
           >
-            <span className="inline-flex size-5 items-center justify-center rounded-full bg-white/20 text-xs">
+            <Typography.Span className="inline-flex size-5 items-center justify-center rounded-full bg-white/20 text-xs">
               ✨
-            </span>
+            </Typography.Span>
             {t("header.weAreHiring")}
-            <span className="opacity-80 group-hover:translate-x-0.5 transition-transform">→</span>
+            <Typography.Span className="opacity-80 group-hover:translate-x-0.5 transition-transform">→</Typography.Span>
           </a>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 shrink-0" dir="ltr">
@@ -86,9 +90,9 @@ export function Header() {
             aria-valuemax={totalCount}
             aria-valuenow={solvedCount}
           >
-            <span className="text-[10px] text-move-muted tabular-nums">
+            <Typography.Span className="text-[10px] text-move-muted tabular-nums">
               {solvedCount}/{totalCount}
-            </span>
+            </Typography.Span>
             <div className="h-1 w-14 sm:w-16 overflow-hidden rounded-full bg-move-panel">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-oz-violet to-indigo-500"
