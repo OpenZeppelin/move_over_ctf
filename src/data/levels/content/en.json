@@ -82,5 +82,15 @@
       "github": "https://github.com/kosedogus"
     },
     "hints": []
+  },
+  "8": {
+    "name": "Object Chest",
+    "description": "Rescue the prize from the chest and capture the flag—same idea as Sticky Treasure, but the prize is stored as a dynamic object field.",
+    "instructions": "# Level VIII: Object Chest\n\nThe goal of this level is to rescue the prize from the treasure chest and capture the flag. The chest stores the prize as a **dynamic object field** (an object with `key`), so it remains discoverable by ID.\n\nThings that might help:\n\n- `sui::dynamic_object_field`\n- Same flow as Sticky Treasure: create, extract, solve\n- Order of operations",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

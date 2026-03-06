@@ -49,5 +49,13 @@
     "modules": [
       "sticky_treasure"
     ]
+  },
+  {
+    "id": 8,
+    "difficulty": "easy",
+    "module": "sticky_treasure_dof",
+    "modules": [
+      "sticky_treasure_dof"
+    ]
   }
 ]

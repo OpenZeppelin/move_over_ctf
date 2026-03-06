@@ -48,6 +48,11 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "StickyTreasureFlag",
     solutionModule: "level_7_solution",
   },
+  8: {
+    module: "sticky_treasure_dof",
+    typeName: "ObjectChestFlag",
+    solutionModule: "level_8_solution",
+  },
 };
 
 export const SUPPORTED_LEVEL_IDS = Object.keys(LEVEL_RUN_CONFIG).map(Number);
