@@ -62,15 +62,15 @@
   },
   "5": {
     "name": "Nested Vault",
-    "description": "Work with three wrapped inner struct levels and satisfy deep-field checks.",
-    "instructions": "# Level 6: Nested Vault\n\nThis level now uses **three inner struct levels** inside the outer object:\n\n`NestedVault -> LevelOneWrap -> LevelTwoWrap -> LevelThreeCore`\n\nYour goal is to:\n\n1. Create the outer object\n2. Modify values inside the deepest wrapped level using the provided mutator functions\n3. Call `unlock` so deep values pass validation\n\n## Useful functions\n\n- `spawn` creates the wrapped object chain\n- `set_charge` updates the deepest `charge`\n- `set_mode` updates the deepest `mode`\n- `charge` and `mode` read back deep values\n- `unlock` destructures all levels and validates final values",
+    "description": "Work with three nested inner struct levels and satisfy deep-field checks.",
+    "instructions": "# Level 6: Nested Vault\n\nThis level uses **three nested struct levels** inside the outer object:\n\n`NestedVault -> LevelOneWrap -> LevelTwoWrap -> LevelThreeCore`\n\nYour goal is to:\n\n1. Create the outer object with `spawn`\n2. Set the deepest `charge` and `mode` using `set_charge` and `set_mode`\n3. Call `unlock` so the inner values pass validation (charge == 100, mode == 7)\n\n## Useful functions\n\n- `spawn` creates the vault with the full nested chain\n- `set_charge(vault, amount)` updates `vault.level_one.level_two.level_three.charge`\n- `set_mode(vault, mode)` updates the deepest `mode`\n- `charge` and `mode` read back the deep values\n- `unlock` destructures all levels and asserts charge == 100, mode == 7",
     "author": {
       "name": "OpenZeppelin",
       "github": "https://github.com/OpenZeppelin"
     },
     "hints": [
-      "You never receive the deepest struct directly; mutate it through `NestedVault`.",
-      "Read the assertions in `unlock` and set those values exactly."
+      "You never receive the deepest struct directly; mutate it through the vault using set_charge and set_mode.",
+      "Read the assertions in unlock and set charge=100, mode=7."
     ]
   },
   "7": {

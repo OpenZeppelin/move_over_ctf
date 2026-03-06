@@ -20,9 +20,19 @@ type PersistenceState = {
   revealedHintCount: number;
 };
 
+function getDefaultState(levelId: number, hintsLength: number): PersistenceState {
+  return {
+    levelId,
+    solutionCode: "",
+    isCompleted: false,
+    revealedHintCount: 0,
+  };
+}
+
 export function useLevelPersistence({ levelId, hintsLength }: Input) {
   const readStateForLevel = useCallback(
     (targetLevelId: number): PersistenceState => {
+      if (typeof window === "undefined") return getDefaultState(targetLevelId, hintsLength);
       const persistedHints = getRevealedHintCountForLevel(targetLevelId);
       return {
         levelId: targetLevelId,
@@ -34,8 +44,15 @@ export function useLevelPersistence({ levelId, hintsLength }: Input) {
     [hintsLength],
   );
 
-  const [state, setState] = useState<PersistenceState>(() => readStateForLevel(levelId));
-  const currentState = state.levelId === levelId ? state : readStateForLevel(levelId);
+  const [state, setState] = useState<PersistenceState>(() => getDefaultState(levelId, hintsLength));
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setState(readStateForLevel(levelId));
+    setHasMounted(true);
+  }, [levelId, readStateForLevel]);
+
+  const currentState = state.levelId === levelId ? state : (hasMounted ? readStateForLevel(levelId) : getDefaultState(levelId, hintsLength));
 
   const handleSolutionChange = useCallback(
     (value: string) => {
