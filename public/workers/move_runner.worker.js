@@ -2258,8 +2258,7 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
         for (let i = 0; i < paramCount; i += 1) args.unshift(popValue());
 
         if (
-          moduleLeafName(target.moduleLabel) === String(challengeModule).toLowerCase() &&
-          String(target.name).toLowerCase() === "create"
+          moduleLeafName(target.moduleLabel) === String(challengeModule).toLowerCase()
         ) {
           const picked = pickCreatePrimitiveArg(args, target.paramsTokens || [], expectedPrimitive);
           if (isKnownPrimitive(picked) && picked.kind !== "unknown") return picked;
