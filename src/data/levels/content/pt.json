@@ -8,10 +8,5 @@
     "name": "Lockbox",
     "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
     "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
-  },
-  "2": {
-    "name": "Fallout",
-    "description": "The contract thinks a certain address is the owner. Time to become that address.",
-    "instructions": "# Level 2: Fallout\n\nA fallout-style contract: a vault with a get_owner function that was never properly implemented. Your job: figure out who the contract thinks the owner is, then withdraw and drain the vault.\n\n## Objectives\n\n- Drain the vault (balance = 0)"
   }
 }

@@ -11,11 +11,6 @@
   },
   {
     "id": 2,
-    "difficulty": "easy",
-    "module": "fallout"
-  },
-  {
-    "id": 3,
     "difficulty": "medium",
     "module": "relay_gateway",
     "modules": [
@@ -24,7 +19,7 @@
     ]
   },
   {
-    "id": 4,
+    "id": 3,
     "difficulty": "easy",
     "module": "artifact",
     "modules": [
@@ -32,7 +27,7 @@
     ]
   },
   {
-    "id": 5,
+    "id": 4,
     "difficulty": "easy",
     "module": "coin_collector",
     "modules": [
@@ -40,7 +35,7 @@
     ]
   },
   {
-    "id": 6,
+    "id": 5,
     "difficulty": "easy",
     "module": "nested_vault",
     "modules": [

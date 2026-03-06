@@ -157,75 +157,6 @@ public fun drain(
   },
   {
     id: 2,
-    difficulty: "easy",
-    contractCode: `module move_over::fallout;
-
-struct Vault has key {
-    id: UID,
-    owner: address,
-}
-
-struct FalloutFlag has copy, drop {}
-
-public entry fun create(ctx: &mut tx_context::TxContext) {
-    let v = create_initial(ctx);
-    transfer::transfer(v, tx_context::sender(ctx));
-}
-
-public fun create_initial(ctx: &mut tx_context::TxContext): Vault {
-    Vault {
-        id: object::new(ctx),
-        owner: @0x0,
-    }
-}
-
-public fun get_owner(_vault: &Vault): address {
-    @0x0
-}
-
-public fun withdraw(vault: Vault, _ctx: &mut tx_context::TxContext): FalloutFlag {
-    let Vault { id, owner: _ } = vault;
-    id.delete();
-    FalloutFlag {}
-}`,
-    contractModules: [
-      {
-        module: "fallout",
-        contractCode: `module move_over::fallout;
-
-struct Vault has key {
-    id: UID,
-    owner: address,
-}
-
-struct FalloutFlag has copy, drop {}
-
-public entry fun create(ctx: &mut tx_context::TxContext) {
-    let v = create_initial(ctx);
-    transfer::transfer(v, tx_context::sender(ctx));
-}
-
-public fun create_initial(ctx: &mut tx_context::TxContext): Vault {
-    Vault {
-        id: object::new(ctx),
-        owner: @0x0,
-    }
-}
-
-public fun get_owner(_vault: &Vault): address {
-    @0x0
-}
-
-public fun withdraw(vault: Vault, _ctx: &mut tx_context::TxContext): FalloutFlag {
-    let Vault { id, owner: _ } = vault;
-    id.delete();
-    FalloutFlag {}
-}`,
-      },
-    ],
-  },
-  {
-    id: 3,
     difficulty: "medium",
     contractCode: `module move_over::relay_gateway;
 
@@ -289,7 +220,7 @@ public fun open(vault: RelayVault, pin: u64): RelayFlag {
     ],
   },
   {
-    id: 4,
+    id: 3,
     difficulty: "easy",
     contractCode: `module move_over::artifact;
 
@@ -350,7 +281,7 @@ public fun shatter(artifact: Artifact): ArtifactFlag {
     ],
   },
   {
-    id: 5,
+    id: 4,
     difficulty: "easy",
     contractCode: `module move_over::coin_collector;
 
@@ -439,7 +370,7 @@ public fun destroy_zero(token: Token) {
     ],
   },
   {
-    id: 6,
+    id: 5,
     difficulty: "easy",
     contractCode: `module move_over::nested_vault;
 

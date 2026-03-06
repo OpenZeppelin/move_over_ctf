@@ -24,29 +24,24 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     solutionModule: "level_1_solution",
   },
   2: {
-    module: "fallout",
-    typeName: "FalloutFlag",
+    module: "relay_gateway",
+    typeName: "RelayFlag",
     solutionModule: "level_2_solution",
   },
   3: {
-    module: "relay_gateway",
-    typeName: "RelayFlag",
+    module: "artifact",
+    typeName: "ArtifactFlag",
     solutionModule: "level_3_solution",
   },
   4: {
-    module: "artifact",
-    typeName: "ArtifactFlag",
+    module: "coin_collector",
+    typeName: "CoinCollectorFlag",
     solutionModule: "level_4_solution",
   },
   5: {
-    module: "coin_collector",
-    typeName: "CoinCollectorFlag",
-    solutionModule: "level_5_solution",
-  },
-  6: {
     module: "nested_vault",
     typeName: "NestedVaultFlag",
-    solutionModule: "level_6_solution",
+    solutionModule: "level_5_solution",
   },
 };
 
