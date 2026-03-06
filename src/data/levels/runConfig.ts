@@ -33,4 +33,11 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "RelayFlag",
     solutionModule: "level_3_solution",
   },
+  4: {
+    module: "artifact",
+    typeName: "ArtifactFlag",
+    solutionModule: "level_4_solution",
+  },
 };
+
+export const SUPPORTED_LEVEL_IDS = Object.keys(LEVEL_RUN_CONFIG).map(Number);

@@ -50,5 +50,16 @@
       "The level has two modules and one gateway call depends on a permit from core.",
       "Make sure your flow creates the right object first, then unlocks with the right input."
     ]
+  },
+  "4": {
+    "name": "Artifact",
+    "description": "The goal of this level is to forge an artifact, charge it, and shatter it to capture the flag.",
+    "instructions": "# Level 0: Artifact\n\nThe goal of this level is to forge an artifact, charge it, and shatter it to capture the flag.\n\nThings that might help:\n\n- Sui objects and `TxContext`\n- Mutable references (`&mut`)\n- Move's ownership model: passing by value vs by reference",
+    "author": {
+      "name":"Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+    ]
   }
 }

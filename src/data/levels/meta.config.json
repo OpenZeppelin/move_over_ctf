@@ -22,5 +22,13 @@
       "relay_core",
       "relay_gateway"
     ]
+  },
+  {
+    "id": 4,
+    "difficulty": "easy",
+    "module": "artifact",
+    "modules": [
+      "artifact"
+    ]
   }
 ]
