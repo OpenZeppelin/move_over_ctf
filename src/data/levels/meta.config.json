@@ -30,5 +30,13 @@
     "modules": [
       "artifact"
     ]
+  },
+  {
+    "id": 5,
+    "difficulty": "easy",
+    "module": "coin_collector",
+    "modules": [
+      "coin_collector"
+    ]
   }
 ]

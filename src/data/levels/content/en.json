@@ -59,7 +59,18 @@
       "name":"Kose",
       "github": "https://github.com/kosedogus"
     },
+    "hints": []
+  },
+  "5": {
+    "name": "Coin Collector",
+    "description": "The goal of this level is to buy the prize from the vending machine. The prize costs 1,000 tokens but the faucet only...",
+    "instructions": "# Level 1: Coin Collector\n\nThe goal of this level is to buy the prize from the vending machine. The prize costs 1,000 tokens but the faucet only gives you 100.\n\nThings that might help:\n\n- Sui's coin model: coins are objects, not balance mappings\n- `split` and `merge` operations",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
     "hints": [
+      "What does `buy_prize` actually validate?"
     ]
   }
 }
