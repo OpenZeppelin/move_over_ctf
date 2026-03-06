@@ -1773,6 +1773,31 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     return null;
   }
 
+  function detectSymbolicUnpackStructFailure(vmMessage, logText, primaryModuleName) {
+    const message = String(vmMessage || "").toLowerCase();
+    if (!message.includes("unpack expected struct value")) return null;
+
+    const logs = String(logText || "");
+    if (!/\bunpack\b/i.test(logs)) return null;
+
+    const expectedModule = String(primaryModuleName || "").trim().toLowerCase();
+    const callPattern = /Call\s*->\s*([A-Za-z0-9_:]+)\s+\(frame\s*#\d+/g;
+    let match;
+    while ((match = callPattern.exec(logs)) !== null) {
+      const callName = String(match[1] || "");
+      const token = normalizeRuntimeFunctionToken(callName);
+      const moduleOk = !expectedModule || !token.moduleHint || token.moduleHint === expectedModule;
+      if (!moduleOk) continue;
+      if (token.functionName === "unlock" || token.functionName === "open" || token.functionName === "verify") {
+        return {
+          functionName: callName,
+        };
+      }
+    }
+
+    return null;
+  }
+
   function parseIntegerLiteral(raw) {
     const text = String(raw || "").trim();
     if (!text) return null;
@@ -2336,6 +2361,29 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     return extractAssertExpectedLiteral(model, targetFn, abortIns.codeIndex);
   }
 
+  function extractAssertExpectedLiteralsFromChallengeFunction(model, payload, functionName) {
+    const challengeModule = String(payload && payload.module ? payload.module : "").trim();
+    const fnName = String(functionName || "").trim();
+    if (!challengeModule || !fnName) return [];
+    const qualified = `0x0::${challengeModule}::${fnName}`;
+    const targetFn = findFunctionByQualifiedOrName(model, qualified, challengeModule, fnName);
+    if (!targetFn || !Array.isArray(targetFn.instructions)) return [];
+
+    const abortInstructions = targetFn.instructions
+      .filter(
+        (ins) => ins && Number.isInteger(ins.codeIndex) && String(ins.mnemonic || "").toUpperCase() === "ABORT"
+      )
+      .sort((a, b) => a.codeIndex - b.codeIndex);
+
+    const literals = [];
+    for (const abortIns of abortInstructions) {
+      if (!abortIns || !Number.isInteger(abortIns.codeIndex)) continue;
+      const expected = extractAssertExpectedLiteral(model, targetFn, abortIns.codeIndex);
+      if (isKnownPrimitive(expected)) literals.push(expected);
+    }
+    return literals;
+  }
+
   function evaluateSymbolicFieldAssertWithLiterals(model, payload, symbolicAbort) {
     if (!symbolicAbort || !symbolicAbort.trace || !symbolicAbort.functionModel) return null;
     const expectedLiteral = extractAssertExpectedLiteral(
@@ -2359,6 +2407,18 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     if (value.kind === "artifact_flag") {
       return {
         kind: "artifact_flag",
+        match: typeof value.match === "boolean" ? value.match : null,
+      };
+    }
+    if (value.kind === "nested_vault_object") {
+      return {
+        kind: "nested_vault_object",
+        id: Number.isInteger(value.id) ? value.id : -1,
+      };
+    }
+    if (value.kind === "nested_vault_flag") {
+      return {
+        kind: "nested_vault_flag",
         match: typeof value.match === "boolean" ? value.match : null,
       };
     }
@@ -2666,6 +2726,350 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     return typeof lastShatterMatch === "boolean" ? lastShatterMatch : null;
   }
 
+  function evaluateSpawnSetUnlockFlow(model, payload, expectedUnlockValues) {
+    const solutionModule = String(payload && payload.solutionModule ? payload.solutionModule : "").trim();
+    const challengeModule = String(payload && payload.module ? payload.module : "").trim();
+    const challengeModuleLower = challengeModule.toLowerCase();
+    if (!solutionModule || !challengeModuleLower) return null;
+
+    const expectedList = Array.isArray(expectedUnlockValues) ? expectedUnlockValues.filter(isKnownPrimitive) : [];
+    const expectedCharge = expectedList.length ? expectedList[0] : null;
+    const expectedMode = expectedList.length >= 2 ? expectedList[1] : null;
+    if (!expectedCharge) return null;
+
+    const qualified = `0x0::${solutionModule}::run`;
+    const runFn = findFunctionByQualifiedOrName(model, qualified, solutionModule, "run");
+    if (!runFn || !Array.isArray(runFn.instructions)) return null;
+
+    const instructions = runFn.instructions
+      .filter((ins) => ins && Number.isInteger(ins.codeIndex))
+      .sort((a, b) => a.codeIndex - b.codeIndex);
+    if (!instructions.length) return null;
+
+    const byCode = new Map();
+    for (let i = 0; i < instructions.length; i += 1) {
+      byCode.set(instructions[i].codeIndex, i);
+    }
+
+    const nextCodeByIndex = new Map();
+    for (let i = 0; i < instructions.length; i += 1) {
+      nextCodeByIndex.set(
+        instructions[i].codeIndex,
+        i + 1 < instructions.length ? instructions[i + 1].codeIndex : null
+      );
+    }
+
+    const stack = [];
+    const locals = [];
+    const argCount = Number.isInteger(runFn.argCount) ? runFn.argCount : 0;
+    const localCount = Number.isInteger(runFn.localCount) ? runFn.localCount : 0;
+    const localSlots = Math.max(8, argCount + localCount + 2);
+    for (let i = 0; i < localSlots; i += 1) locals[i] = primitiveUnknown();
+
+    const functionHandles = Array.isArray(model && model.functionHandles) ? model.functionHandles : [];
+    const runHandleIdx = Number.isInteger(runFn.funcHandleIdx) ? runFn.funcHandleIdx : null;
+    const runHandle = runHandleIdx !== null ? functionHandles[runHandleIdx] : null;
+    const runReturnCount = Number.isInteger(runHandle && runHandle.returnCount)
+      ? runHandle.returnCount
+      : 1;
+
+    const vaultStates = new Map();
+    let nextVaultId = 1;
+    let lastUnlockMatch = null;
+
+    const popValue = () => (stack.length ? stack.pop() : primitiveUnknown());
+    const pushValue = (value) => stack.push(cloneSymbolicEvalValue(value));
+    const trackedVaultFromRef = (refValue) => {
+      if (!refValue || refValue.kind !== "ref_local") return null;
+      if (!Number.isInteger(refValue.index) || refValue.index < 0) return null;
+      const localValue = locals[refValue.index];
+      if (!localValue || localValue.kind !== "nested_vault_object") return null;
+      if (!Number.isInteger(localValue.id)) return null;
+      return localValue;
+    };
+
+    let pc = instructions[0].codeIndex;
+    let steps = 0;
+    while (Number.isInteger(pc) && byCode.has(pc) && steps < 3000) {
+      steps += 1;
+      const ins = instructions[byCode.get(pc)];
+      const op = String(ins.mnemonic || "").toUpperCase();
+      const nextCode = nextCodeByIndex.get(pc);
+
+      if (op === "RET") {
+        const returns = [];
+        const count = Math.max(0, runReturnCount || 0);
+        for (let i = 0; i < count; i += 1) returns.unshift(popValue());
+        for (const returned of returns) {
+          if (returned && returned.kind === "nested_vault_flag" && typeof returned.match === "boolean") {
+            return returned.match;
+          }
+        }
+        return typeof lastUnlockMatch === "boolean" ? lastUnlockMatch : null;
+      }
+
+      const literal = instructionPrimitiveLiteral(model, ins);
+      if (isKnownPrimitive(literal)) {
+        pushValue(literal);
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "POP") {
+        popValue();
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "COPY_LOC" || op === "MOVE_LOC") {
+        const locIdx = Array.isArray(ins.operands) && ins.operands.length ? parseOperandIndex(ins.operands[0]) : null;
+        if (!Number.isInteger(locIdx) || locIdx < 0) return null;
+        pushValue(locals[locIdx] || primitiveUnknown());
+        if (op === "MOVE_LOC") locals[locIdx] = primitiveUnknown();
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "ST_LOC") {
+        const locIdx = Array.isArray(ins.operands) && ins.operands.length ? parseOperandIndex(ins.operands[0]) : null;
+        if (!Number.isInteger(locIdx) || locIdx < 0) return null;
+        locals[locIdx] = popValue();
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "IMM_BORROW_LOC" || op === "MUT_BORROW_LOC") {
+        const locIdx = Array.isArray(ins.operands) && ins.operands.length ? parseOperandIndex(ins.operands[0]) : null;
+        if (!Number.isInteger(locIdx) || locIdx < 0) return null;
+        pushValue({ kind: "ref_local", index: locIdx });
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "READ_REF") {
+        const ref = popValue();
+        if (ref && ref.kind === "ref_local" && Number.isInteger(ref.index) && ref.index >= 0) {
+          pushValue(locals[ref.index] || primitiveUnknown());
+        } else {
+          pushValue(primitiveUnknown());
+        }
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "WRITE_REF") {
+        const value = popValue();
+        const ref = popValue();
+        if (ref && ref.kind === "ref_local" && Number.isInteger(ref.index) && ref.index >= 0) {
+          locals[ref.index] = value;
+        }
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "FREEZE_REF") {
+        pc = nextCode;
+        continue;
+      }
+
+      if (
+        op === "ADD" ||
+        op === "SUB" ||
+        op === "MUL" ||
+        op === "DIV" ||
+        op === "MOD" ||
+        op === "BIT_AND" ||
+        op === "BIT_OR" ||
+        op === "XOR" ||
+        op === "SHL" ||
+        op === "SHR"
+      ) {
+        const right = popValue();
+        const left = popValue();
+        pushValue(primitiveIntBinary(op, left, right));
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "AND" || op === "OR") {
+        const right = popValue();
+        const left = popValue();
+        if (left.kind === "bool" && right.kind === "bool") {
+          pushValue(primitiveBool(op === "AND" ? left.value && right.value : left.value || right.value));
+        } else {
+          pushValue(primitiveUnknown());
+        }
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "NOT") {
+        const v = popValue();
+        if (v.kind === "bool") pushValue(primitiveBool(!v.value));
+        else pushValue(primitiveUnknown());
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "EQ" || op === "NEQ") {
+        const right = popValue();
+        const left = popValue();
+        const eq = primitiveEquals(left, right);
+        if (typeof eq === "boolean") pushValue(primitiveBool(op === "EQ" ? eq : !eq));
+        else pushValue(primitiveUnknown());
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "LT" || op === "LE" || op === "GT" || op === "GE") {
+        const right = popValue();
+        const left = popValue();
+        if (left.kind === "int" && right.kind === "int") {
+          const a = BigInt(left.value);
+          const b = BigInt(right.value);
+          if (op === "LT") pushValue(primitiveBool(a < b));
+          else if (op === "LE") pushValue(primitiveBool(a <= b));
+          else if (op === "GT") pushValue(primitiveBool(a > b));
+          else pushValue(primitiveBool(a >= b));
+        } else {
+          pushValue(primitiveUnknown());
+        }
+        pc = nextCode;
+        continue;
+      }
+
+      const castMatch = /^CAST_U(8|16|32|64|128|256)$/.exec(op);
+      if (castMatch) {
+        const value = popValue();
+        pushValue(castPrimitiveInt(value, Number(castMatch[1])));
+        pc = nextCode;
+        continue;
+      }
+
+      if (op === "BRANCH") {
+        const target = Array.isArray(ins.operands) && ins.operands.length ? parseOperandIndex(ins.operands[0]) : null;
+        if (!Number.isInteger(target) || !byCode.has(target)) return null;
+        pc = target;
+        continue;
+      }
+
+      if (op === "BR_TRUE" || op === "BR_FALSE") {
+        const target = Array.isArray(ins.operands) && ins.operands.length ? parseOperandIndex(ins.operands[0]) : null;
+        if (!Number.isInteger(target) || !byCode.has(target)) return null;
+        const cond = popValue();
+        if (cond.kind !== "bool") return null;
+        const take = op === "BR_TRUE" ? !!cond.value : !cond.value;
+        pc = take ? target : nextCode;
+        continue;
+      }
+
+      if (op === "CALL") {
+        const target = callTargetForInstruction(model, ins);
+        if (!target) return null;
+
+        const paramCount = Number.isInteger(target.paramCount)
+          ? target.paramCount
+          : Array.isArray(target.paramsTokens)
+            ? target.paramsTokens.length
+            : 0;
+        const args = [];
+        for (let i = 0; i < paramCount; i += 1) args.unshift(popValue());
+
+        const targetModule = moduleLeafName(target.moduleLabel);
+        const targetName = String(target.name || "").toLowerCase();
+        const returnCount = Number.isInteger(target.returnCount) ? target.returnCount : 0;
+
+        if (targetModule === challengeModuleLower && targetName === "spawn") {
+          const vaultId = nextVaultId++;
+          vaultStates.set(vaultId, {
+            charge: primitiveInt(64, 0n),
+            mode: primitiveInt(64, 0n),
+          });
+          if (returnCount > 0) pushValue({ kind: "nested_vault_object", id: vaultId });
+          for (let i = 1; i < returnCount; i += 1) pushValue(primitiveUnknown());
+          pc = nextCode;
+          continue;
+        }
+
+        if (targetModule === challengeModuleLower && targetName === "set_charge") {
+          const vaultRef = trackedVaultFromRef(args[0]);
+          const amount = args[1];
+          if (vaultRef && amount && amount.kind === "int") {
+            const state = vaultStates.get(vaultRef.id) || { charge: primitiveUnknown(), mode: primitiveUnknown() };
+            state.charge = primitiveInt(
+              Number.isInteger(amount.bits) ? amount.bits : 64,
+              BigInt(amount.value)
+            );
+            vaultStates.set(vaultRef.id, state);
+          }
+          for (let i = 0; i < returnCount; i += 1) pushValue(primitiveUnknown());
+          pc = nextCode;
+          continue;
+        }
+
+        if (targetModule === challengeModuleLower && targetName === "set_mode") {
+          const vaultRef = trackedVaultFromRef(args[0]);
+          const modeValue = args[1];
+          if (vaultRef && modeValue && modeValue.kind === "int") {
+            const state = vaultStates.get(vaultRef.id) || { charge: primitiveUnknown(), mode: primitiveUnknown() };
+            state.mode = primitiveInt(
+              Number.isInteger(modeValue.bits) ? modeValue.bits : 64,
+              BigInt(modeValue.value)
+            );
+            vaultStates.set(vaultRef.id, state);
+          }
+          for (let i = 0; i < returnCount; i += 1) pushValue(primitiveUnknown());
+          pc = nextCode;
+          continue;
+        }
+
+        if (targetModule === challengeModuleLower && targetName === "charge") {
+          const vaultRef = trackedVaultFromRef(args[0]);
+          const state = vaultRef ? vaultStates.get(vaultRef.id) : null;
+          if (returnCount > 0) pushValue(state ? state.charge : primitiveUnknown());
+          for (let i = 1; i < returnCount; i += 1) pushValue(primitiveUnknown());
+          pc = nextCode;
+          continue;
+        }
+
+        if (targetModule === challengeModuleLower && targetName === "mode") {
+          const vaultRef = trackedVaultFromRef(args[0]);
+          const state = vaultRef ? vaultStates.get(vaultRef.id) : null;
+          if (returnCount > 0) pushValue(state ? state.mode : primitiveUnknown());
+          for (let i = 1; i < returnCount; i += 1) pushValue(primitiveUnknown());
+          pc = nextCode;
+          continue;
+        }
+
+        if (targetModule === challengeModuleLower && targetName === "unlock") {
+          let match = null;
+          const vaultValue = args.length ? args[0] : null;
+          if (vaultValue && vaultValue.kind === "nested_vault_object" && Number.isInteger(vaultValue.id)) {
+            const state = vaultStates.get(vaultValue.id);
+            if (state) {
+              const chargeOk = primitiveEquals(state.charge, expectedCharge) === true;
+              const modeOk = expectedMode ? primitiveEquals(state.mode, expectedMode) === true : true;
+              match = chargeOk && modeOk;
+            }
+          }
+          if (typeof match === "boolean") lastUnlockMatch = match;
+          if (returnCount > 0) pushValue({ kind: "nested_vault_flag", match });
+          for (let i = 1; i < returnCount; i += 1) pushValue(primitiveUnknown());
+          pc = nextCode;
+          continue;
+        }
+
+        for (let i = 0; i < returnCount; i += 1) pushValue(primitiveUnknown());
+        pc = nextCode;
+        continue;
+      }
+
+      return null;
+    }
+
+    return typeof lastUnlockMatch === "boolean" ? lastUnlockMatch : null;
+  }
+
   function evaluateSymbolicFieldAddWithLiterals(model, payload) {
     const challengeModule = String(payload && payload.module ? payload.module : "").trim();
     if (!challengeModule) return null;
@@ -2684,6 +3088,16 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
     );
     if (!isKnownPrimitive(chargedLiteral)) return null;
     return primitiveEquals(chargedLiteral, expectedLiteral) === true;
+  }
+
+  function evaluateSymbolicUnpackStructWithLiterals(model, payload) {
+    const expectedUnlockValues = extractAssertExpectedLiteralsFromChallengeFunction(
+      model,
+      payload,
+      "unlock"
+    );
+    if (!expectedUnlockValues.length) return null;
+    return evaluateSpawnSetUnlockFlow(model, payload, expectedUnlockValues);
   }
 
   function defaultSystemInputs() {
@@ -2923,6 +3337,51 @@ public fun verify(ctx: &mut sui::tx_context::TxContext): bool {
           output: [
             "Web runner limitation: this level hit symbolic struct field arithmetic in browser VM.",
             "The current WASM debugger cannot execute arithmetic over symbolic object fields on this path.",
+            "Use Move CLI tests as authoritative for this level, or switch to a full-runtime WASM backend.",
+            diagnostics,
+            !runtimeInfo && logTail ? `Recent logs:\n${logTail}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n\n"),
+        };
+      }
+      const symbolicUnpackFailure = detectSymbolicUnpackStructFailure(
+        vmMessage,
+        fullLogText,
+        payload.module
+      );
+      if (symbolicUnpackFailure) {
+        const evaluatedUnpack = evaluateSymbolicUnpackStructWithLiterals(model, payload);
+        if (evaluatedUnpack === true) {
+          return {
+            success: true,
+            output: [
+              "✅ Level passed in browser VM.",
+              `Verifier check: ${payload.verifierModule}::verify returned true.`,
+            ].join("\n\n"),
+          };
+        }
+
+        const diagnostics = runtimeInfo || lineInfo;
+        if (evaluatedUnpack === false) {
+          return {
+            success: false,
+            output: [
+              "Execution failed in browser VM.",
+              `Derived check: values passed through ${payload.module}::unlock do not satisfy its assertions.`,
+              diagnostics,
+              !runtimeInfo && logTail ? `Recent logs:\n${logTail}` : "",
+            ]
+              .filter(Boolean)
+              .join("\n\n"),
+          };
+        }
+
+        return {
+          success: false,
+          output: [
+            "Web runner limitation: this level hit symbolic struct unpacking in browser VM.",
+            "The current WASM debugger cannot fully materialize nested struct values for this path.",
             "Use Move CLI tests as authoritative for this level, or switch to a full-runtime WASM backend.",
             diagnostics,
             !runtimeInfo && logTail ? `Recent logs:\n${logTail}` : "",

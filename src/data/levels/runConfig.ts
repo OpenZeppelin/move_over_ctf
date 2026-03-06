@@ -38,6 +38,16 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "ArtifactFlag",
     solutionModule: "level_4_solution",
   },
+  5: {
+    module: "coin_collector",
+    typeName: "CoinCollectorFlag",
+    solutionModule: "level_5_solution",
+  },
+  6: {
+    module: "nested_vault",
+    typeName: "NestedVaultFlag",
+    solutionModule: "level_6_solution",
+  },
 };
 
 export const SUPPORTED_LEVEL_IDS = Object.keys(LEVEL_RUN_CONFIG).map(Number);

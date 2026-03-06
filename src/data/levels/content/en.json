@@ -59,7 +59,31 @@
       "name":"Kose",
       "github": "https://github.com/kosedogus"
     },
+    "hints": []
+  },
+  "5": {
+    "name": "Coin Collector",
+    "description": "The goal of this level is to buy the prize from the vending machine. The prize costs 1,000 tokens but the faucet only...",
+    "instructions": "# Level 1: Coin Collector\n\nThe goal of this level is to buy the prize from the vending machine. The prize costs 1,000 tokens but the faucet only gives you 100.\n\nThings that might help:\n\n- Sui's coin model: coins are objects, not balance mappings\n- `split` and `merge` operations",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
     "hints": [
+      "What does `buy_prize` actually validate?"
+    ]
+  },
+  "6": {
+    "name": "Nested Vault",
+    "description": "Work with three wrapped inner struct levels and satisfy deep-field checks.",
+    "instructions": "# Level 6: Nested Vault\n\nThis level now uses **three inner struct levels** inside the outer object:\n\n`NestedVault -> LevelOneWrap -> LevelTwoWrap -> LevelThreeCore`\n\nYour goal is to:\n\n1. Create the outer object\n2. Modify values inside the deepest wrapped level using the provided mutator functions\n3. Call `unlock` so deep values pass validation\n\n## Useful functions\n\n- `spawn` creates the wrapped object chain\n- `set_charge` updates the deepest `charge`\n- `set_mode` updates the deepest `mode`\n- `charge` and `mode` read back deep values\n- `unlock` destructures all levels and validates final values",
+    "author": {
+      "name": "OpenZeppelin",
+      "github": "https://github.com/OpenZeppelin"
+    },
+    "hints": [
+      "You never receive the deepest struct directly; mutate it through `NestedVault`.",
+      "Read the assertions in `unlock` and set those values exactly."
     ]
   }
 }

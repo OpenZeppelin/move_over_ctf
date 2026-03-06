@@ -34,7 +34,7 @@ const pending = new Map<
 >();
 
 const WORKER_TIMEOUT_MS = 120_000;
-const WORKER_URL = "/workers/move_runner.worker.js?v=20260306_symbolic_charge_flow";
+const WORKER_URL = "/workers/move_runner.worker.js?v=20260306_symbolic_unpack";
 
 function getWorker(): Worker {
   if (typeof window === "undefined") {

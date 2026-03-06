@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useLocale } from "@/contexts/LocaleContext";
 import { LEVEL_RUN_CONFIG, type Level } from "@/data/levels";
@@ -93,7 +93,10 @@ export function LevelView({ level }: { level: Level }) {
     solutionTextareaRef,
   });
 
-  const hasPassed = isCompleted || runResult?.success === true;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const hasPassed = mounted && (isCompleted || runResult?.success === true);
 
   return (
     <div className="flex-1 flex flex-col min-w-0">

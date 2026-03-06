@@ -349,4 +349,242 @@ public fun shatter(artifact: Artifact): ArtifactFlag {
       },
     ],
   },
+  {
+    id: 5,
+    difficulty: "easy",
+    contractCode: `module move_over::coin_collector;
+
+public struct Token has key, store {
+    id: UID,
+    value: u64,
+}
+
+public struct CoinCollectorFlag has copy, drop {}
+
+public fun faucet(ctx: &mut TxContext): Token {
+    Token { id: object::new(ctx), value: 100 }
+}
+
+public fun split(token: &mut Token, amount: u64, ctx: &mut TxContext): Token {
+    assert!(token.value >= amount, 0);
+    token.value = token.value - amount;
+    Token { id: object::new(ctx), value: amount }
+}
+
+public fun merge(token: &mut Token, other: Token) {
+    let Token { id, value } = other;
+    id.delete();
+    token.value = token.value + value;
+}
+
+public fun buy_prize(payment: Token): CoinCollectorFlag {
+    let Token { id, value: _ } = payment;
+    id.delete();
+    CoinCollectorFlag {}
+}
+
+public fun value(token: &Token): u64 {
+    token.value
+}
+
+public fun destroy_zero(token: Token) {
+    assert!(token.value == 0, 0);
+    let Token { id, value: _ } = token;
+    id.delete();
+}`,
+    contractModules: [
+      {
+        module: "coin_collector",
+        contractCode: `module move_over::coin_collector;
+
+public struct Token has key, store {
+    id: UID,
+    value: u64,
+}
+
+public struct CoinCollectorFlag has copy, drop {}
+
+public fun faucet(ctx: &mut TxContext): Token {
+    Token { id: object::new(ctx), value: 100 }
+}
+
+public fun split(token: &mut Token, amount: u64, ctx: &mut TxContext): Token {
+    assert!(token.value >= amount, 0);
+    token.value = token.value - amount;
+    Token { id: object::new(ctx), value: amount }
+}
+
+public fun merge(token: &mut Token, other: Token) {
+    let Token { id, value } = other;
+    id.delete();
+    token.value = token.value + value;
+}
+
+public fun buy_prize(payment: Token): CoinCollectorFlag {
+    let Token { id, value: _ } = payment;
+    id.delete();
+    CoinCollectorFlag {}
+}
+
+public fun value(token: &Token): u64 {
+    token.value
+}
+
+public fun destroy_zero(token: Token) {
+    assert!(token.value == 0, 0);
+    let Token { id, value: _ } = token;
+    id.delete();
+}`,
+      },
+    ],
+  },
+  {
+    id: 6,
+    difficulty: "easy",
+    contractCode: `module move_over::nested_vault;
+
+public struct LevelThreeCore has key, store {
+    id: UID,
+    charge: u64,
+    mode: u64,
+}
+
+public struct LevelTwoWrap has store {
+    level_three: LevelThreeCore,
+}
+
+public struct LevelOneWrap has store {
+    level_two: LevelTwoWrap,
+}
+
+public struct NestedVault has key {
+    id: UID,
+    level_one: LevelOneWrap,
+}
+
+public struct NestedVaultFlag has copy, drop {}
+
+public fun spawn(ctx: &mut tx_context::TxContext): NestedVault {
+    let level_three = LevelThreeCore {
+        id: object::new(ctx),
+        charge: 0,
+        mode: 0,
+    };
+    let level_two = LevelTwoWrap { level_three };
+    let level_one = LevelOneWrap { level_two };
+    NestedVault {
+        id: object::new(ctx),
+        level_one,
+    }
+}
+
+public fun set_charge(vault: &mut NestedVault, amount: u64) {
+    vault.level_one.level_two.level_three.charge = amount;
+}
+
+public fun set_mode(vault: &mut NestedVault, mode: u64) {
+    vault.level_one.level_two.level_three.mode = mode;
+}
+
+public fun charge(vault: &NestedVault): u64 {
+    vault.level_one.level_two.level_three.charge
+}
+
+public fun mode(vault: &NestedVault): u64 {
+    vault.level_one.level_two.level_three.mode
+}
+
+public fun unlock(vault: NestedVault): NestedVaultFlag {
+    let NestedVault { id, level_one } = vault;
+    let LevelOneWrap { level_two } = level_one;
+    let LevelTwoWrap { level_three } = level_two;
+    let LevelThreeCore {
+        id: core_id,
+        charge,
+        mode,
+    } = level_three;
+
+    assert!(charge == 100, 0);
+    assert!(mode == 7, 1);
+
+    core_id.delete();
+    id.delete();
+    NestedVaultFlag {}
+}`,
+    contractModules: [
+      {
+        module: "nested_vault",
+        contractCode: `module move_over::nested_vault;
+
+public struct LevelThreeCore has key, store {
+    id: UID,
+    charge: u64,
+    mode: u64,
+}
+
+public struct LevelTwoWrap has store {
+    level_three: LevelThreeCore,
+}
+
+public struct LevelOneWrap has store {
+    level_two: LevelTwoWrap,
+}
+
+public struct NestedVault has key {
+    id: UID,
+    level_one: LevelOneWrap,
+}
+
+public struct NestedVaultFlag has copy, drop {}
+
+public fun spawn(ctx: &mut tx_context::TxContext): NestedVault {
+    let level_three = LevelThreeCore {
+        id: object::new(ctx),
+        charge: 0,
+        mode: 0,
+    };
+    let level_two = LevelTwoWrap { level_three };
+    let level_one = LevelOneWrap { level_two };
+    NestedVault {
+        id: object::new(ctx),
+        level_one,
+    }
+}
+
+public fun set_charge(vault: &mut NestedVault, amount: u64) {
+    vault.level_one.level_two.level_three.charge = amount;
+}
+
+public fun set_mode(vault: &mut NestedVault, mode: u64) {
+    vault.level_one.level_two.level_three.mode = mode;
+}
+
+public fun charge(vault: &NestedVault): u64 {
+    vault.level_one.level_two.level_three.charge
+}
+
+public fun mode(vault: &NestedVault): u64 {
+    vault.level_one.level_two.level_three.mode
+}
+
+public fun unlock(vault: NestedVault): NestedVaultFlag {
+    let NestedVault { id, level_one } = vault;
+    let LevelOneWrap { level_two } = level_one;
+    let LevelTwoWrap { level_three } = level_two;
+    let LevelThreeCore {
+        id: core_id,
+        charge,
+        mode,
+    } = level_three;
+
+    assert!(charge == 100, 0);
+    assert!(mode == 7, 1);
+
+    core_id.delete();
+    id.delete();
+    NestedVaultFlag {}
+}`,
+      },
+    ],
+  },
 ];
