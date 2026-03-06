@@ -41,5 +41,13 @@
     "modules": [
       "nested_vault"
     ]
+  },
+  {
+    "id": 7,
+    "difficulty": "easy",
+    "module": "sticky_treasure",
+    "modules": [
+      "sticky_treasure"
+    ]
   }
 ]

@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { LevelSidebar } from "@/components/LevelSidebar";
 import { LevelView } from "@/components/LevelView";
 import { MobileLevelPicker } from "@/components/MobileLevelPicker";
-import { getLevel, getLevels } from "@/data/levels";
+import { getLevels } from "@/data/levels";
 import { getTranslations } from "@/i18n";
 import { replaceTemplate } from "@/i18n/utils";
 import { BASE_URL } from "@/config";
@@ -69,13 +69,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LevelPage({ params }: Props) {
   const { locale, id } = await params;
   const loc = getSafeLocale(locale);
-  const numId = Number(id);
   const levels = getLevels(loc);
-  const validId =
-    Number.isFinite(numId) && numId >= 0 && numId < levels.length ? numId : 0;
-  const currentLevel = getLevel(loc, validId) ?? levels[0];
+  const level = levels.find((l) => String(l.id) === id) ?? null;
 
-  if (Number(id) !== validId) {
+  if (!level) {
     redirect(`/${loc}/levels/0`);
   }
 
@@ -85,7 +82,7 @@ export default async function LevelPage({ params }: Props) {
       <MobileLevelPicker levels={levels} />
       <div className="flex-1 flex min-h-0 overflow-hidden">
         <LevelSidebar levels={levels} />
-        <LevelView level={currentLevel} />
+        <LevelView level={level} />
       </div>
     </div>
   );

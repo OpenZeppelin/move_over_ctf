@@ -72,5 +72,15 @@
       "You never receive the deepest struct directly; mutate it through `NestedVault`.",
       "Read the assertions in `unlock` and set those values exactly."
     ]
+  },
+  "7": {
+    "name": "Sticky Treasure",
+    "description": "The goal of this level is to rescue the prize from the treasure chest and capture the flag.",
+    "instructions": "# Level VI: Sticky Treasure\n\nThe goal of this level is to rescue the prize from the treasure chest and capture the flag.\n\nThings that might help:\n\n- `sui::dynamic_field`\n- Orphaned fields\n- Order of operations",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }
