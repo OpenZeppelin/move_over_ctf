@@ -14,6 +14,8 @@ export interface LevelContent {
   name: string;
   description: string;
   instructions: string;
+  /** Shown after the level is completed; explains the nature/lesson of the level. Translatable per locale. */
+  explanation?: string;
   author?: LevelAuthor;
   hints?: string[];
 }

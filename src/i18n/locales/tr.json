@@ -35,7 +35,9 @@
         "runSuccess": "Tüm testler geçti!",
         "runError": "Testler başarısız oldu",
         "runNotSupported": "Bu seviye henüz tarayıcı içi çalıştırıcı tarafından desteklenmiyor. Sui CLI'yi yükleyip seviyeyi yerelde çalıştırın veya Seviye 0'ı deneyin.",
-        "solutionPlaceholder": "// örn.: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag"
+        "solutionPlaceholder": "// örn.: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+        "passedMessage": "Bayrak alındı. Bu seviye resmen geçildi.",
+        "explanationTitle": "Bu seviye ne öğretti"
     },
     "sidebar": {
         "levels": "Seviyeler"

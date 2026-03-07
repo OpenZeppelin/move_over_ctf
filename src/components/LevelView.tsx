@@ -12,6 +12,7 @@ import { ContractCodeCard } from "@/components/level-view/ContractCodeCard";
 import { LevelTabs, type LevelTab } from "@/components/level-view/LevelTabs";
 import { InstructionsTabContent } from "@/components/level-view/InstructionsTabContent";
 import { SolutionEditorCard } from "@/components/level-view/SolutionEditorCard";
+import { Typography } from "@/components/ui/Typography";
 import { useLevelNavigation } from "@/components/level-view/hooks/useLevelNavigation";
 import { useLevelPersistence } from "@/components/level-view/hooks/useLevelPersistence";
 import { useLevelRunner } from "@/components/level-view/hooks/useLevelRunner";
@@ -142,24 +143,39 @@ export function LevelView({ level }: { level: Level }) {
             />
 
             {hasRunner && runConfig && (
-              <SolutionEditorCard
-                levelId={level.id}
-                runConfig={runConfig}
-                hasPassed={hasPassed}
-                runLoading={runLoading}
-                codeStyle={codeStyle}
-                solutionCode={solutionCode}
-                runLabel={t("level.run")}
-                runSuccessLabel={t("level.runSuccess")}
-                runErrorLabel={t("level.runError")}
-                solutionPlaceholder={t("level.solutionPlaceholder")}
-                runResult={runResult}
-                onRun={handleRun}
-                onSolutionChange={handleSolutionChange}
-                solutionWrapperRef={solutionWrapperRef}
-                solutionHighlightRef={solutionHighlightRef}
-                solutionTextareaRef={solutionTextareaRef}
-              />
+              <>
+                <SolutionEditorCard
+                  levelId={level.id}
+                  runConfig={runConfig}
+                  hasPassed={hasPassed}
+                  runLoading={runLoading}
+                  codeStyle={codeStyle}
+                  solutionCode={solutionCode}
+                  runLabel={t("level.run")}
+                  runSuccessLabel={t("level.runSuccess")}
+                  runErrorLabel={t("level.runError")}
+                  solutionPlaceholder={t("level.solutionPlaceholder")}
+                  runResult={runResult}
+                  onRun={handleRun}
+                  onSolutionChange={handleSolutionChange}
+                  solutionWrapperRef={solutionWrapperRef}
+                  solutionHighlightRef={solutionHighlightRef}
+                  solutionTextareaRef={solutionTextareaRef}
+                />
+                {hasPassed && level.explanation && (
+                  <div className="rounded-xl border border-move-border bg-move-dark/60 px-3 py-2.5">
+                    <Typography.P
+                      variant="unstyled"
+                      className="text-xs font-semibold text-move-muted uppercase tracking-wider mb-1.5"
+                    >
+                      {t("level.explanationTitle")}
+                    </Typography.P>
+                    <Typography.P variant="unstyled" className="text-sm text-move-text whitespace-pre-wrap">
+                      {level.explanation}
+                    </Typography.P>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

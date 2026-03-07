@@ -10,7 +10,8 @@
     "hints": [
       "Look at the function signatures first and keep the flow minimal: create, then solve.",
       "The `solve` assertion now checks the value stored inside the `Genesis` object."
-    ]
+    ],
+    "explanation": "This level introduces Sui’s object model and TxContext: you mint an object with `create`, receive ownership, then call `solve` to flip its flag. No signer is required—everything is driven by the transaction context. In real contracts, ensuring that only intended flows can change critical state is key to security."
   },
   "1": {
     "name": "Lockbox",

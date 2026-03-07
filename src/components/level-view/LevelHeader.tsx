@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import type { Level } from "@/data/levels";
 import { DIFFICULTY_BADGE_CLASS } from "@/data/levels";
 import { Typography } from "@/components/ui/Typography";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type Props = {
   level: Level;
@@ -22,6 +25,7 @@ export function LevelHeader({
   nextLevelId,
   locale,
 }: Props) {
+  const { t } = useLocale();
   return (
     <div className="border-b border-move-border bg-move-panel px-4 sm:px-6 py-4 sm:py-5">
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -102,7 +106,7 @@ export function LevelHeader({
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-move-text"
           >
             <Typography.Span aria-hidden>🏆</Typography.Span>
-            Flag captured. This level is officially passed.
+            {t("level.passedMessage")}
           </Typography.P>
         </div>
       )}

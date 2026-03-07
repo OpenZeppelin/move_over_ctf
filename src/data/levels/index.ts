@@ -53,6 +53,7 @@ export function getLevels(locale: Locale): Level[] {
       name: c.name,
       description: c.description,
       instructions: c.instructions,
+      explanation: typeof c.explanation === "string" && c.explanation.trim() ? c.explanation.trim() : undefined,
       author: c.author,
       hints: Array.isArray(c.hints)
         ? c.hints

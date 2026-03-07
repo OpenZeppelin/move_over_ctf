@@ -35,7 +35,9 @@
         "runSuccess": "نجحت جميع الاختبارات!",
         "runError": "فشلت الاختبارات",
         "runNotSupported": "هذا المستوى غير مدعوم بعد في المشغّل داخل المتصفح. ثبّت Sui CLI وشغّل المستوى محليًا، أو جرّب المستوى 0.",
-        "solutionPlaceholder": "// مثال: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag"
+        "solutionPlaceholder": "// مثال: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+        "passedMessage": "تم الاستيلاء على العلم. تم اجتياز هذا المستوى رسميًا.",
+        "explanationTitle": "ما الذي علّمك إياه هذا المستوى"
     },
     "sidebar": {
         "levels": "المستويات"

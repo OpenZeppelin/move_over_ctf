@@ -244,6 +244,35 @@ async function askModuleMoveCode(rl, moduleIndex) {
   return { moduleName, moveCode: normalizedMoveCode };
 }
 
+async function askMultilineOptional(rl, label) {
+  const collectLinesUntilEnd = () =>
+    new Promise((resolve) => {
+      const lines = [];
+      const onLine = (line) => {
+        if (line.trim() === "END") {
+          rl.off("line", onLine);
+          rl.off("close", onClose);
+          resolve(lines);
+          return;
+        }
+        lines.push(line);
+      };
+      const onClose = () => {
+        rl.off("line", onLine);
+        rl.off("close", onClose);
+        resolve(lines);
+      };
+      rl.on("line", onLine);
+      rl.on("close", onClose);
+    });
+
+  output.write(`\n${label}\n`);
+  output.write("Finish by entering a single line with END (or END alone to skip)\n");
+  const lines = await collectLinesUntilEnd();
+  const value = normalizeNewlines(lines.join("\n")).trim();
+  return value;
+}
+
 async function askMultilineRequired(rl, label) {
   const collectLinesUntilEnd = () =>
     new Promise((resolve) => {
@@ -297,6 +326,7 @@ function printHelp() {
   output.write("  - Name\n");
   output.write("  - Difficulty (easy|medium|hard)\n");
   output.write("  - Instructions (multiline, end with END)\n");
+  output.write("  - Explanation (optional, shown after level is completed; end with END or leave empty)\n");
   output.write("  - One or more challenge module Move files (multiline each, end with END)\n");
   output.write("  - Primary module for runConfig (when multiple modules)\n");
 }
@@ -326,6 +356,12 @@ async function run() {
       })
     ).toLowerCase();
     instructions = await askMultilineRequired(rl, "Instructions markdown:");
+
+    let explanation = "";
+    if (INTERACTIVE_TTY) {
+      output.write("\nExplanation (optional): shown after the level is completed, e.g. what vulnerability or concept this level demonstrates. Leave empty and press END to skip.\n");
+      explanation = await askMultilineOptional(rl, "Explanation");
+    }
 
     output.write("\nEnter one or more challenge modules for this level.\n");
     let moduleIndex = 1;
@@ -445,11 +481,15 @@ async function run() {
   const newRunConfig = renderRunConfigFile(runConfigMap);
   await fs.writeFile(runConfigPath, newRunConfig, "utf8");
 
-  enContent[String(nextId)] = {
+  const levelEntry = {
     name,
     description: deriveDescription(name, instructions),
     instructions: normalizeNewlines(instructions),
   };
+  if (explanation && explanation.trim()) {
+    levelEntry.explanation = normalizeNewlines(explanation).trim();
+  }
+  enContent[String(nextId)] = levelEntry;
   const sortedContent = Object.fromEntries(
     Object.entries(enContent).sort((a, b) => Number(a[0]) - Number(b[0]))
   );
