@@ -50,11 +50,6 @@ const P_VARIANTS = {
   unstyled: "",
 } as const;
 
-const SMALL_VARIANTS = {
-  default: "text-xs text-move-muted",
-  unstyled: "",
-} as const;
-
 type HeadingProps<V extends string> = HTMLAttributes<HTMLHeadingElement> & {
   variant?: V;
 };
@@ -93,10 +88,6 @@ function P({ variant = "default", className, ...props }: ParagraphProps<keyof ty
   return <p className={joinClassNames(P_VARIANTS[variant], className)} {...props} />;
 }
 
-function Small({ variant = "default", className, ...props }: ParagraphProps<keyof typeof SMALL_VARIANTS>) {
-  return <p className={joinClassNames(SMALL_VARIANTS[variant], className)} {...props} />;
-}
-
 function Span({ className, ...props }: SpanProps) {
   return <span className={className} {...props} />;
 }
@@ -109,6 +100,5 @@ export const Typography = {
   H5,
   H6,
   P,
-  Small,
   Span,
 };

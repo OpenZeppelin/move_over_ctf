@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { LevelSidebar } from "@/components/LevelSidebar";
 import { LevelView } from "@/components/LevelView";
 import { MobileLevelPicker } from "@/components/MobileLevelPicker";
-import { getLevels } from "@/data/levels";
+import { getLevel, getLevels } from "@/data/levels";
 import { getTranslations } from "@/i18n";
 import { replaceTemplate } from "@/i18n/utils";
 import { BASE_URL } from "@/config";
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
   const loc = getSafeLocale(locale);
   const levels = getLevels(loc);
-  const level = levels.find((l) => String(l.id) === id) ?? levels[0];
+  const level = getLevel(loc, Number(id)) ?? levels[0];
   const t = getTranslations(loc);
   const title = replaceTemplate(t("seo.levelTitle"), { id: level.id, name: level.name });
   const description = level.description;
@@ -69,8 +69,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LevelPage({ params }: Props) {
   const { locale, id } = await params;
   const loc = getSafeLocale(locale);
+  const numericId = Number(id);
+  const level = getLevel(loc, numericId);
   const levels = getLevels(loc);
-  const level = levels.find((l) => String(l.id) === id) ?? null;
 
   if (!level) {
     redirect(`/${loc}/levels/0`);
