@@ -29,6 +29,17 @@ npm run build
 npx serve out
 ```
 
+## Run with Docker
+
+Build and run the static site in a container:
+
+```bash
+docker build -t move-over .
+docker run -p 3000:3000 move-over
+```
+
+Then open [http://localhost:3000](http://localhost:3000).
+
 ## Available scripts
 
 - `npm run dev` - Runs metadata sync, watches `public/contracts/*.move`, and starts Next.js dev mode.
