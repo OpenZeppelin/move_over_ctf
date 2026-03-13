@@ -14,6 +14,7 @@ import {
 import { Typography } from "@/components/ui/Typography";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { Progress, Tooltip, TooltipContent, TooltipTrigger } from "@openzeppelin/ui-builder-ui";
 
 const EMPTY_SUBSCRIBE = () => () => {};
 
@@ -81,25 +82,30 @@ export function Header() {
           </a>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 shrink-0" dir="ltr">
-          <div
-            className="inline-flex items-center gap-1.5 rounded-md border border-move-border bg-move-dark px-2 py-1"
-            title={`${solvedCount}/${totalCount} solved (${progressPct}%)`}
-            role="progressbar"
-            aria-label="CTF solved progress"
-            aria-valuemin={0}
-            aria-valuemax={totalCount}
-            aria-valuenow={solvedCount}
-          >
-            <Typography.Span className="text-[10px] text-move-muted tabular-nums">
-              {solvedCount}/{totalCount}
-            </Typography.Span>
-            <div className="h-1 w-14 sm:w-16 overflow-hidden rounded-full bg-move-panel">
+          <Tooltip>
+            <TooltipTrigger asChild>
               <div
-                className="h-full rounded-full bg-gradient-to-r from-oz-violet to-indigo-500"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
-          </div>
+                className="inline-flex cursor-default items-center gap-1.5 rounded-md border border-move-border bg-move-dark px-2 py-1"
+                aria-label="CTF solved progress"
+              >
+                <Typography.Span className="text-[10px] text-move-muted tabular-nums">
+                  {solvedCount}/{totalCount}
+                </Typography.Span>
+                <Progress
+                  value={progressPct}
+                  className="h-1 w-14 overflow-hidden rounded-full bg-move-panel sm:w-16 [&>div]:bg-gradient-to-r [&>div]:from-oz-violet [&>div]:to-indigo-500"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={progressPct}
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="border-move-border bg-move-panel text-move-text">
+              <p className="text-xs">
+                {solvedCount}/{totalCount} solved ({progressPct}%)
+              </p>
+            </TooltipContent>
+          </Tooltip>
           <LocaleSwitcher />
           <ThemeToggle />
         </div>

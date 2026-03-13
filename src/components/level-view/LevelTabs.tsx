@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+import { Tabs, TabsList, TabsTrigger } from "@openzeppelin/ui-builder-ui";
 
 export type LevelTab = "instructions" | "code";
 
@@ -11,43 +11,28 @@ type Props = {
 
 export function LevelTabs({ tab, onTabChange, instructionsLabel, contractCodeLabel }: Props) {
   return (
-    <div
-      className="flex border-b border-move-border bg-move-panel/80 overflow-x-auto"
-      role="tablist"
-      aria-label="Level content tabs"
-    >
-      <Button
-        onClick={() => onTabChange("instructions")}
-        variant="unstyled"
-        size="none"
-        id="tab-instructions"
-        role="tab"
-        aria-selected={tab === "instructions"}
-        aria-controls="panel-instructions"
-        className={`shrink-0 min-h-[48px] px-4 sm:px-6 py-3 text-sm font-medium border-b-2 ${
-          tab === "instructions"
-            ? "border-move-accent text-move-accent"
-            : "border-transparent text-move-muted hover:text-move-text"
-        }`}
+    <Tabs value={tab} onValueChange={(v) => onTabChange(v as LevelTab)} className="w-full">
+      <TabsList
+        className="flex h-auto w-full justify-start gap-0 rounded-none border-b border-move-border bg-move-panel/80 p-0 shadow-none"
+        aria-label="Level content tabs"
       >
-        {instructionsLabel}
-      </Button>
-      <Button
-        onClick={() => onTabChange("code")}
-        variant="unstyled"
-        size="none"
-        id="tab-code"
-        role="tab"
-        aria-selected={tab === "code"}
-        aria-controls="panel-code"
-        className={`shrink-0 min-h-[48px] px-4 sm:px-6 py-3 text-sm font-medium border-b-2 ${
-          tab === "code"
-            ? "border-move-accent text-move-accent"
-            : "border-transparent text-move-muted hover:text-move-text"
-        }`}
-      >
-        {contractCodeLabel}
-      </Button>
-    </div>
+        <TabsTrigger
+          value="instructions"
+          id="tab-instructions"
+          aria-controls="panel-instructions"
+          className="min-h-[48px] shrink-0 rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium text-move-muted transition-colors hover:text-move-text data-[state=active]:border-move-accent data-[state=active]:text-move-accent sm:px-6"
+        >
+          {instructionsLabel}
+        </TabsTrigger>
+        <TabsTrigger
+          value="code"
+          id="tab-code"
+          aria-controls="panel-code"
+          className="min-h-[48px] shrink-0 rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium text-move-muted transition-colors hover:text-move-text data-[state=active]:border-move-accent data-[state=active]:text-move-accent sm:px-6"
+        >
+          {contractCodeLabel}
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 }

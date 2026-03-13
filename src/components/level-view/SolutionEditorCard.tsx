@@ -2,8 +2,15 @@ import type { CSSProperties, RefObject } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import type { LevelRunConfig } from "@/data/levels";
 import { CodeWindowHeader } from "@/components/ui/CodeWindowHeader";
-import { Button } from "@/components/ui/Button";
 import { PanelCard } from "@/components/ui/PanelCard";
+import {
+  Alert,
+  AlertTitle,
+  LoadingButton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@openzeppelin/ui-builder-ui";
 import { Typography } from "@/components/ui/Typography";
 
 type RunResult = { success: boolean; output: string } | null;
@@ -64,34 +71,42 @@ export function SolutionEditorCard({
         }
         rightContent={
           <>
-            <Button
-              onClick={onRun}
-              disabled={runLoading}
-              variant={hasPassed ? "unstyled" : "accent"}
-              size="none"
-              className={`gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold tracking-wide ${
-                hasPassed ? "rounded-lg border border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22" : ""
-              }`}
-              aria-label={
-                runLoading
-                  ? "Running solution"
-                  : hasPassed
-                    ? "Run solution again"
-                    : "Run solution with Cmd or Control plus Enter shortcut"
-              }
-            >
-              <Typography.Span
-                aria-hidden
-                className={`inline-flex size-4 items-center justify-center rounded-full border text-[10px] ${
-                  hasPassed
-                    ? "border-emerald-400/60 bg-emerald-500/20 text-move-text"
-                    : "border-white/35 bg-white/15 text-white"
-                }`}
-              >
-                {runLoading ? "…" : hasPassed ? "✓" : "▶"}
-              </Typography.Span>
-              {runLoading ? "Running…" : hasPassed ? "Run Again" : runLabel}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <LoadingButton
+                  onClick={onRun}
+                  disabled={runLoading}
+                  loading={runLoading}
+                  className={`inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold tracking-wide sm:text-sm ${
+                    hasPassed
+                      ? "border border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22"
+                      : "border border-oz-violet/70 bg-gradient-to-r from-oz-violet to-indigo-500 text-white shadow-[0_0_18px_rgba(124,58,237,0.35)] hover:brightness-110"
+                  }`}
+                  aria-label={
+                    runLoading
+                      ? "Running solution"
+                      : hasPassed
+                        ? "Run solution again"
+                        : "Run solution with Cmd or Control plus Enter shortcut"
+                  }
+                >
+                  <Typography.Span
+                    aria-hidden
+                    className={`inline-flex size-4 items-center justify-center rounded-full border text-[10px] ${
+                      hasPassed
+                        ? "border-emerald-400/60 bg-emerald-500/20 text-move-text"
+                        : "border-white/35 bg-white/15 text-white"
+                    }`}
+                  >
+                    {runLoading ? "…" : hasPassed ? "✓" : "▶"}
+                  </Typography.Span>
+                  {runLoading ? "Running…" : hasPassed ? "Run Again" : runLabel}
+                </LoadingButton>
+              </TooltipTrigger>
+              <TooltipContent className="border-move-border bg-move-panel text-move-text">
+                <p className="text-xs">Run solution (Cmd+Enter or Ctrl+Enter)</p>
+              </TooltipContent>
+            </Tooltip>
           </>
         }
       />
@@ -212,8 +227,9 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
         </SyntaxHighlighter>
       </div>
       {runResult && (
-        <div
-          className={`border-t border-move-border p-4 font-mono text-xs whitespace-pre-wrap ${
+        <Alert
+          variant={runResult.success ? "success" : "destructive"}
+          className={`mx-4 mb-4 mt-5 rounded-lg border p-4 font-mono text-xs [&>svg]:hidden ${
             runResult.success
               ? "border-emerald-400/55 bg-emerald-500/12 text-emerald-200"
               : "border-red-400/55 bg-red-500/12 text-red-200"
@@ -221,14 +237,15 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
           role="status"
           aria-live="polite"
         >
-          <Typography.P
-            variant="unstyled"
-            className={`mb-1 font-semibold ${runResult.success ? "text-emerald-300" : "text-red-300"}`}
+          <AlertTitle
+            className={`mb-1 font-semibold ${
+              runResult.success ? "text-emerald-300" : "text-red-300"
+            }`}
           >
             {runResult.success ? runSuccessLabel : runErrorLabel}
-          </Typography.P>
-          <pre className="text-inherit overflow-x-auto">{runResult.output}</pre>
-        </div>
+          </AlertTitle>
+          <pre className="text-inherit overflow-x-auto whitespace-pre-wrap">{runResult.output}</pre>
+        </Alert>
       )}
     </PanelCard>
   );

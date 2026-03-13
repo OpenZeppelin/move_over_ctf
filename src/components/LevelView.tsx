@@ -7,7 +7,6 @@ import { LEVEL_RUN_CONFIG, type Level } from "@/data/levels";
 import { codeStyleDark, codeStyleLight } from "@/lib/codeHighlight";
 import { markLevelSolved, saveSolutionForLevel } from "@/lib/progressStorage";
 import { LevelHeader } from "@/components/level-view/LevelHeader";
-import { ModuleRelationshipMap } from "@/components/level-view/ModuleRelationshipMap";
 import { ContractCodeCard } from "@/components/level-view/ContractCodeCard";
 import { LevelTabs, type LevelTab } from "@/components/level-view/LevelTabs";
 import { InstructionsTabContent } from "@/components/level-view/InstructionsTabContent";
@@ -42,7 +41,6 @@ export function LevelView({ level }: { level: Level }) {
 
   const {
     contractModules,
-    moduleDependencyGraph,
     activeContractIndex,
     setActiveContractIndex,
     activeContractCode,
@@ -129,10 +127,6 @@ export function LevelView({ level }: { level: Level }) {
           />
         ) : (
           <div id="panel-code" role="tabpanel" aria-labelledby="tab-code" className="flex flex-col gap-4">
-            {moduleDependencyGraph && (
-              <ModuleRelationshipMap graph={moduleDependencyGraph} runModule={runConfig?.module} />
-            )}
-
             <ContractCodeCard
               modulePath={modulePath}
               contractModules={contractModules}

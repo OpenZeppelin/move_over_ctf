@@ -42,6 +42,8 @@ npx serve out
 
 Then open the URL shown (e.g. `http://localhost:3000`).
 
+The app uses [@openzeppelin/ui-builder-ui](https://www.npmjs.com/package/@openzeppelin/ui-builder-ui) for the locale select, level tabs, contract-module tabs, header progress bar (with tooltip), run button (with loading state and tooltip), run result alerts (success/error), and tooltips. The rest of the UI (buttons, cards, typography) uses local components in `src/components/ui/`.
+
 ## Project structure
 
 | Path | Purpose |

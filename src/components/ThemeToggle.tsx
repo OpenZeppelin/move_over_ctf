@@ -6,7 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
 
-const EMPTY_SUBSCRIBE = () => () => {};
+const EMPTY_SUBSCRIBE = () => () => { };
 
 function useHasHydrated() {
   return useSyncExternalStore(EMPTY_SUBSCRIBE, () => true, () => false);
@@ -20,10 +20,10 @@ export function ThemeToggle() {
   if (!hasHydrated || resolvedTheme === undefined) {
     return (
       <Typography.Span
-        className="inline-flex size-10 items-center justify-center rounded-lg border border-move-border bg-move-panel"
+        className="inline-flex size-12 items-center justify-center rounded-lg border border-move-border bg-move-panel sm:size-14"
         aria-hidden
       >
-        <Typography.Span className="size-5 rounded-full bg-move-muted/30" />
+        <Typography.Span className="size-6 rounded-full bg-move-muted/30 sm:size-7" />
       </Typography.Span>
     );
   }
@@ -36,7 +36,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       variant="panel"
       size="icon"
-      className="hover:bg-move-border/50"
+      className="hover:bg-move-border/50 w-20"
       aria-label={label}
       title={label}
     >

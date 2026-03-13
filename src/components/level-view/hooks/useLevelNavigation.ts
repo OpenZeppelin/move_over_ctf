@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { LEVEL_IDS } from "@/data/levels";
 import type { LevelContractModule } from "@/data/levels/types";
 import { parseModulePath } from "@/lib/contractCode";
-import { buildModuleDependencyGraph } from "@/lib/moduleDependencyGraph";
 
 type Input = {
   levelId: number;
@@ -47,11 +46,6 @@ export function useLevelNavigation({
       },
     ];
   }, [contractCode, contractModules]);
-
-  const moduleDependencyGraph = useMemo(
-    () => buildModuleDependencyGraph(normalizedContractModules, runModule),
-    [normalizedContractModules, runModule],
-  );
 
   const selectionKey = useMemo(
     () =>
@@ -99,7 +93,6 @@ export function useLevelNavigation({
 
   return {
     contractModules: normalizedContractModules,
-    moduleDependencyGraph,
     activeContractIndex,
     setActiveContractIndex,
     activeContractCode,

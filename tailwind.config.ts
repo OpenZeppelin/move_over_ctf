@@ -6,6 +6,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/data/levels/difficulty.ts",
+    "./node_modules/@openzeppelin/ui-builder-ui/dist/*.js",
   ],
   safelist: [
     /* Difficulty badge and text (values from difficulty.ts – used via dynamic keys) */
@@ -40,7 +41,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
 
 export default config;

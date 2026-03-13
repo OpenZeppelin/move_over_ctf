@@ -2,8 +2,8 @@ import type { CSSProperties } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import type { LevelContractModule } from "@/data/levels/types";
 import { CodeWindowHeader } from "@/components/ui/CodeWindowHeader";
-import { Button } from "@/components/ui/Button";
 import { PanelCard } from "@/components/ui/PanelCard";
+import { Tabs, TabsList, TabsTrigger } from "@openzeppelin/ui-builder-ui";
 
 type Props = {
   modulePath: string;
@@ -26,29 +26,25 @@ export function ContractCodeCard({
     <PanelCard>
       <CodeWindowHeader label="Contract:" value={`${modulePath}.move`} />
       {contractModules.length > 1 && (
-        <div className="flex flex-wrap gap-1 border-b border-move-border bg-move-panel/60 px-2 py-1.5">
-          {contractModules.map((contract, idx) => {
-            const isActive = idx === activeContractIndex;
-            return (
-              <Button
+        <Tabs
+          value={String(activeContractIndex)}
+          onValueChange={(v) => onSelectContract(Number(v))}
+          className="w-full"
+        >
+          <TabsList className="flex h-auto w-full justify-start gap-1 rounded-none border-b border-move-border bg-move-panel/60 p-2 shadow-none">
+            {contractModules.map((contract, idx) => (
+              <TabsTrigger
                 key={`${contract.module}-${idx}`}
-                onClick={() => onSelectContract(idx)}
-                variant="unstyled"
-                size="none"
-                className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-mono ${
-                  isActive
-                    ? "border-oz-violet/45 bg-oz-violet/15 text-oz-violet"
-                    : "border-move-border bg-move-dark text-move-muted hover:text-move-text"
-                }`}
+                value={String(idx)}
+                className="rounded-md border px-2.5 py-1 text-[11px] font-mono data-[state=inactive]:border-move-border data-[state=inactive]:bg-move-dark data-[state=inactive]:text-move-muted data-[state=inactive]:hover:text-move-text data-[state=active]:border-oz-violet/45 data-[state=active]:bg-oz-violet/15 data-[state=active]:text-oz-violet sm:text-xs"
                 title={`Open ${contract.module}.move`}
                 aria-label={`Open ${contract.module}.move`}
-                aria-pressed={isActive}
               >
                 {contract.module}.move
-              </Button>
-            );
-          })}
-        </div>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       )}
       <div className="border-l-[3px] border-l-[var(--oz-violet)] bg-move-panel">
         <SyntaxHighlighter
