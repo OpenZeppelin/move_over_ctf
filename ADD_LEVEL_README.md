@@ -1,9 +1,10 @@
 # How to Add a New Level
 
-This repo is browser-first.  
-The level source of truth is in `public/contracts`, then `meta.ts` is generated from it.
+This repo is browser-first: the level source of truth is **`public/contracts`**. Contract files there drive the UI and the in-browser runner; `meta.ts` is generated from them and from `meta.config.json`. This guide covers the automated flow and, for reference, manual steps and conventions.
 
-## Fast path (automated script)
+**To remove a level instead,** see [DELETE_LEVEL_README.md](DELETE_LEVEL_README.md).
+
+## Quick path (automated script)
 
 Run:
 
@@ -13,61 +14,43 @@ npm run create:level
 
 You will be prompted for:
 
-- Name
-- Difficulty
-- Instructions
-- Move code
+- **Name** — Level display name
+- **Difficulty** — `easy`, `medium`, or `hard`
+- **Instructions** — Markdown shown to the player (mission, hints context)
+- **Move code** — Full source of the challenge module
 
-The script will automatically:
+The script will:
 
 - Create `public/contracts/<module>.move` from your Move code
 - Add a new level entry to `src/data/levels/meta.config.json`
 - Add a new level entry to `src/data/levels/runConfig.ts`
-- Add English content to `src/data/levels/content/en.json` (including optional author + hints metadata)
-- Run `node scripts/sync-meta-from-public.mjs`
+- Add English content to `src/data/levels/content/en.json` (name, description derived from instructions, optional author and hints)
+- Run `node scripts/sync-meta-from-public.mjs` to regenerate `meta.ts`
 
-After that, start dev/build as usual.
+Then run `npm run dev` or `npm run build` as usual.
 
-## Delete level (automated script)
+## Files you touch when adding a level
 
-Run:
+When adding a level (by script or by hand), these are the places that change:
 
-```bash
-npm run delete:level
-```
-
-The script will:
-
-- Prompt for level id
-- Ask for confirmation
-- Remove the level from `meta.config.json`
-- Remove and reindex entries in `runConfig.ts`
-- Remove and reindex entries in all `src/data/levels/content/*.json`
-- Delete `public/contracts/<module>.move` (if no other level uses the same module)
-- Run `node scripts/sync-meta-from-public.mjs`
-
-Note: it reindexes higher level ids by `-1` to keep level routes contiguous.
-
-## What to edit
-
-When adding a level, you usually touch these files:
-
-1. `public/contracts/<module>.move` (new challenge contract)
-2. `src/data/levels/meta.config.json` (id + difficulty + module mapping)
-3. `src/data/levels/runConfig.ts` (runner module + expected return type)
-4. `src/data/levels/content/en.json` (name, description, instructions, optional author, optional hints)
-5. Optional: other `src/data/levels/content/<locale>.json` files
+| File | Purpose |
+|------|--------|
+| `public/contracts/<module>.move` | Challenge contract (new file) |
+| `src/data/levels/meta.config.json` | id, difficulty, module (and optional `modules` list) |
+| `src/data/levels/runConfig.ts` | Runner module name and expected return type for this level |
+| `src/data/levels/content/en.json` | name, description, instructions; optional `author`, `hints` |
+| `src/data/levels/content/<locale>.json` | Optional: same structure for other locales |
 
 ## Contract conventions
 
-Use these conventions so the web runner verifies correctly:
+The in-browser runner expects a consistent shape so it can compile and verify solutions:
 
-- Module name format: `module move_over::<module>;`
-- The solution should return a proof/flag type, e.g. `MyLevelFlag`
-- The challenge module should construct that flag type only on the solved path
-- Keep contract API simple for browser execution
+- **Module format:** `module move_over::<module_name>;`
+- **Flag type:** The solution must return a proof/flag type (e.g. `MyLevelFlag`) that the challenge module defines.
+- **Solved path only:** The challenge should construct or expose that flag only when the intended exploit is executed.
+- **API:** Keep the contract API simple so it runs reliably in the browser.
 
-Example shape:
+Example skeleton:
 
 ```move
 module move_over::my_level;
@@ -89,17 +72,19 @@ public fun solve(v: Vault, _ctx: &mut tx_context::TxContext): MyLevelFlag {
 }
 ```
 
-## Step-by-step
+The player’s solution will implement a `run()` that is invoked by the runner; it must return the same flag type (e.g. `MyLevelFlag`) for the level to be marked solved.
 
-### 1) Add the contract
+## Manual step-by-step
 
-Create:
+If you prefer to add a level without the script:
 
-- `public/contracts/<module>.move`
+### 1. Add the contract
 
-### 2) Register it in meta config
+Create `public/contracts/<module>.move` with your Move module (following the conventions above).
 
-Append to `src/data/levels/meta.config.json`:
+### 2. Register in meta config
+
+Append an entry to `src/data/levels/meta.config.json`:
 
 ```json
 {
@@ -109,9 +94,11 @@ Append to `src/data/levels/meta.config.json`:
 }
 ```
 
-### 3) Add runner config
+For levels that use multiple modules, you can add a `modules` array; the primary `module` is the one used for display/runner.
 
-Add entry to `src/data/levels/runConfig.ts`:
+### 3. Add runner config
+
+Add an entry in `src/data/levels/runConfig.ts`:
 
 ```ts
 3: {
@@ -121,11 +108,11 @@ Add entry to `src/data/levels/runConfig.ts`:
 },
 ```
 
-`typeName` must match the contract return type expected from `run()`.
+`typeName` must match the flag type your contract returns from the solved path.
 
-### 4) Add level text
+### 4. Add level content
 
-Add key `"3"` in `src/data/levels/content/en.json`:
+In `src/data/levels/content/en.json`, add a key for the level id (e.g. `"3"`):
 
 ```json
 "3": {
@@ -143,9 +130,9 @@ Add key `"3"` in `src/data/levels/content/en.json`:
 }
 ```
 
-You can add other locales now, or rely on English fallback.
+You can add the same key to other locale files or rely on English fallback.
 
-### 5) Regenerate metadata
+### 5. Regenerate metadata
 
 Run:
 
@@ -153,29 +140,19 @@ Run:
 npm run sync:meta
 ```
 
-This rebuilds `src/data/levels/meta.ts` from `public/contracts`.
+This rebuilds `src/data/levels/meta.ts` from `public/contracts` and the config.
 
-### 6) Validate
+### 6. Validate
 
-Run:
-
-```bash
-npm run dev
-```
-
-Check that:
+Run `npm run dev`, open the level in the UI, and confirm:
 
 - The level appears in the sidebar/picker
-- Contract code renders correctly
-- Running a solution compiles and executes
+- Contract code and instructions render correctly
+- Running a solution compiles and executes, and returning the correct flag type marks the level solved
 
-Then run:
-
-```bash
-npm run build
-```
+Then run `npm run build` to ensure the production build works.
 
 ## Notes
 
-- `move_over/` is optional for browser-only flow and hosting.
-- `sync:contracts` is legacy and not required for the current level flow.
+- The optional `move_over/` directory and `npm run sync:contracts` are legacy; the current flow uses `public/contracts` and `sync:meta` only.
+- After adding a level, consider adding or updating translations in `src/data/levels/content/<locale>.json` for other languages.
