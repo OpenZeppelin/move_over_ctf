@@ -1,0 +1,25 @@
+# Dependencies and build output
+node_modules
+.next
+out
+build
+dist
+
+# Git and IDE
+.git
+.gitignore
+.idea
+.vscode
+*.swp
+*.swo
+
+# Env and debug
+.env
+.env.*
+*.log
+
+# OS and misc
+.DS_Store
+Thumbs.db
+*.md
+!README.md
