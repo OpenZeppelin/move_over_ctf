@@ -46,7 +46,8 @@ export function LocaleProvider({
         localStorage.setItem(LOCALE_STORAGE_KEY, next);
         document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; SameSite=Lax`;
         document.documentElement.lang = next === "zh-Hans" ? "zh-Hans" : next === "zh-Hant" ? "zh-Hant" : next;
-        document.documentElement.dir = next === "ar" ? "rtl" : "ltr";
+        /* Keep layout LTR; Arabic is displayed in LTR layout without mirroring */
+        document.documentElement.dir = "ltr";
       }
     } catch {
       // ignore
@@ -56,7 +57,7 @@ export function LocaleProvider({
   useEffect(() => {
     if (!mounted || typeof document === "undefined") return;
     document.documentElement.lang = locale === "zh-Hans" ? "zh-Hans" : locale === "zh-Hant" ? "zh-Hant" : locale;
-    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = "ltr";
   }, [mounted, locale]);
 
   const t = useMemo(

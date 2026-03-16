@@ -87,3 +87,13 @@ body {
   padding: 0.2em 0.4em !important;
   font-size: 0.875em !important;
 }
+
+/* Select item: checkmark on the right (override @openzeppelin/ui-builder-ui default left-2) */
+[data-slot="select-item"] {
+  padding-left: 0.5rem;
+  padding-right: 2rem;
+}
+[data-slot="select-item-indicator"] {
+  left: auto;
+  right: 0.5rem;
+}
