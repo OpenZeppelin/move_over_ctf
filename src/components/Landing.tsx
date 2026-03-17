@@ -74,7 +74,7 @@ export function Landing() {
         <div className="mx-auto max-w-5xl min-h-full flex items-center justify-center">
           <PanelCard as="section" className="w-full">
             <div className="border-b border-move-border bg-move-dark/60 px-4 sm:px-6 py-3 font-mono text-xs text-move-muted">
-              move-over://landing
+              {t("landing.landingUrl")}
             </div>
 
             <div className="p-5 sm:p-8">
@@ -86,49 +86,48 @@ export function Landing() {
                   variant="unstyled"
                   className="mt-2 text-sm sm:text-lg text-oz-violet font-medium"
                 >
-                  Browser-based Move security wargame
+                  {t("landing.subtitle")}
                 </Typography.P>
                 <Typography.P className="mt-4">
-                  Move-over is a browser-first CTF for Move security. Read vulnerable contracts, write the `run()`
-                  exploit path, and return the right `*Flag` to clear each level.
+                  {t("landing.intro")}
                 </Typography.P>
                 <Typography.P variant="smallMuted" className="mt-3">
-                  Move-over is open source. Explore the code on{" "}
+                  {t("landing.introMuted")}{" "}
                   <a
                     href="https://github.com/OpenZeppelin/move_over_ctf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-oz-violet hover:underline"
                   >
-                    GitHub
+                    {t("landing.github")}
                   </a>
                   .
                 </Typography.P>
               </div>
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
-                  <Typography.P variant="cardLabel">Format</Typography.P>
+                  <Typography.P variant="cardLabel">{t("landing.cardFormat")}</Typography.P>
                   <Typography.P variant="cardValue" className="mt-1">
-                    Capture-the-Flag
+                    {t("landing.cardValueCtf")}
                   </Typography.P>
                 </div>
                 <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
-                  <Typography.P variant="cardLabel">Runtime</Typography.P>
+                  <Typography.P variant="cardLabel">{t("landing.cardRuntime")}</Typography.P>
                   <Typography.P variant="cardValue" className="mt-1">
-                    100% in Browser
+                    {t("landing.cardValueBrowser")}
                   </Typography.P>
                 </div>
                 <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
-                  <Typography.P variant="cardLabel">Goal</Typography.P>
+                  <Typography.P variant="cardLabel">{t("landing.cardGoal")}</Typography.P>
                   <Typography.P variant="cardValue" className="mt-1">
-                    Return the `*Flag`
+                    {t("landing.cardValueReturnFlag")}
                   </Typography.P>
                 </div>
               </div>
 
               <div className="mt-5 rounded-lg border border-move-border bg-move-dark/70 overflow-hidden">
                 <div className="px-4 py-2 border-b border-move-border bg-move-panel/60 font-mono text-xs text-move-accent">
-                  Live Security Feed
+                  {t("landing.feedTitle")}
                 </div>
                 <div className="relative h-56 sm:h-64 overflow-hidden font-mono text-[11px] sm:text-xs glitch-feed">
                   <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-move-dark/95 to-transparent z-10" />
@@ -138,35 +137,35 @@ export function Landing() {
                   <div className="hack-scroll-track absolute inset-0 px-4 py-3 text-move-muted">
                     <div className="hack-glitch-copy">
                       <div className="space-y-1.5">
-                        <Typography.P variant="unstyled">[00:00:01] booting move-over browser runtime...</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:02] loading challenge set: genesis, lockbox, fallout</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:03] objective detected: return level::Flag</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:04] parsing run() template... ready</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:05] no wallet requested, no network required</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine1")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine2")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine3")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine4")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine5")}</Typography.P>
                         <Typography.P variant="unstyled">
-                          <Typography.Span>[00:00:06] partner channel connected: </Typography.Span>
+                          <Typography.Span>{t("landing.feedLine6Prefix")} </Typography.Span>
                           <ProgressiveGlitchText text="OpenZeppelin" className="text-oz-violet" />
                         </Typography.P>
-                        <Typography.P variant="unstyled">[00:00:07] exploit simulation sandbox: active</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:08] verifier status: waiting for your code...</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine7")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine8")}</Typography.P>
                         <Typography.P variant="unstyled" className="text-move-text">
-                          [00:00:09] write run() and press Run_
+                          {t("landing.feedLine9")}
                         </Typography.P>
                       </div>
                       <div className="mt-6 space-y-1.5">
-                        <Typography.P variant="unstyled">[00:00:01] booting move-over browser runtime...</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:02] loading challenge set: genesis, lockbox, fallout</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:03] objective detected: return level::Flag</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:04] parsing run() template... ready</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:05] no wallet requested, no network required</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine1")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine2")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine3")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine4")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine5")}</Typography.P>
                         <Typography.P variant="unstyled">
-                          <Typography.Span>[00:00:06] partner channel connected: </Typography.Span>
+                          <Typography.Span>{t("landing.feedLine6Prefix")} </Typography.Span>
                           <ProgressiveGlitchText text="OpenZeppelin" className="text-oz-violet" />
                         </Typography.P>
-                        <Typography.P variant="unstyled">[00:00:07] exploit simulation sandbox: active</Typography.P>
-                        <Typography.P variant="unstyled">[00:00:08] verifier status: waiting for your code...</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine7")}</Typography.P>
+                        <Typography.P variant="unstyled">{t("landing.feedLine8")}</Typography.P>
                         <Typography.P variant="unstyled" className="text-move-text">
-                          [00:00:09] write run() and press Run_
+                          {t("landing.feedLine9")}
                         </Typography.P>
                       </div>
                     </div>
@@ -176,46 +175,36 @@ export function Landing() {
 
               <section className="mt-6 rounded-lg border border-move-border bg-move-dark/45 p-4 sm:p-6 text-left">
                 <Typography.H2>
-                  Move Smart Contract Security in a Browser Runtime
+                  {t("landing.sectionTitle")}
                 </Typography.H2>
                 <Typography.P className="mt-2">
-                  Move-over is a browser-based security playground where you learn by doing. Instead of reading theory
-                  only, you inspect vulnerable contract code, write an exploit flow, run it instantly, and verify that
-                  your solution can return the expected proof object. The core loop is practical: read, write, run,
-                  return, and improve.
+                  {t("landing.sectionIntro")}
                 </Typography.P>
 
                 <Typography.H3 className="mt-4">
-                  How the Move-over Browser Workflow Operates
+                  {t("landing.howItWorksTitle")}
                 </Typography.H3>
                 <Typography.P className="mt-2">
-                  Every level runs in an in-browser runtime, so there is no wallet setup, chain state dependency, or
-                  local VM requirement to start practicing. You focus on Move security logic: ownership checks,
-                  capability misuse, object state transitions, and how to craft a safe, reproducible exploit path that
-                  passes verification.
+                  {t("landing.howItWorksBody")}
                 </Typography.P>
 
                 <Typography.H4 className="mt-4">
-                  Write `run()`, Return the `Flag`, and Pass the Level
+                  {t("landing.writeRunTitle")}
                 </Typography.H4>
                 <Typography.P className="mt-2">
-                  Your target is explicit: write the `run()` body so it can return the correct `*Flag` object for the
-                  challenge. If the return type and behavior match the level contract requirements, the level is
-                  cleared and your progress is saved.
+                  {t("landing.writeRunBody")}
                 </Typography.P>
 
-                <Typography.H5 className="mt-4">Core Skills You Practice</Typography.H5>
+                <Typography.H5 className="mt-4">{t("landing.coreSkillsTitle")}</Typography.H5>
                 <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-move-text/90">
-                  <li>Read and reason about Move smart contract security behavior.</li>
-                  <li>Write exploit-oriented logic in a controlled browser environment.</li>
-                  <li>Return proof objects correctly and validate deterministic outcomes.</li>
+                  <li>{t("landing.coreSkill1")}</li>
+                  <li>{t("landing.coreSkill2")}</li>
+                  <li>{t("landing.coreSkill3")}</li>
                 </ul>
 
-                <Typography.H6 className="mt-4">Recommended Starting Path</Typography.H6>
+                <Typography.H6 className="mt-4">{t("landing.recommendedTitle")}</Typography.H6>
                 <Typography.P className="mt-2">
-                  Start with Genesis for fundamentals, continue with Lockbox for object manipulation patterns, and then
-                  tackle Fallout for deeper exploit reasoning. This sequence builds practical Move security intuition
-                  step by step.
+                  {t("landing.recommendedBody")}
                 </Typography.P>
               </section>
             </div>
@@ -226,7 +215,7 @@ export function Landing() {
                   href={`/${locale}/levels/how-to-play`}
                   className="group inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-7 py-3 rounded-lg bg-oz-violet text-white text-sm sm:text-base font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
                 >
-                  Start with How to Play
+                  {t("landing.startHowToPlay")}
                   <Typography.Span className="opacity-80 group-hover:translate-x-1 transition-transform">→</Typography.Span>
                 </Link>
                 <Link
@@ -249,7 +238,7 @@ export function Landing() {
             rel="noopener noreferrer"
             className="hover:text-move-text hover:underline"
           >
-            GitHub
+            {t("landing.footerGitHub")}
           </a>
           <Typography.Span aria-hidden>·</Typography.Span>
           <a
@@ -258,7 +247,7 @@ export function Landing() {
             rel="noopener noreferrer"
             className="hover:text-move-text hover:underline"
           >
-            X
+            {t("landing.footerX")}
           </a>
           <Typography.Span aria-hidden>·</Typography.Span>
           <a
@@ -267,10 +256,10 @@ export function Landing() {
             rel="noopener noreferrer"
             className="hover:text-move-text hover:underline"
           >
-            LinkedIn
+            {t("landing.footerLinkedIn")}
           </a>
           <Typography.Span aria-hidden>·</Typography.Span>
-          <Typography.Span>© 2026 Zeppelin Group Ltd</Typography.Span>
+          <Typography.Span>{t("landing.footerCopyright")}</Typography.Span>
         </div>
       </footer>
       <style jsx>{`

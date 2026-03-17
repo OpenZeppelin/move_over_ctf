@@ -14,43 +14,23 @@ export interface LevelRunConfig {
 
 export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
   0: {
-    module: "genesis",
-    typeName: "GenesisFlag",
+    module: "artifact",
+    typeName: "ArtifactFlag",
     solutionModule: "level_0_solution",
   },
   1: {
-    module: "lockbox",
-    typeName: "LockboxFlag",
+    module: "coin_collector",
+    typeName: "CoinCollectorFlag",
     solutionModule: "level_1_solution",
   },
-  2: {
-    module: "relay_gateway",
-    typeName: "RelayFlag",
-    solutionModule: "level_2_solution",
-  },
   3: {
-    module: "artifact",
-    typeName: "ArtifactFlag",
+    module: "sticky_treasure",
+    typeName: "StickyTreasureFlag",
     solutionModule: "level_3_solution",
   },
   4: {
-    module: "coin_collector",
-    typeName: "CoinCollectorFlag",
-    solutionModule: "level_4_solution",
-  },
-  5: {
-    module: "nested_vault",
-    typeName: "NestedVaultFlag",
-    solutionModule: "level_5_solution",
-  },
-  7: {
-    module: "sticky_treasure",
-    typeName: "StickyTreasureFlag",
-    solutionModule: "level_7_solution",
-  },
-  8: {
     module: "sticky_treasure_dof",
     typeName: "ObjectChestFlag",
-    solutionModule: "level_8_solution",
+    solutionModule: "level_4_solution",
   },
 };

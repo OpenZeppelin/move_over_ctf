@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "神器",
+    "description": "本关目标：锻造神器、为其充能并击碎它以夺取旗帜。",
+    "instructions": "# 第 0 关：神器\n\n本关目标：锻造神器、为其充能并击碎它以夺取旗帜。\n\n可参考：\n\n- Sui 对象与 `TxContext`\n- 可变引用（`&mut`）\n- Move 所有权模型：按值传递与按引用传递",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "硬币收集者",
+    "description": "本关目标：从自动售货机购买奖品。奖品需要 1,000 代币，但水龙头只...",
+    "instructions": "# 第 1 关：硬币收集者\n\n本关目标：从自动售货机购买奖品。奖品需要 1,000 代币，但水龙头只给你 100。\n\n可参考：\n\n- Sui 的硬币模型：硬币是对象，不是余额映射\n- `split` 与 `merge` 操作",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "`buy_prize` 实际校验的是什么？"
+    ]
+  },
+  "3": {
+    "name": "黏性宝藏",
+    "description": "本关目标：从宝箱中救出奖品并夺取旗帜。",
+    "instructions": "# 第 3 关：黏性宝藏\n\n本关目标：从宝箱中救出奖品并夺取旗帜。\n\n可参考：\n\n- `sui::dynamic_field`\n- 孤立字段\n- 操作顺序",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "对象宝箱",
+    "description": "从宝箱中救出奖品并夺取旗帜——思路与黏性宝藏相同，但奖品以动态对象字段存储。",
+    "instructions": "# 第 4 关：对象宝箱\n\n本关目标：从宝箱中救出奖品并夺取旗帜。宝箱将奖品存为**动态对象字段**（带 `key` 的对象），因此仍可通过 ID 发现。\n\n可参考：\n\n- `sui::dynamic_object_field`\n- 与黏性宝藏相同流程：创建、提取、解决\n- 操作顺序",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

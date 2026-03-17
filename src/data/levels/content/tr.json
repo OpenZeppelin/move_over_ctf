@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "Eser",
+    "description": "Bu seviyenin amacı bir eser dövmek, şarj etmek ve bayrağı ele geçirmek için parçalamaktır.",
+    "instructions": "# Seviye 0: Eser\n\nBu seviyenin amacı bir eser dövmek, şarj etmek ve bayrağı ele geçirmek için parçalamaktır.\n\nYardımcı olabilecek şeyler:\n\n- Sui nesneleri ve `TxContext`\n- Değiştirilebilir referanslar (`&mut`)\n- Move'un mülkiyet modeli: değerle vs referansla geçirme",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "Madeni para toplayıcı",
+    "description": "Bu seviyenin amacı otomattan ödülü satın almaktır. Ödül 1.000 token ama musluk sadece...",
+    "instructions": "# Seviye 1: Madeni para toplayıcı\n\nBu seviyenin amacı otomattan ödülü satın almaktır. Ödül 1.000 token ama musluk size sadece 100 veriyor.\n\nYardımcı olabilecek şeyler:\n\n- Sui'nin coin modeli: coinler nesnedir, bakiye eşlemeleri değil\n- `split` ve `merge` işlemleri",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "`buy_prize` aslında neyi doğruluyor?"
+    ]
+  },
+  "3": {
+    "name": "Yapışkan hazine",
+    "description": "Bu seviyenin amacı hazine sandığından ödülü kurtarmak ve bayrağı ele geçirmektir.",
+    "instructions": "# Seviye 3: Yapışkan hazine\n\nBu seviyenin amacı hazine sandığından ödülü kurtarmak ve bayrağı ele geçirmektir.\n\nYardımcı olabilecek şeyler:\n\n- `sui::dynamic_field`\n- Yetim alanlar\n- İşlem sırası",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "Nesne sandığı",
+    "description": "Sandıktan ödülü kurtarın ve bayrağı ele geçirin—Yapışkan hazine ile aynı fikir, ama ödül dinamik nesne alanı olarak saklanıyor.",
+    "instructions": "# Seviye 4: Nesne sandığı\n\nBu seviyenin amacı hazine sandığından ödülü kurtarmak ve bayrağı ele geçirmektir. Sandık ödülü **dinamik nesne alanı** (`key` içeren bir nesne) olarak saklar, bu yüzden ID ile bulunabilir kalır.\n\nYardımcı olabilecek şeyler:\n\n- `sui::dynamic_object_field`\n- Yapışkan hazine ile aynı akış: oluştur, çıkar, çöz\n- İşlem sırası",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

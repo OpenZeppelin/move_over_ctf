@@ -5,6 +5,7 @@ import type { Level } from "@/data/levels";
 import { DIFFICULTY_BADGE_CLASS } from "@/data/levels";
 import { Typography } from "@/components/ui/Typography";
 import { useLocale } from "@/contexts/LocaleContext";
+import { replaceTemplate } from "@/i18n/utils";
 
 type Props = {
   level: Level;
@@ -31,7 +32,7 @@ export function LevelHeader({
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <Typography.Span
           className="font-mono text-[10px] sm:text-xs uppercase tracking-widest px-2.5 py-1 rounded border border-move-border bg-move-dark text-move-muted"
-          aria-label={`Level ${level.id}`}
+          aria-label={replaceTemplate(t("level.levelAriaLabel"), { id: level.id })}
         >
           Level {level.id}
         </Typography.Span>
@@ -46,8 +47,8 @@ export function LevelHeader({
             <Link
               href={prevHref}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60"
-              aria-label={prevLevelId !== undefined ? `Go to level ${prevLevelId}` : "Go to How to Play"}
-              title={prevLevelId !== undefined ? `Previous level (${prevLevelId})` : "How to Play"}
+              aria-label={prevLevelId !== undefined ? replaceTemplate(t("level.goToLevel"), { id: prevLevelId }) : t("level.goToHowToPlay")}
+              title={prevLevelId !== undefined ? replaceTemplate(t("level.prevLevel"), { id: prevLevelId }) : t("sidebar.howToPlay")}
             >
               ←
             </Link>
@@ -56,8 +57,8 @@ export function LevelHeader({
             <Link
               href={`/${locale}/levels/${nextLevelId}`}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-move-border bg-move-dark text-move-text hover:bg-move-panel transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60"
-              aria-label={`Go to level ${nextLevelId}`}
-              title={`Next level (${nextLevelId})`}
+              aria-label={replaceTemplate(t("level.goToLevel"), { id: nextLevelId })}
+              title={replaceTemplate(t("level.nextLevel"), { id: nextLevelId })}
             >
               →
             </Link>
@@ -76,7 +77,7 @@ export function LevelHeader({
         <Typography.Span className="text-move-muted/70" aria-hidden>
           ·
         </Typography.Span>
-        <Typography.Span className="text-move-muted/80">Contract:</Typography.Span>
+        <Typography.Span className="text-move-muted/80">{t("level.contractLabel")}</Typography.Span>
         <code className="text-move-accent">{modulePath}</code>
       </Typography.P>
       <Typography.P variant="smallMuted" className="mt-1">
@@ -84,7 +85,7 @@ export function LevelHeader({
       </Typography.P>
       {level.author && (
         <Typography.P variant="smallMuted" className="mt-1">
-          <Typography.Span className="text-move-muted/80">Author:</Typography.Span>{" "}
+          <Typography.Span className="text-move-muted/80">{t("level.authorLabel")}</Typography.Span>{" "}
           {level.author.github ? (
             <a
               href={level.author.github}

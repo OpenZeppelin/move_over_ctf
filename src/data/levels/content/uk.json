@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "Артефакт",
+    "description": "Мета рівня — викувати артефакт, зарядити його й розбити, щоб захопити прапор.",
+    "instructions": "# Рівень 0: Артефакт\n\nМета рівня — викувати артефакт, зарядити його й розбити, щоб захопити прапор.\n\nЩо може знадобитися:\n\n- Об'єкти Sui та `TxContext`\n- Мутабельні посилання (`&mut`)\n- Модель власності Move: передача за значенням та за посиланням",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "Колекціонер монет",
+    "description": "Мета рівня — купити приз у автоматі. Приз коштує 1 000 токенів, але крани дають лише...",
+    "instructions": "# Рівень 1: Колекціонер монет\n\nМета рівня — купити приз у автоматі. Приз коштує 1 000 токенів, але крани дають лише 100.\n\nЩо може знадобитися:\n\n- Модель монет Sui: монети — це об'єкти, а не відображення балансів\n- Операції `split` та `merge`",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "Що насправді перевіряє `buy_prize`?"
+    ]
+  },
+  "3": {
+    "name": "Липкий скарб",
+    "description": "Мета рівня — дістати приз із скрині зі скарбами й захопити прапор.",
+    "instructions": "# Рівень 3: Липкий скарб\n\nМета рівня — дістати приз із скрині зі скарбами й захопити прапор.\n\nЩо може знадобитися:\n\n- `sui::dynamic_field`\n- Втрачені поля\n- Порядок операцій",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "Скриня об'єктів",
+    "description": "Дістаньте приз із скрині й захопіть прапор — та сама ідея, що в Липкому скарбі, але приз зберігається в динамічному полі об'єкта.",
+    "instructions": "# Рівень 4: Скриня об'єктів\n\nМета рівня — дістати приз із скрині зі скарбами й захопити прапор. Скриня зберігає приз у **динамічному полі об'єкта** (об'єкт із `key`), тому його можна знайти за ID.\n\nЩо може знадобитися:\n\n- `sui::dynamic_object_field`\n- Той самий сценарій, що й у Липкому скарбі: створити, витягнути, розв'язати\n- Порядок операцій",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

@@ -46,7 +46,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
           aria-current={isHowToPlayActive ? "page" : undefined}
         >
           <Typography.Span className="text-move-muted font-mono text-sm w-6">?</Typography.Span>
-          <Typography.Span className="flex-1 truncate font-medium">How to Play</Typography.Span>
+          <Typography.Span className="flex-1 truncate font-medium">{t("sidebar.howToPlay")}</Typography.Span>
         </Link>
         {levels.map((level) => {
           const isActive = !isHowToPlayActive && level.id === currentId;
@@ -81,7 +81,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
                 ))}
               </Typography.Span>
               {level.completed || solvedIds.has(level.id) ? (
-                <Typography.Span className="text-move-success text-sm" title="Completed">
+                <Typography.Span className="text-move-success text-sm" title={t("sidebar.completed")}>
                   ✓
                 </Typography.Span>
               ) : null}

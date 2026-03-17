@@ -10,11 +10,11 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
   const pathname = usePathname();
   const currentId = typeof params?.id === "string" ? Number(params.id) : Number.NaN;
   const isHowToPlayActive = pathname?.includes("/levels/how-to-play") ?? false;
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
 
   return (
     <div className="md:hidden shrink-0 border-b border-move-border bg-move-panel px-3 py-2 overflow-x-auto">
-      <div className="flex gap-2 min-w-max pb-1" role="tablist" aria-label="Select level">
+      <div className="flex gap-2 min-w-max pb-1" role="tablist" aria-label={t("mobilePicker.selectLevelAriaLabel")}>
         <Link
           href={`/${locale}/levels/how-to-play`}
           className={`
@@ -23,7 +23,7 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
           `}
           aria-current={isHowToPlayActive ? "page" : undefined}
         >
-          How to Play
+          {t("mobilePicker.howToPlay")}
         </Link>
         {levels.map((level) => {
           const isActive = !isHowToPlayActive && level.id === currentId;

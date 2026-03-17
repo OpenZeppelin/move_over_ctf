@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "Artefact",
+    "description": "L'objectif de ce niveau est de forger un artefact, le charger et le briser pour capturer le drapeau.",
+    "instructions": "# Niveau 0 : Artefact\n\nL'objectif de ce niveau est de forger un artefact, le charger et le briser pour capturer le drapeau.\n\nPistes utiles :\n\n- Objets Sui et `TxContext`\n- Références mutables (`&mut`)\n- Modèle de propriété Move : passage par valeur vs par référence",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "Collectionneur de pièces",
+    "description": "L'objectif de ce niveau est d'acheter le lot à la machine. Le lot coûte 1 000 jetons mais le robinet n'en donne que...",
+    "instructions": "# Niveau 1 : Collectionneur de pièces\n\nL'objectif de ce niveau est d'acheter le lot à la machine. Le lot coûte 1 000 jetons mais le robinet ne vous en donne que 100.\n\nPistes utiles :\n\n- Modèle des pièces Sui : les pièces sont des objets, pas des soldes\n- Opérations `split` et `merge`",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "Que valide vraiment `buy_prize` ?"
+    ]
+  },
+  "3": {
+    "name": "Trésor collant",
+    "description": "L'objectif de ce niveau est de récupérer le lot dans le coffre au trésor et capturer le drapeau.",
+    "instructions": "# Niveau 3 : Trésor collant\n\nL'objectif de ce niveau est de récupérer le lot dans le coffre au trésor et capturer le drapeau.\n\nPistes utiles :\n\n- `sui::dynamic_field`\n- Champs orphelins\n- Ordre des opérations",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "Coffre à objets",
+    "description": "Récupérez le lot dans le coffre et capturez le drapeau — même idée que Trésor collant, mais le lot est stocké dans un champ d'objet dynamique.",
+    "instructions": "# Niveau 4 : Coffre à objets\n\nL'objectif de ce niveau est de récupérer le lot dans le coffre au trésor et capturer le drapeau. Le coffre stocke le lot dans un **champ d'objet dynamique** (objet avec `key`), donc repérable par ID.\n\nPistes utiles :\n\n- `sui::dynamic_object_field`\n- Même déroulé que Trésor collant : créer, extraire, résoudre\n- Ordre des opérations",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

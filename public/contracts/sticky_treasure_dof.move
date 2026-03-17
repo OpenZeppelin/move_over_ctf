@@ -24,7 +24,7 @@ fun prize_key(): PrizeKey {
 
 public fun create(ctx: &mut TxContext): Chest {
     let mut chest = Chest { id: object::new(ctx) };
-    let prize = Prize { id: object::new(ctx), value: 1000 };
+    let prize = Prize { id: object::new(ctx), value: 2000 };
     dof::add(&mut chest.id, prize_key(), prize);
     chest
 }
@@ -49,7 +49,7 @@ public fun discard(chest: Chest) {
 }
 
 public fun solve(prize: Prize): ObjectChestFlag {
-    assert!(prize.value == 1000, 0);
+    assert!(prize.value == 2000, 0);
     let Prize { id, value: _ } = prize;
     id.delete();
     ObjectChestFlag {}

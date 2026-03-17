@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "Artefacto",
+    "description": "El objetivo de este nivel es forjar un artefacto, cargarlo y destrozarlo para capturar la bandera.",
+    "instructions": "# Nivel 0: Artefacto\n\nEl objetivo de este nivel es forjar un artefacto, cargarlo y destrozarlo para capturar la bandera.\n\nCosas que pueden ayudar:\n\n- Objetos Sui y `TxContext`\n- Referencias mutables (`&mut`)\n- Modelo de propiedad de Move: paso por valor vs por referencia",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "Coleccionista de monedas",
+    "description": "El objetivo de este nivel es comprar el premio en la máquina expendedora. El premio cuesta 1.000 tokens pero el grifo solo...",
+    "instructions": "# Nivel 1: Coleccionista de monedas\n\nEl objetivo de este nivel es comprar el premio en la máquina expendedora. El premio cuesta 1.000 tokens pero el grifo solo te da 100.\n\nCosas que pueden ayudar:\n\n- Modelo de monedas de Sui: las monedas son objetos, no mapas de saldo\n- Operaciones `split` y `merge`",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "¿Qué valida realmente `buy_prize`?"
+    ]
+  },
+  "3": {
+    "name": "Tesoro pegajoso",
+    "description": "El objetivo de este nivel es rescatar el premio del cofre del tesoro y capturar la bandera.",
+    "instructions": "# Nivel 3: Tesoro pegajoso\n\nEl objetivo de este nivel es rescatar el premio del cofre del tesoro y capturar la bandera.\n\nCosas que pueden ayudar:\n\n- `sui::dynamic_field`\n- Campos huérfanos\n- Orden de las operaciones",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "Cofre de objetos",
+    "description": "Rescata el premio del cofre y captura la bandera—misma idea que Tesoro pegajoso, pero el premio se guarda como un campo de objeto dinámico.",
+    "instructions": "# Nivel 4: Cofre de objetos\n\nEl objetivo de este nivel es rescatar el premio del cofre del tesoro y capturar la bandera. El cofre guarda el premio como un **campo de objeto dinámico** (un objeto con `key`), por lo que sigue siendo localizable por ID.\n\nCosas que pueden ayudar:\n\n- `sui::dynamic_object_field`\n- Mismo flujo que Tesoro pegajoso: crear, extraer, resolver\n- Orden de las operaciones",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

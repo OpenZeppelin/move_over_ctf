@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "아티팩트",
+    "description": "이 레벨의 목표는 아티팩트를 제작하고, 충전한 뒤, 부수어 플래그를 획득하는 것입니다.",
+    "instructions": "# 레벨 0: 아티팩트\n\n이 레벨의 목표는 아티팩트를 제작하고, 충전한 뒤, 부수어 플래그를 획득하는 것입니다.\n\n참고할 만한 것:\n\n- Sui 객체와 `TxContext`\n- 가변 참조(`&mut`)\n- Move의 소유권 모델: 값에 의한 전달 vs 참조에 의한 전달",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "코인 수집가",
+    "description": "이 레벨의 목표는 자판기에서 상품을 사는 것입니다. 상품은 1,000 토큰인데 자판기는 100만...",
+    "instructions": "# 레벨 1: 코인 수집가\n\n이 레벨의 목표는 자판기에서 상품을 사는 것입니다. 상품은 1,000 토큰인데 자판기는 100만 줍니다.\n\n참고할 만한 것:\n\n- Sui의 코인 모델: 코인은 객체이며 잔액 매핑이 아님\n- `split`과 `merge` 연산",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "`buy_prize`는 실제로 무엇을 검증하나요?"
+    ]
+  },
+  "3": {
+    "name": "스티키 트레저",
+    "description": "이 레벨의 목표는 보물 상자에서 상품을 구하고 플래그를 획득하는 것입니다.",
+    "instructions": "# 레벨 3: 스티키 트레저\n\n이 레벨의 목표는 보물 상자에서 상품을 구하고 플래그를 획득하는 것입니다.\n\n참고할 만한 것:\n\n- `sui::dynamic_field`\n- 고아 필드\n- 연산 순서",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "오브젝트 체스트",
+    "description": "상자에서 상품을 구하고 플래그를 획득하세요—스티키 트레저와 같은 발상이지만, 상품이 동적 객체 필드로 저장됩니다.",
+    "instructions": "# 레벨 4: 오브젝트 체스트\n\n이 레벨의 목표는 보물 상자에서 상품을 구하고 플래그를 획득하는 것입니다. 상자는 상품을 **동적 객체 필드**(`key`를 가진 객체)로 저장하므로 ID로 조회할 수 있습니다.\n\n참고할 만한 것:\n\n- `sui::dynamic_object_field`\n- 스티키 트레저와 같은 흐름: 생성, 추출, 해결\n- 연산 순서",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

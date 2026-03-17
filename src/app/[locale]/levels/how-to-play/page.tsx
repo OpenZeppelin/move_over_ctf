@@ -18,9 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const loc = getSafeLocale(locale);
   const t = getTranslations(loc);
-  const pageTitle = `How to Play | ${t("seo.siteName")}`;
-  const pageDescription =
-    "Learn the Move-over flow: inspect vulnerable contracts, write run(), return the Flag object, and pass levels in-browser.";
+  const pageTitle = `${t("howToPlay.title")} | ${t("seo.siteName")}`;
+  const pageDescription = t("seo.howToPlayDescription");
   const url = `${BASE_URL}/${loc}/levels/how-to-play`;
   const languageAlternates = Object.fromEntries(
     VALID_LOCALES.map((localeCode) => [
@@ -62,6 +61,7 @@ export default async function HowToPlayPage({ params }: Props) {
     redirect(`/${loc}/levels/how-to-play`);
   }
 
+  const t = getTranslations(loc);
   const levels = getLevels(loc);
 
   return (
@@ -72,23 +72,21 @@ export default async function HowToPlayPage({ params }: Props) {
         <LevelSidebar levels={levels} />
         <main className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
           <div className="mx-auto max-w-3xl rounded-lg border border-move-border bg-move-panel p-5 sm:p-6">
-            <Typography.H1 variant="page">How to Play</Typography.H1>
+            <Typography.H1 variant="page">{t("howToPlay.title")}</Typography.H1>
             <Typography.P variant="muted" className="mt-3">
-              Welcome to a tiny browser-based heist simulator. Each level gives you a vulnerable Move module, and your
-              job is to write `run()` so it returns the glorious `Flag`.
+              {t("howToPlay.welcome")}
             </Typography.P>
 
             <ol className="mt-5 space-y-3 text-sm sm:text-base text-move-text list-decimal list-inside">
-              <li>Read the level instructions and inspect the contract code like a detective with too much coffee.</li>
-              <li>Write only the body of `run()` in the editor.</li>
-              <li>Capture the `Flag` and return it from `run()`; no `Flag`, no victory.</li>
-              <li>Click Run, watch the verifier judge your life choices, then iterate and move to the next level.</li>
+              <li>{t("howToPlay.step1")}</li>
+              <li>{t("howToPlay.step2")}</li>
+              <li>{t("howToPlay.step3")}</li>
+              <li>{t("howToPlay.step4")}</li>
             </ol>
             <section className="mt-6 rounded-lg border border-move-border bg-move-dark/40 p-4">
-              <Typography.H2 variant="compact">Want to add a level?</Typography.H2>
+              <Typography.H2 variant="compact">{t("howToPlay.addLevelTitle")}</Typography.H2>
               <Typography.P className="mt-2">
-                Move-over is open source and everyone is welcome to contribute. If you want to create a new challenge,
-                follow the add-level guide and submit a PR:
+                {t("howToPlay.addLevelBody")}
               </Typography.P>
               <a
                 href="https://github.com/OpenZeppelin/move_over_ctf/blob/main/ADD_LEVEL_README.md"
@@ -96,7 +94,7 @@ export default async function HowToPlayPage({ params }: Props) {
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center text-sm font-medium text-oz-violet hover:underline"
               >
-                How to add a new level on GitHub
+                {t("howToPlay.addLevelLink")}
               </a>
             </section>
 
@@ -105,7 +103,7 @@ export default async function HowToPlayPage({ params }: Props) {
                 href={`/${loc}/levels/0`}
                 className="inline-flex items-center rounded-lg border border-oz-violet/40 bg-oz-violet/20 px-4 py-2 text-sm font-medium text-oz-violet hover:bg-oz-violet/30 transition-colors"
               >
-                Start Level 0 →
+                {t("howToPlay.startLevel0")}
               </Link>
             </div>
           </div>

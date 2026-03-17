@@ -15,6 +15,7 @@ import { Typography } from "@/components/ui/Typography";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { Progress, Tooltip, TooltipContent, TooltipTrigger } from "@openzeppelin/ui-builder-ui";
+import { replaceTemplate } from "@/i18n/utils";
 
 const EMPTY_SUBSCRIBE = () => () => {};
 
@@ -86,7 +87,7 @@ export function Header() {
             <TooltipTrigger asChild>
               <div
                 className="inline-flex cursor-default items-center gap-1.5 rounded-md border border-move-border bg-move-dark px-2 py-1"
-                aria-label="CTF solved progress"
+                aria-label={t("header.progressAriaLabel")}
               >
                 <Typography.Span className="text-[10px] text-move-muted tabular-nums">
                   {solvedCount}/{totalCount}
@@ -102,7 +103,11 @@ export function Header() {
             </TooltipTrigger>
             <TooltipContent className="border-move-border bg-move-panel text-move-text">
               <p className="text-xs">
-                {solvedCount}/{totalCount} solved ({progressPct}%)
+                {replaceTemplate(t("header.progressTooltip"), {
+                  solvedCount,
+                  totalCount,
+                  progressPct,
+                })}
               </p>
             </TooltipContent>
           </Tooltip>

@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "قطعة أثرية",
+    "description": "هدف هذا المستوى هو صنع قطعة أثرية وشحنها وتحطيمها للاستيلاء على العلم.",
+    "instructions": "# المستوى 0: قطعة أثرية\n\nهدف هذا المستوى هو صنع قطعة أثرية وشحنها وتحطيمها للاستيلاء على العلم.\n\nما قد يساعد:\n\n- كائنات Sui و`TxContext`\n- المراجع القابلة للتعديل (`&mut`)\n- نموذج الملكية في Move: التمرير بالقيمة مقابل بالمرجع",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "جامع العملات",
+    "description": "هدف هذا المستوى هو شراء الجائزة من الآلة. الجائزة تكلف 1,000 توكن لكن الصنبور يعطيك فقط...",
+    "instructions": "# المستوى 1: جامع العملات\n\nهدف هذا المستوى هو شراء الجائزة من الآلة. الجائزة تكلف 1,000 توكن لكن الصنبور يعطيك فقط 100.\n\nما قد يساعد:\n\n- نموذج العملات في Sui: العملات كائنات وليست تعيينات رصيد\n- عمليات `split` و`merge`",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "ماذا يتحقق `buy_prize` فعلياً؟"
+    ]
+  },
+  "3": {
+    "name": "كنز لزج",
+    "description": "هدف هذا المستوى هو إنقاذ الجائزة من صندوق الكنز والاستيلاء على العلم.",
+    "instructions": "# المستوى 3: كنز لزج\n\nهدف هذا المستوى هو إنقاذ الجائزة من صندوق الكنز والاستيلاء على العلم.\n\nما قد يساعد:\n\n- `sui::dynamic_field`\n- الحقول اليتيمة\n- ترتيب العمليات",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "صندوق الكائنات",
+    "description": "أنقذ الجائزة من الصندوق واستولِ على العلم—نفس فكرة كنز لزج، لكن الجائزة مخزنة كحقل كائن ديناميكي.",
+    "instructions": "# المستوى 4: صندوق الكائنات\n\nهدف هذا المستوى هو إنقاذ الجائزة من صندوق الكنز والاستيلاء على العلم. الصندوق يخزن الجائزة ك**حقل كائن ديناميكي** (كائن له `key`) فيبقى قابلاً للاكتشاف بالمعرّف.\n\nما قد يساعد:\n\n- `sui::dynamic_object_field`\n- نفس التدفق كما في كنز لزج: إنشاء، استخراج، حل\n- ترتيب العمليات",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

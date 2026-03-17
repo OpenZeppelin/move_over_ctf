@@ -1,37 +1,119 @@
 {
-    "theme": {
-        "label": "Тема",
-        "light": "Світла",
-        "dark": "Темна",
-        "toggleToLight": "Перемкнути на світлу тему",
-        "toggleToDark": "Перемкнути на темну тему",
-        "system": "Системна"
-    },
-    "header": {
-        "home": "Move-over – Головна",
-        "connectWallet": "Підключити гаманець",
-        "weAreHiring": "Ми наймаємо",
-        "network": "Мережа: Devnet",
-        "language": "Мова"
-    },
-    "landing": {
-        "title": "A wargame for Move on Sui",
-        "description": "Move-over is a Web3/Move-based wargame inspired by Ethernaut and overthewire.org, played on the Sui blockchain. Each level is a smart contract that needs to be 'hacked'. The game is 100% open source and all levels are contributions made by other players. Do you have an interesting idea? PRs are welcome.",
-        "cta": "Move-over to Level 0"
-    },
-    "level": {
-        "instructions": "Інструкції",
-        "contractCode": "Код контракту"
-    },
-    "sidebar": {
-        "levels": "Рівні"
-    },
-    "seo": {
-        "defaultTitle": "Move-over | CTF for Move on Sui",
-        "defaultDescription": "Move-over is a capture-the-flag wargame for Move smart contracts on Sui. Learn security by solving vulnerable contract challenges. Inspired by Ethernaut.",
-        "ogTitle": "Move-over | CTF for Move on Sui",
-        "ogDescription": "A wargame for Move on Sui. Learn smart contract security by solving vulnerable contract challenges. Inspired by Ethernaut.",
-        "levelTitle": "Level {id}: {name} | Move-over",
-        "siteName": "Move-over"
-    }
+  "theme": {
+    "label": "Тема",
+    "light": "Світла",
+    "dark": "Темна",
+    "toggleToLight": "Перемкнути на світлу тему",
+    "toggleToDark": "Перемкнути на темну тему",
+    "system": "Системна"
+  },
+  "header": {
+    "home": "Move-over – Головна",
+    "connectWallet": "Підключити гаманець",
+    "weAreHiring": "Ми наймаємо",
+    "network": "Мережа: Devnet",
+    "language": "Мова",
+    "progressAriaLabel": "Прогрес пройдених рівнів CTF",
+    "progressTooltip": "{solvedCount}/{totalCount} пройдено ({progressPct}%)"
+  },
+  "landing": {
+    "title": "Варгейм Move на Sui",
+    "description": "Move-over — варгейм на Web3/Move за мотивами Ethernaut та overthewire.org, грається в блокчейні Sui. Кожен рівень — смарт-контракт, який потрібно «зламати». Гра повністю відкрита, усі рівні — внесок інших гравців. Є ідея? PR вітаються.",
+    "cta": "Move-over до Рівня 0",
+    "subtitle": "Варгейм безпеки Move у браузері",
+    "intro": "Move-over — CTF спочатку для браузера з безпеки Move. Читайте вразливі контракти, пишіть шлях експлойту `run()` і повертайте правильний `*Flag`, щоб пройти рівень.",
+    "introMuted": "Move-over — відкритий проєкт. Код на",
+    "github": "GitHub",
+    "cardFormat": "Формат",
+    "cardRuntime": "Середовище",
+    "cardGoal": "Мета",
+    "cardValueCtf": "Capture-the-Flag",
+    "cardValueBrowser": "100% у браузері",
+    "cardValueReturnFlag": "Повернути `*Flag`",
+    "feedTitle": "Стрічка безпеки в реальному часі",
+    "feedLine1": "[00:00:01] завантаження move-over runtime у браузері...",
+    "feedLine2": "[00:00:02] завантаження набору рівнів: genesis, lockbox, fallout",
+    "feedLine3": "[00:00:03] ціль: повернути level::Flag",
+    "feedLine4": "[00:00:04] розбір шаблону run()... готово",
+    "feedLine5": "[00:00:05] гаманець і мережа не потрібні",
+    "feedLine6Prefix": "[00:00:06] канал партнера підключено:",
+    "feedLine7": "[00:00:07] пісочниця симуляції експлойту: активна",
+    "feedLine8": "[00:00:08] статус верифікатора: очікування вашого коду...",
+    "feedLine9": "[00:00:09] напишіть run() і натисніть Run_",
+    "sectionTitle": "Безпека смарт-контрактів Move у браузерному runtime",
+    "sectionIntro": "Move-over — майданчик безпеки в браузері, де вчаться на практиці. Замість однієї теорії ви переглядаєте код вразливих контрактів, пишете сценарій експлойту, запускаєте його одразу й перевіряєте, що рішення повертає очікуваний об'єкт-доказ. Цикл простий: читати, писати, запускати, повертати, покращувати.",
+    "howItWorksTitle": "Як влаштований робочий процес Move-over у браузері",
+    "howItWorksBody": "Кожен рівень виконується в runtime у браузері — без налаштування гаманця, залежності від стану мережі та локальної VM. Ви зосереджуєтесь на логіці безпеки Move: перевірки власності, зловживання можливостями, переходи станів об'єктів і побудова безпечного відтворюваного шляху експлойту, що проходить верифікацію.",
+    "writeRunTitle": "Написати `run()`, повернути `Flag` і пройти рівень",
+    "writeRunBody": "Мета ясна: написати тіло `run()` так, щоб воно повертало правильний об'єкт `*Flag` для рівня. Якщо тип повернення й поведінка збігаються з вимогами контракту рівня, рівень зараховується й прогрес зберігається.",
+    "coreSkillsTitle": "Навички, які ви відпрацьовуєте",
+    "coreSkill1": "Читати й міркувати про поведінку безпеки смарт-контрактів Move.",
+    "coreSkill2": "Писати логіку, орієнтовану на експлойт, у керованому браузерному середовищі.",
+    "coreSkill3": "Коректно повертати об'єкти-докази й перевіряти детерміновані результати.",
+    "recommendedTitle": "Рекомендований стартовий шлях",
+    "recommendedBody": "Почніть з Genesis для основ, продовжте Lockbox для патернів роботи з об'єктами, потім Fallout для глибшого міркування про експлойти. Ця послідовність крок за кроком розвиває практичну інтуїцію з безпеки Move.",
+    "startHowToPlay": "Почати з «Як грати»",
+    "landingUrl": "move-over://landing",
+    "footerGitHub": "GitHub",
+    "footerX": "X",
+    "footerLinkedIn": "LinkedIn",
+    "footerCopyright": "© 2026 Zeppelin Group Ltd"
+  },
+  "level": {
+    "instructions": "Інструкції",
+    "contractCode": "Код контракту",
+    "solution": "Рішення",
+    "run": "Запустити",
+    "runLocally": "Запустити локально",
+    "runLocallyDescription": "Запускайте тести на своїй машині — без сервера й обмежень по частоті.",
+    "runLocallyStep1": "Встановіть Sui CLI",
+    "runLocallyStep2": "Помістіть ваше рішення в",
+    "runLocallyStep3": "З кореня репозиторію виконайте",
+    "runLocallyCopyFile": "Скопіювати файл рішення",
+    "runLocallyCopyCmd": "Скопіювати команду",
+    "runLocallyCopied": "Скопійовано!",
+    "runSuccess": "Усі тести пройдено!",
+    "runError": "Тести не пройдено",
+    "runNotSupported": "Цей рівень поки не підтримується вбудованим у браузер раннером. Встановіть Sui CLI і запустіть рівень локально або спробуйте Рівень 0.",
+    "solutionPlaceholder": "// напр.: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "passedMessage": "Прапор захоплено. Рівень пройдено офіційно.",
+    "explanationTitle": "Чому навчав цей рівень",
+    "contractLabel": "Контракт:",
+    "authorLabel": "Автор:",
+    "goToLevel": "Перейти до рівня {id}",
+    "goToHowToPlay": "Перейти до «Як грати»",
+    "prevLevel": "Попередній рівень ({id})",
+    "nextLevel": "Наступний рівень ({id})",
+    "levelAriaLabel": "Рівень {id}"
+  },
+  "sidebar": {
+    "levels": "Рівні",
+    "howToPlay": "Як грати",
+    "completed": "Пройдено"
+  },
+  "howToPlay": {
+    "title": "Як грати",
+    "welcome": "Ласкаво просимо до невеликого браузерного симулятора злому. Кожен рівень дає вам вразливий модуль Move; ваше завдання — написати `run()`, щоб він повертав завітний `Flag`.",
+    "step1": "Прочитайте інструкції рівня й вивчіть код контракту як детектив із зайвою чашкою кави.",
+    "step2": "У редакторі пишіть лише тіло функції `run()`.",
+    "step3": "Захопіть `Flag` і поверніть його з `run()`; без `Flag` перемоги не буде.",
+    "step4": "Натисніть «Запустити», подивіться, як верифікатор оцінює ваші рішення, потім ітеруйте й переходьте до наступного рівня.",
+    "addLevelTitle": "Хочете додати рівень?",
+    "addLevelBody": "Move-over — відкритий проєкт, внесок вітається. Щоб створити новий рівень, дотримуйтесь посібника з додавання рівня й надішліть PR:",
+    "addLevelLink": "Як додати новий рівень на GitHub",
+    "startLevel0": "Почати Рівень 0 →"
+  },
+  "mobilePicker": {
+    "selectLevelAriaLabel": "Вибрати рівень",
+    "howToPlay": "Як грати"
+  },
+  "seo": {
+    "defaultTitle": "Move-over CTF: безпека смарт-контрактів Move на Sui",
+    "defaultDescription": "Move-over — варгейм capture-the-flag для смарт-контрактів Move на Sui. Вивчайте безпеку, розв'язуючи рівні з вразливими контрактами. За мотивами Ethernaut.",
+    "ogTitle": "Move-over CTF: безпека смарт-контрактів Move на Sui",
+    "ogDescription": "Варгейм Move на Sui. Вивчайте безпеку смарт-контрактів, розв'язуючи рівні з вразливими контрактами. За мотивами Ethernaut.",
+    "levelTitle": "Рівень {id}: {name} | Move-over",
+    "siteName": "Move-over",
+    "howToPlayDescription": "Дізнайтесь про потік Move-over: вивчайте вразливі контракти, пишіть run(), повертайте об'єкт Flag і проходьте рівні в браузері."
+  }
 }

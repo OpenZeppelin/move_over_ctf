@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "Artefato",
+    "description": "O objetivo deste nível é forjar um artefato, carregá-lo e quebrá-lo para capturar a bandeira.",
+    "instructions": "# Nível 0: Artefato\n\nO objetivo deste nível é forjar um artefato, carregá-lo e quebrá-lo para capturar a bandeira.\n\nCoisas que podem ajudar:\n\n- Objetos Sui e `TxContext`\n- Referências mutáveis (`&mut`)\n- Modelo de propriedade do Move: passagem por valor vs por referência",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "Colecionador de moedas",
+    "description": "O objetivo deste nível é comprar o prémio na máquina de vending. O prémio custa 1.000 tokens mas a torneira só...",
+    "instructions": "# Nível 1: Colecionador de moedas\n\nO objetivo deste nível é comprar o prémio na máquina de vending. O prémio custa 1.000 tokens mas a torneira só te dá 100.\n\nCoisas que podem ajudar:\n\n- Modelo de moedas do Sui: moedas são objetos, não mapas de saldo\n- Operações `split` e `merge`",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "O que é que `buy_prize` valida realmente?"
+    ]
+  },
+  "3": {
+    "name": "Tesouro pegajoso",
+    "description": "O objetivo deste nível é resgatar o prémio do baú do tesouro e capturar a bandeira.",
+    "instructions": "# Nível 3: Tesouro pegajoso\n\nO objetivo deste nível é resgatar o prémio do baú do tesouro e capturar a bandeira.\n\nCoisas que podem ajudar:\n\n- `sui::dynamic_field`\n- Campos órfãos\n- Ordem das operações",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "Baú de objetos",
+    "description": "Resgata o prémio do baú e captura a bandeira—mesma ideia que Tesouro pegajoso, mas o prémio está guardado como campo de objeto dinâmico.",
+    "instructions": "# Nível 4: Baú de objetos\n\nO objetivo deste nível é resgatar o prémio do baú do tesouro e capturar a bandeira. O baú guarda o prémio como **campo de objeto dinâmico** (um objeto com `key`), por isso continua a ser encontrável por ID.\n\nCoisas que podem ajudar:\n\n- `sui::dynamic_object_field`\n- Mesmo fluxo que Tesouro pegajoso: criar, extrair, resolver\n- Ordem das operações",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

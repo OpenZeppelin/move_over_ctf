@@ -1,12 +1,44 @@
 {
   "0": {
-    "name": "Genesis",
-    "description": "Create an owned object and mark it solved. Pure Sui style: TxContext, no signer.",
-    "instructions": "# Level 0: Genesis\n\nYour first Sui mission: create an object (it gets transferred to you), then call solve on it to flip the solved flag. All with TxContext—no signer in sight.\n\n## Objectives\n\n1. Call create to mint your Genesis object\n2. Call solve with that object to set solved = true"
+    "name": "Артефакт",
+    "description": "Цель уровня — выковать артефакт, зарядить его и разбить, чтобы захватить флаг.",
+    "instructions": "# Уровень 0: Артефакт\n\nЦель уровня — выковать артефакт, зарядить его и разбить, чтобы захватить флаг.\n\nЧто может пригодиться:\n\n- Объекты Sui и `TxContext`\n- Мутабельные ссылки (`&mut`)\n- Модель владения Move: передача по значению и по ссылке",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   },
   "1": {
-    "name": "Lockbox",
-    "description": "Unlock the lockbox and drain it. The contract is a little too generous with secrets.",
-    "instructions": "# Level 1: Lockbox\n\nThe lockbox holds a password and a balance. Your mission: unlock it and drain the balance to zero. Sometimes the best way in is to see what the contract is willing to tell you.\n\n## Objectives\n\n- Unlock the lockbox\n- Drain the balance to zero"
+    "name": "Коллекционер монет",
+    "description": "Цель уровня — купить приз в автомате. Приз стоит 1 000 токенов, но краны дают только...",
+    "instructions": "# Уровень 1: Коллекционер монет\n\nЦель уровня — купить приз в автомате. Приз стоит 1 000 токенов, но краны дают только 100.\n\nЧто может пригодиться:\n\n- Модель монет Sui: монеты — это объекты, а не отображение балансов\n- Операции `split` и `merge`",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "Что на самом деле проверяет `buy_prize`?"
+    ]
+  },
+  "3": {
+    "name": "Липкое сокровище",
+    "description": "Цель уровня — вытащить приз из сундука с сокровищами и захватить флаг.",
+    "instructions": "# Уровень 3: Липкое сокровище\n\nЦель уровня — вытащить приз из сундука с сокровищами и захватить флаг.\n\nЧто может пригодиться:\n\n- `sui::dynamic_field`\n- Потерянные поля\n- Порядок операций",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "4": {
+    "name": "Сундук объектов",
+    "description": "Вытащите приз из сундука и захватите флаг — та же идея, что и в Липком сокровище, но приз хранится в динамическом поле объекта.",
+    "instructions": "# Уровень 4: Сундук объектов\n\nЦель уровня — вытащить приз из сундука с сокровищами и захватить флаг. Сундук хранит приз в **динамическом поле объекта** (объект с `key`), поэтому его можно найти по ID.\n\nЧто может пригодиться:\n\n- `sui::dynamic_object_field`\n- Тот же сценарий, что и в Липком сокровище: создать, извлечь, решить\n- Порядок операций",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }
