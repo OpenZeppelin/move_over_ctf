@@ -38,4 +38,9 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "FlashVaultFlag",
     solutionModule: "level_5_solution",
   },
+  6: {
+    module: "pool_party",
+    typeName: "PoolPartyFlag",
+    solutionModule: "level_6_solution",
+  },
 };

@@ -38,5 +38,13 @@
     "modules": [
       "flash_vault"
     ]
+  },
+  {
+    "id": 6,
+    "difficulty": "medium",
+    "module": "pool_party",
+    "modules": [
+      "pool_party"
+    ]
   }
 ]

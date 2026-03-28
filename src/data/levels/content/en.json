@@ -50,5 +50,16 @@
       "github": "https://github.com/kosedogus"
     },
     "hints": []
+  },
+  "6": {
+    "name": "Pool Party",
+    "description": "The goal of this level is to drain Pool A and capture the flag.",
+    "instructions": "The goal of this level is to drain Pool A and capture the flag.",
+    "explanation": "trying",
+        "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }
