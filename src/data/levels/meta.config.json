@@ -30,5 +30,13 @@
     "modules": [
       "sticky_treasure_dof"
     ]
+  },
+  {
+    "id": 5,
+    "difficulty": "easy",
+    "module": "flash_vault",
+    "modules": [
+      "flash_vault"
+    ]
   }
 ]

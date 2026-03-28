@@ -40,5 +40,15 @@
       "github": "https://github.com/kosedogus"
     },
     "hints": []
+  },
+  "5": {
+    "name": "Flash Vault",
+    "description": "Drain the vault completely and capture the flag.",
+    "instructions": "# Level 5: Flash Vault\n\nThe goal of this level is to drain the vault completely and capture the flag.\n\nThings that might help:\n\n- Move structs and their abilities\n- Flash loan invariants",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
   }
 }

@@ -33,4 +33,9 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "ObjectChestFlag",
     solutionModule: "level_4_solution",
   },
+  5: {
+    module: "flash_vault",
+    typeName: "FlashVaultFlag",
+    solutionModule: "level_5_solution",
+  },
 };
