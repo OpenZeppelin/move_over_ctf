@@ -251,6 +251,7 @@ async function run() {
   let name = "";
   let difficulty = "";
   let instructions = "";
+  let explanation = "";
   const moduleEntries = [];
 
   try {
@@ -267,7 +268,6 @@ async function run() {
     ).toLowerCase();
     instructions = await askMultilineRequired(rl, "Instructions markdown:");
 
-    let explanation = "";
     if (INTERACTIVE_TTY) {
       output.write("\nExplanation (optional): shown after the level is completed, e.g. what vulnerability or concept this level demonstrates. Leave empty and press END to skip.\n");
       explanation = await askMultilineOptional(rl, "Explanation");
