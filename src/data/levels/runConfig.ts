@@ -43,4 +43,9 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "PoolPartyFlag",
     solutionModule: "level_6_solution",
   },
+  7: {
+    module: "tick_tock",
+    typeName: "TickTockFlag",
+    solutionModule: "level_7_solution",
+  },
 };

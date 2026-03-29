@@ -46,5 +46,13 @@
     "modules": [
       "pool_party"
     ]
+  },
+  {
+    "id": 7,
+    "difficulty": "medium",
+    "module": "tick_tock",
+    "modules": [
+      "tick_tock"
+    ]
   }
 ]

@@ -56,6 +56,16 @@
     "description": "The goal of this level is to drain Pool A and capture the flag.",
     "instructions": "The goal of this level is to drain Pool A and capture the flag.",
     "explanation": "trying",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": []
+  },
+  "7": {
+    "name": "Tick Tock",
+    "description": "The goal of this level is to drain at least 900,000 tokens from the pool and capture the flag.",
+    "instructions": "The goal of this level is to drain at least 900,000 tokens from the pool and capture the flag.\n\nThings that might help:\n\n- Concentrated liquidity and tick-based pricing",
         "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
