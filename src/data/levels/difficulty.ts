@@ -9,14 +9,14 @@ export const DIFFICULTY_DOTS: Record<Difficulty, number> = {
 
 /** Tailwind classes for difficulty text color (sidebar dots) */
 export const DIFFICULTY_TEXT_CLASS: Record<Difficulty, string> = {
-  easy: "text-move-success",
-  medium: "text-move-warning",
+  easy: "text-success",
+  medium: "text-warning",
   hard: "text-red-400",
 };
 
 /** Tailwind classes for difficulty badge (level header pill) */
 export const DIFFICULTY_BADGE_CLASS: Record<Difficulty, string> = {
-  easy: "bg-move-success/20 text-move-success",
-  medium: "bg-move-warning/20 text-move-warning",
+  easy: "bg-success/20 text-success",
+  medium: "bg-warning/20 text-warning",
   hard: "bg-red-500/20 text-red-400",
 };

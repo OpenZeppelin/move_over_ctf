@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
 import { PanelCard } from "@/components/ui/PanelCard";
 import { Typography } from "@/components/ui/Typography";
+import { Footer } from "@/components/Footer";
 
 const LETTERS_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -70,21 +71,21 @@ export function Landing() {
   const { t, locale } = useLocale();
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <main className="flex-1 overflow-auto bg-move-dark p-4 sm:p-6">
+      <main className="flex-1 overflow-auto bg-background p-5 sm:p-8">
         <div className="mx-auto max-w-5xl min-h-full flex items-center justify-center">
           <PanelCard as="section" className="w-full">
-            <div className="border-b border-move-border bg-move-dark/60 px-4 sm:px-6 py-3 font-mono text-xs text-move-muted">
+            <div className="border-b border-border bg-background/60 px-4 sm:px-6 py-3 font-mono text-xs text-muted-foreground">
               {t("landing.landingUrl")}
             </div>
 
             <div className="p-5 sm:p-8">
               <div className="mx-auto max-w-3xl text-center">
                 <Typography.H1 variant="hero">
-                  Move<Typography.Span className="text-oz-violet">-over</Typography.Span>
+                  Move<Typography.Span className="text-selected">-over</Typography.Span>
                 </Typography.H1>
                 <Typography.P
                   variant="unstyled"
-                  className="mt-2 text-sm sm:text-lg text-oz-violet font-medium"
+                  className="mt-2 text-sm sm:text-lg text-selected font-medium"
                 >
                   {t("landing.subtitle")}
                 </Typography.P>
@@ -97,7 +98,7 @@ export function Landing() {
                     href="https://github.com/OpenZeppelin/move_over_ctf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-oz-violet hover:underline"
+                    className="text-selected hover:underline"
                   >
                     {t("landing.github")}
                   </a>
@@ -105,19 +106,19 @@ export function Landing() {
                 </Typography.P>
               </div>
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
+                <div className="rounded-xl border border-border bg-muted/50 p-4 text-center">
                   <Typography.P variant="cardLabel">{t("landing.cardFormat")}</Typography.P>
                   <Typography.P variant="cardValue" className="mt-1">
                     {t("landing.cardValueCtf")}
                   </Typography.P>
                 </div>
-                <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
+                <div className="rounded-xl border border-border bg-muted/50 p-4 text-center">
                   <Typography.P variant="cardLabel">{t("landing.cardRuntime")}</Typography.P>
                   <Typography.P variant="cardValue" className="mt-1">
                     {t("landing.cardValueBrowser")}
                   </Typography.P>
                 </div>
-                <div className="rounded-lg border border-move-border bg-move-dark/60 p-3 text-center">
+                <div className="rounded-xl border border-border bg-muted/50 p-4 text-center">
                   <Typography.P variant="cardLabel">{t("landing.cardGoal")}</Typography.P>
                   <Typography.P variant="cardValue" className="mt-1">
                     {t("landing.cardValueReturnFlag")}
@@ -125,16 +126,16 @@ export function Landing() {
                 </div>
               </div>
 
-              <div className="mt-5 rounded-lg border border-move-border bg-move-dark/70 overflow-hidden">
-                <div className="px-4 py-2 border-b border-move-border bg-move-panel/60 font-mono text-xs text-move-accent">
+              <div className="mt-5 rounded-xl border border-border bg-muted/40 overflow-hidden">
+                <div className="px-4 py-2 border-b border-border bg-card/60 font-mono text-xs text-selected">
                   {t("landing.feedTitle")}
                 </div>
                 <div className="relative h-56 sm:h-64 overflow-hidden font-mono text-[11px] sm:text-xs glitch-feed">
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-move-dark/95 to-transparent z-10" />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-move-dark/95 to-transparent z-10" />
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-background/95 to-transparent z-10" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background/95 to-transparent z-10" />
                   <div className="pointer-events-none absolute inset-0 z-20 glitch-scanlines" />
                   <div className="pointer-events-none absolute inset-0 z-[21] glitch-slices" />
-                  <div className="hack-scroll-track absolute inset-0 px-4 py-3 text-move-muted">
+                  <div className="hack-scroll-track absolute inset-0 px-4 py-3 text-muted-foreground">
                     <div className="hack-glitch-copy">
                       <div className="space-y-1.5">
                         <Typography.P variant="unstyled">{t("landing.feedLine1")}</Typography.P>
@@ -144,11 +145,11 @@ export function Landing() {
                         <Typography.P variant="unstyled">{t("landing.feedLine5")}</Typography.P>
                         <Typography.P variant="unstyled">
                           <Typography.Span>{t("landing.feedLine6Prefix")} </Typography.Span>
-                          <ProgressiveGlitchText text="OpenZeppelin" className="text-oz-violet" />
+                          <ProgressiveGlitchText text="OpenZeppelin" className="text-selected" />
                         </Typography.P>
                         <Typography.P variant="unstyled">{t("landing.feedLine7")}</Typography.P>
                         <Typography.P variant="unstyled">{t("landing.feedLine8")}</Typography.P>
-                        <Typography.P variant="unstyled" className="text-move-text">
+                        <Typography.P variant="unstyled" className="text-foreground">
                           {t("landing.feedLine9")}
                         </Typography.P>
                       </div>
@@ -160,11 +161,11 @@ export function Landing() {
                         <Typography.P variant="unstyled">{t("landing.feedLine5")}</Typography.P>
                         <Typography.P variant="unstyled">
                           <Typography.Span>{t("landing.feedLine6Prefix")} </Typography.Span>
-                          <ProgressiveGlitchText text="OpenZeppelin" className="text-oz-violet" />
+                          <ProgressiveGlitchText text="OpenZeppelin" className="text-selected" />
                         </Typography.P>
                         <Typography.P variant="unstyled">{t("landing.feedLine7")}</Typography.P>
                         <Typography.P variant="unstyled">{t("landing.feedLine8")}</Typography.P>
-                        <Typography.P variant="unstyled" className="text-move-text">
+                        <Typography.P variant="unstyled" className="text-foreground">
                           {t("landing.feedLine9")}
                         </Typography.P>
                       </div>
@@ -173,7 +174,7 @@ export function Landing() {
                 </div>
               </div>
 
-              <section className="mt-6 rounded-lg border border-move-border bg-move-dark/45 p-4 sm:p-6 text-left">
+              <section className="mt-6 rounded-xl border border-border bg-muted/30 p-5 sm:p-6 text-left">
                 <Typography.H2>
                   {t("landing.sectionTitle")}
                 </Typography.H2>
@@ -196,7 +197,7 @@ export function Landing() {
                 </Typography.P>
 
                 <Typography.H5 className="mt-4">{t("landing.coreSkillsTitle")}</Typography.H5>
-                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-move-text/90">
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-foreground/90">
                   <li>{t("landing.coreSkill1")}</li>
                   <li>{t("landing.coreSkill2")}</li>
                   <li>{t("landing.coreSkill3")}</li>
@@ -209,18 +210,18 @@ export function Landing() {
               </section>
             </div>
 
-            <div className="border-t border-move-border px-4 sm:px-6 py-4 sm:py-5">
+            <div className="border-t border-border px-4 sm:px-6 py-4 sm:py-5">
               <div className="flex flex-wrap justify-center gap-3">
                 <Link
                   href={`/${locale}/levels/how-to-play`}
-                  className="group inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-7 py-3 rounded-lg bg-oz-violet text-white text-sm sm:text-base font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
+                  className="group inline-flex items-center justify-center gap-2 h-11 px-6 sm:px-8 rounded-md bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
                 >
                   {t("landing.startHowToPlay")}
                   <Typography.Span className="opacity-80 group-hover:translate-x-1 transition-transform">→</Typography.Span>
                 </Link>
                 <Link
                   href={`/${locale}/levels/0`}
-                  className="inline-flex items-center justify-center min-h-[46px] px-5 sm:px-7 py-3 rounded-lg border border-move-border bg-move-dark text-move-text text-sm sm:text-base font-semibold hover:bg-move-panel transition-colors"
+                  className="inline-flex items-center justify-center h-11 px-6 sm:px-8 rounded-md border border-input bg-background text-foreground text-sm font-medium hover:bg-accent transition-colors"
                 >
                   {t("landing.cta")}
                 </Link>
@@ -230,38 +231,7 @@ export function Landing() {
         </div>
       </main>
 
-      <footer className="shrink-0 border-t border-move-border bg-move-panel/70 px-4 py-2.5">
-        <div className="mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-move-muted">
-          <a
-            href="https://github.com/OpenZeppelin"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-move-text hover:underline"
-          >
-            {t("landing.footerGitHub")}
-          </a>
-          <Typography.Span aria-hidden>·</Typography.Span>
-          <a
-            href="https://x.com/openzeppelin"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-move-text hover:underline"
-          >
-            {t("landing.footerX")}
-          </a>
-          <Typography.Span aria-hidden>·</Typography.Span>
-          <a
-            href="https://www.linkedin.com/company/openzeppelin/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-move-text hover:underline"
-          >
-            {t("landing.footerLinkedIn")}
-          </a>
-          <Typography.Span aria-hidden>·</Typography.Span>
-          <Typography.Span>{t("landing.footerCopyright")}</Typography.Span>
-        </div>
-      </footer>
+      <Footer />
       <style jsx>{`
         .glitch-feed {
           animation: feed-flicker 7s steps(1, end) infinite;

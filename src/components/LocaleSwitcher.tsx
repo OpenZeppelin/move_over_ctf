@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@openzeppelin/ui-builder-ui";
+} from "@openzeppelin/ui-components";
 
 export function LocaleSwitcher() {
   const { locale, setLocale, t } = useLocale();
@@ -26,13 +26,13 @@ export function LocaleSwitcher() {
   return (
     <Select value={locale} onValueChange={handleValueChange} dir="ltr">
       <SelectTrigger
-        className="min-h-[40px] min-w-[100px] gap-1.5 rounded-lg border border-move-border bg-move-panel text-move-text hover:bg-move-border/30 sm:min-w-[140px] [&>svg]:size-4 [&>svg]:text-move-muted"
+        className="min-h-[40px] min-w-[100px] gap-1.5 rounded-md border border-input bg-background text-foreground hover:bg-accent sm:min-w-[140px] [&>svg]:size-4 [&>svg]:text-muted-foreground"
         aria-label={t("header.language")}
       >
         <SelectValue placeholder={t("header.language")} className="max-w-[120px] truncate sm:max-w-[140px]" />
       </SelectTrigger>
       <SelectContent
-        className="max-h-[70vh] min-w-[180px] border-move-border bg-move-panel text-move-text"
+        className="max-h-[70vh] min-w-[180px] border-border bg-popover text-popover-foreground"
         position="popper"
         sideOffset={4}
       >
@@ -40,7 +40,7 @@ export function LocaleSwitcher() {
           <SelectItem
             key={option.code}
             value={option.code}
-            className="cursor-pointer px-3 py-2.5 text-sm transition-colors hover:bg-move-border/50 data-[highlighted]:bg-move-border/50 data-[state=checked]:bg-oz-violet/15 data-[state=checked]:text-oz-violet data-[state=checked]:font-medium"
+            className="cursor-pointer px-3 py-2.5 text-sm transition-colors hover:bg-accent data-[highlighted]:bg-accent data-[state=checked]:bg-selected/10 data-[state=checked]:text-selected data-[state=checked]:font-medium"
             dir="auto"
           >
             {option.label}

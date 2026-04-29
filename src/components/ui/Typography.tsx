@@ -5,48 +5,48 @@ function joinClassNames(...classNames: Array<string | undefined>) {
 }
 
 const H1_VARIANTS = {
-  default: "text-xl sm:text-2xl font-semibold text-move-text",
-  hero: "text-3xl sm:text-5xl font-bold text-move-text tracking-tight",
-  page: "font-mono text-xl sm:text-2xl font-semibold text-move-text",
-  level: "font-mono text-base sm:text-lg font-semibold text-move-text",
+  default: "text-xl sm:text-2xl font-semibold text-foreground",
+  hero: "text-3xl sm:text-5xl font-bold text-foreground tracking-tight",
+  page: "font-mono text-xl sm:text-2xl font-semibold text-foreground",
+  level: "font-mono text-base sm:text-lg font-semibold text-foreground",
   unstyled: "",
 } as const;
 
 const H2_VARIANTS = {
-  default: "text-base sm:text-lg font-semibold text-move-text",
-  compact: "text-sm sm:text-base font-semibold text-move-text",
-  tiny: "text-xs sm:text-sm font-semibold text-move-text",
-  sidebar: "text-sm font-semibold text-move-muted uppercase tracking-wider",
+  default: "text-base sm:text-lg font-semibold text-foreground",
+  compact: "text-sm sm:text-base font-semibold text-foreground",
+  tiny: "text-xs sm:text-sm font-semibold text-foreground",
+  sidebar: "text-sm font-semibold text-muted-foreground uppercase tracking-wider",
   unstyled: "",
 } as const;
 
 const H3_VARIANTS = {
-  default: "text-sm sm:text-base font-semibold text-move-text",
+  default: "text-sm sm:text-base font-semibold text-foreground",
   unstyled: "",
 } as const;
 
 const H4_VARIANTS = {
-  default: "text-sm font-semibold text-move-text",
+  default: "text-sm font-semibold text-foreground",
   unstyled: "",
 } as const;
 
 const H5_VARIANTS = {
-  default: "text-xs uppercase tracking-wide text-move-muted",
+  default: "text-xs uppercase tracking-wide text-muted-foreground",
   unstyled: "",
 } as const;
 
 const H6_VARIANTS = {
-  default: "text-xs uppercase tracking-wide text-move-muted",
+  default: "text-xs uppercase tracking-wide text-muted-foreground",
   unstyled: "",
 } as const;
 
 const P_VARIANTS = {
-  default: "text-sm sm:text-base text-move-muted leading-relaxed",
-  muted: "text-sm sm:text-base text-move-muted",
-  smallMuted: "text-xs sm:text-sm text-move-muted",
-  tinyMuted: "text-[11px] sm:text-xs text-move-muted",
-  cardLabel: "font-mono text-[10px] uppercase tracking-wide text-move-muted",
-  cardValue: "text-sm font-semibold text-move-text",
+  default: "text-sm sm:text-base text-muted-foreground leading-relaxed",
+  muted: "text-sm sm:text-base text-muted-foreground",
+  smallMuted: "text-xs sm:text-sm text-muted-foreground",
+  tinyMuted: "text-[11px] sm:text-xs text-muted-foreground",
+  cardLabel: "font-mono text-[10px] uppercase tracking-wide text-muted-foreground",
+  cardValue: "text-sm font-semibold text-foreground",
   unstyled: "",
 } as const;
 

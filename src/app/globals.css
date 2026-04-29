@@ -1,99 +1,176 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source("../../src");
+@source "../../node_modules/@openzeppelin/ui-components/dist/*.js";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * OZ UI Design Tokens
+ * Aligned with github.com/OpenZeppelin/openzeppelin-ui
+ * Light: clean, airy, near-white. Dark: neutral gray.
+ */
 :root {
-  /* OpenZeppelin: Violet #4F56FA – same in both themes */
-  --oz-violet: #4F56FA;
-  --oz-grey: #15193A;
-  --oz-white: #FFFFFF;
-  --oz-black: #000000;
-  /* Light theme (default) */
-  --move-dark: #f0f2f8;
-  --move-panel: #ffffff;
-  --move-border: #e2e6f0;
-  --move-accent: #4F56FA;
-  --move-text: #15193A;
-  --move-muted: #5c6280;
-  --code-border: #e2e6f0;
-  --code-text: #15193A;
-  --code-bg: #e4e8f2;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #f5f5f5;
+  --accent-foreground: #0a0a0a;
+  --sidebar: rgba(245, 245, 245, 0.31);
+  --sidebar-foreground: #0a0a0a;
+  --border: #f5f5f5;
+  --input: #e5e5e5;
+  --ring: #0a0a0a;
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+  --success: #22c55e;
+  --warning: #eab308;
+  --selected: #4F56FA;
+  --selected-foreground: #ffffff;
+  --code-text: #0a0a0a;
+  --code-bg: #f5f5f5;
+  --radius: 0.625rem;
 }
 
 .dark {
-  --move-dark: #15193A;
-  --move-panel: #1e2240;
-  --move-border: #2a2f5c;
-  --move-accent: #4F56FA;
-  --move-text: #e8eaf0;
-  --move-muted: #8b92b8;
-  --code-border: #2a2f5c;
-  --code-text: #e8eaf0;
-  --code-bg: #15193A;
+  --background: #1a1a1a;
+  --foreground: #e5e5e5;
+  --primary: #e5e5e5;
+  --primary-foreground: #1a1a1a;
+  --secondary: #262626;
+  --secondary-foreground: #e5e5e5;
+  --card: #242424;
+  --card-foreground: #e5e5e5;
+  --popover: #242424;
+  --popover-foreground: #e5e5e5;
+  --muted: #262626;
+  --muted-foreground: #888888;
+  --accent: #262626;
+  --accent-foreground: #e5e5e5;
+  --sidebar: #1e1e1e;
+  --sidebar-foreground: #e5e5e5;
+  --border: #2e2e2e;
+  --input: #2e2e2e;
+  --ring: #e5e5e5;
+  --destructive: #c53030;
+  --destructive-foreground: #ffffff;
+  --success: #22c55e;
+  --warning: #eab308;
+  --selected: #4F56FA;
+  --selected-foreground: #ffffff;
+  --code-text: #e5e5e5;
+  --code-bg: #1a1a1a;
+  --radius: 0.625rem;
 }
 
-body {
-  background-color: var(--move-dark);
-  color: var(--move-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-selected: var(--selected);
+  --color-selected-foreground: var(--selected-foreground);
+  --color-code-text: var(--code-text);
+  --color-code-bg: var(--code-bg);
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Baseline keyboard focus treatment for interactive controls */
-:where(a, button, input, textarea, select, [tabindex]):focus-visible {
-  outline: 2px solid var(--oz-violet);
-  outline-offset: 2px;
-}
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-/* Custom scrollbar – dark theme */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+  /* Baseline keyboard focus treatment */
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 
-::-webkit-scrollbar-track {
-  background: var(--move-panel);
-}
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--move-border);
-  border-radius: 4px;
-}
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--move-muted);
-}
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
 
-/* Code blocks in instructions – match level header/title theme */
-.prose pre {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
-  background: var(--move-panel) !important;
-  border: 1px solid var(--move-border) !important;
-  border-left: 3px solid var(--oz-violet) !important;
-  color: var(--code-text) !important;
-  border-radius: 0 6px 6px 0 !important;
-  padding: 1rem 1.25rem !important;
-  margin: 1rem 0 !important;
-  font-size: 0.8125rem !important;
-  line-height: 1.6 !important;
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
 
-.prose code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
-  background: var(--move-dark) !important;
-  color: var(--code-text) !important;
-  border: 1px solid var(--move-border) !important;
-  border-radius: 4px !important;
-  padding: 0.2em 0.4em !important;
-  font-size: 0.875em !important;
-}
+  /* Code blocks in instructions */
+  .prose pre {
+    font-family: var(--font-mono);
+    background: var(--muted) !important;
+    border: 1px solid var(--border) !important;
+    border-left: 3px solid var(--selected) !important;
+    color: var(--code-text) !important;
+    border-radius: 0 8px 8px 0 !important;
+    padding: 1rem 1.25rem !important;
+    margin: 1rem 0 !important;
+    font-size: 0.8125rem !important;
+    line-height: 1.6 !important;
+  }
 
-/* Select item: checkmark on the right (override @openzeppelin/ui-builder-ui default left-2) */
-[data-slot="select-item"] {
-  padding-left: 0.5rem;
-  padding-right: 2rem;
-}
-[data-slot="select-item-indicator"] {
-  left: auto;
-  right: 0.5rem;
+  .prose code {
+    font-family: var(--font-mono);
+    background: var(--muted) !important;
+    color: var(--code-text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+    padding: 0.2em 0.4em !important;
+    font-size: 0.875em !important;
+  }
+
+  /* Select item: checkmark on the right */
+  [data-slot="select-item"] {
+    padding-left: 0.5rem;
+    padding-right: 2rem;
+  }
+  [data-slot="select-item-indicator"] {
+    left: auto;
+    right: 0.5rem;
+  }
 }

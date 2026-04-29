@@ -12,10 +12,10 @@ export function HintsPanel({ levelId, hints, revealedHintCount, onRevealNextHint
   if (!hints.length) return null;
 
   return (
-    <section className="rounded-lg border border-move-border bg-move-panel/60 p-4" aria-label={`Hints for level ${levelId}`}>
+    <section className="rounded-xl border border-border bg-card p-5" aria-label={`Hints for level ${levelId}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <Typography.H2 variant="unstyled" className="text-sm font-semibold text-move-text">
+          <Typography.H2 variant="unstyled" className="text-sm font-semibold text-foreground">
             Hints
           </Typography.H2>
           <Typography.P variant="smallMuted" className="mt-1">
@@ -36,7 +36,7 @@ export function HintsPanel({ levelId, hints, revealedHintCount, onRevealNextHint
         </Button>
       </div>
       {revealedHintCount > 0 && (
-        <ol className="mt-3 space-y-2 list-decimal pl-5 text-sm text-move-text">
+        <ol className="mt-3 space-y-2 list-decimal pl-5 text-sm text-foreground">
           {hints.slice(0, revealedHintCount).map((hint, idx) => (
             <li key={`${levelId}-hint-${idx}`}>{hint}</li>
           ))}

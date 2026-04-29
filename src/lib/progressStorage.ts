@@ -15,7 +15,9 @@ function parseIntegerSet(raw: unknown): Set<number> {
 
 function dispatchProgressUpdated(detail?: unknown): void {
   if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent(PROGRESS_UPDATED_EVENT, { detail }));
+  queueMicrotask(() => {
+    window.dispatchEvent(new CustomEvent(PROGRESS_UPDATED_EVENT, { detail }));
+  });
 }
 
 function getHintRevealMapFromStorage(): Record<string, number> {

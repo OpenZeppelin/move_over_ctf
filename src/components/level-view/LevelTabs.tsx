@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsTrigger } from "@openzeppelin/ui-builder-ui";
+import { Tabs, TabsList, TabsTrigger } from "@openzeppelin/ui-components";
 
 export type LevelTab = "instructions" | "code";
 
@@ -13,14 +13,14 @@ export function LevelTabs({ tab, onTabChange, instructionsLabel, contractCodeLab
   return (
     <Tabs value={tab} onValueChange={(v) => onTabChange(v as LevelTab)} className="w-full">
       <TabsList
-        className="flex h-auto w-full justify-start gap-0 rounded-none border-b border-move-border bg-move-panel/80 p-0 shadow-none"
+        className="flex h-11 w-full items-center justify-start gap-1 rounded-none border-b border-border bg-card px-4 sm:px-6"
         aria-label="Level content tabs"
       >
         <TabsTrigger
           value="instructions"
           id="tab-instructions"
           aria-controls="panel-instructions"
-          className="min-h-[48px] shrink-0 rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium text-move-muted transition-colors hover:text-move-text data-[state=active]:border-move-accent data-[state=active]:text-move-accent sm:px-6"
+          className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm"
         >
           {instructionsLabel}
         </TabsTrigger>
@@ -28,7 +28,7 @@ export function LevelTabs({ tab, onTabChange, instructionsLabel, contractCodeLab
           value="code"
           id="tab-code"
           aria-controls="panel-code"
-          className="min-h-[48px] shrink-0 rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium text-move-muted transition-colors hover:text-move-text data-[state=active]:border-move-accent data-[state=active]:text-move-accent sm:px-6"
+          className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm"
         >
           {contractCodeLabel}
         </TabsTrigger>

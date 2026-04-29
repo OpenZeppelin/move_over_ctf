@@ -1,20 +1,22 @@
 import type { ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "panel" | "accentSoft";
+type ButtonVariant = "default" | "outline" | "ghost" | "accentSoft";
 type ButtonSize = "icon" | "sm" | "md";
 
 const BASE_BUTTON_CLASS =
-  "inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60 disabled:cursor-not-allowed disabled:opacity-60 touch-manipulation";
+  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer";
 
 const BUTTON_VARIANT_CLASS: Record<ButtonVariant, string> = {
-  panel: "rounded-lg border border-move-border bg-move-panel text-move-text hover:bg-move-border/30 active:scale-[0.98]",
-  accentSoft: "rounded-md border border-oz-violet/40 bg-oz-violet/15 text-oz-violet hover:bg-oz-violet/25",
+  default: "bg-primary text-primary-foreground hover:bg-primary/90",
+  outline: "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+  ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
+  accentSoft: "border border-selected/30 bg-selected/10 text-selected hover:bg-selected/15",
 };
 
 const BUTTON_SIZE_CLASS: Record<ButtonSize, string> = {
-  icon: "size-10",
-  sm: "px-3 py-1.5 text-xs sm:text-sm font-medium",
-  md: "px-3 py-2 text-sm font-medium",
+  icon: "size-10 shrink-0",
+  sm: "h-9 px-3",
+  md: "h-10 px-4 py-2",
 };
 
 function joinClassNames(...classNames: Array<string | undefined>) {
@@ -26,7 +28,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: ButtonSize;
 };
 
-export function Button({ variant = "panel", size = "md", className, type = "button", ...props }: Props) {
+export function Button({ variant = "default", size = "md", className, type = "button", ...props }: Props) {
   return (
     <button
       type={type}

@@ -14,7 +14,7 @@ export function PanelCard({ children, className, as: Tag = "div" }: Props) {
   return (
     <Tag
       className={joinClassNames(
-        "rounded-lg border border-move-border overflow-hidden bg-move-panel text-sm shadow-sm",
+        "rounded-xl border border-border overflow-hidden bg-card text-sm",
         className,
       )}
     >
