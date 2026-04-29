@@ -20,10 +20,10 @@ export function ThemeToggle() {
   if (!hasHydrated || resolvedTheme === undefined) {
     return (
       <Typography.Span
-        className="inline-flex size-12 items-center justify-center rounded-lg border border-move-border bg-move-panel sm:size-14"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-background"
         aria-hidden
       >
-        <Typography.Span className="size-6 rounded-full bg-move-muted/30 sm:size-7" />
+        <Typography.Span className="size-6 rounded-full bg-muted-foreground/30 sm:size-7" />
       </Typography.Span>
     );
   }
@@ -34,16 +34,15 @@ export function ThemeToggle() {
   return (
     <Button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      variant="panel"
+      variant="outline"
       size="icon"
-      className="hover:bg-move-border/50 w-20"
       aria-label={label}
       title={label}
     >
       {isDark ? (
-        <SunIcon className="size-5 text-move-muted" />
+        <SunIcon className="size-5 text-muted-foreground" />
       ) : (
-        <MoonIcon className="size-5 text-move-muted" />
+        <MoonIcon className="size-5 text-muted-foreground" />
       )}
     </Button>
   );

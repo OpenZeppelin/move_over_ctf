@@ -13,13 +13,13 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
   const { locale, t } = useLocale();
 
   return (
-    <div className="md:hidden shrink-0 border-b border-move-border bg-move-panel px-3 py-2 overflow-x-auto">
-      <div className="flex gap-2 min-w-max pb-1" role="tablist" aria-label={t("mobilePicker.selectLevelAriaLabel")}>
+    <div className="md:hidden shrink-0 border-b border-border bg-background px-3 py-2 overflow-x-auto">
+      <div className="flex gap-1.5 min-w-max pb-1" role="tablist" aria-label={t("mobilePicker.selectLevelAriaLabel")}>
         <Link
           href={`/${locale}/levels/how-to-play`}
           className={`
-            shrink-0 min-h-[44px] inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60
-            ${isHowToPlayActive ? "bg-oz-violet text-white" : "text-move-text bg-white/5 hover:bg-white/10"}
+            shrink-0 h-9 inline-flex items-center px-3 rounded-md text-sm font-medium transition-colors
+            ${isHowToPlayActive ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"}
           `}
           aria-current={isHowToPlayActive ? "page" : undefined}
         >
@@ -32,8 +32,8 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
               key={level.id}
               href={`/${locale}/levels/${level.id}`}
               className={`
-                shrink-0 min-h-[44px] inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oz-violet/60
-                ${isActive ? "bg-oz-violet text-white" : "text-move-text bg-white/5 hover:bg-white/10"}
+                shrink-0 h-9 inline-flex items-center px-3 rounded-md text-sm font-medium transition-colors
+                ${isActive ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"}
               `}
               aria-current={isActive ? "page" : undefined}
             >

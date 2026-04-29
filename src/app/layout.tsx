@@ -1,8 +1,13 @@
 import type { Viewport } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
@@ -23,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={jetbrains.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased">
         <ThemeProvider>{children}</ThemeProvider>
         {GA_MEASUREMENT_ID ? (

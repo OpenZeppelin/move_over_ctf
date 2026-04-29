@@ -116,7 +116,7 @@ export function LevelView({ level }: { level: Level }) {
         contractCodeLabel={t("level.contractCode")}
       />
 
-      <div ref={contentScrollRef} className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
+      <div ref={contentScrollRef} className="flex-1 overflow-auto p-5 sm:p-8 bg-background">
         {tab === "instructions" ? (
           <InstructionsTabContent
             levelId={level.id}
@@ -157,14 +157,14 @@ export function LevelView({ level }: { level: Level }) {
                   solutionTextareaRef={solutionTextareaRef}
                 />
                 {hasPassed && level.explanation && (
-                  <div className="rounded-xl border border-move-border bg-move-dark/60 px-3 py-2.5">
+                  <div className="rounded-xl border border-border bg-muted/50 px-4 py-3">
                     <Typography.P
                       variant="unstyled"
-                      className="text-xs font-semibold text-move-muted uppercase tracking-wider mb-1.5"
+                      className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5"
                     >
                       {t("level.explanationTitle")}
                     </Typography.P>
-                    <Typography.P variant="unstyled" className="text-sm text-move-text whitespace-pre-wrap">
+                    <Typography.P variant="unstyled" className="text-sm text-foreground whitespace-pre-wrap">
                       {level.explanation}
                     </Typography.P>
                   </div>

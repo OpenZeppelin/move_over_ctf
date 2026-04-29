@@ -14,7 +14,7 @@ import {
 import { Typography } from "@/components/ui/Typography";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
-import { Progress, Tooltip, TooltipContent, TooltipTrigger } from "@openzeppelin/ui-builder-ui";
+import { Progress, Tooltip, TooltipContent, TooltipTrigger } from "@openzeppelin/ui-components";
 import { replaceTemplate } from "@/i18n/utils";
 
 const EMPTY_SUBSCRIBE = () => () => {};
@@ -23,7 +23,7 @@ export function Header() {
   const { t, locale } = useLocale();
   const { resolvedTheme } = useTheme();
   const hasHydrated = useSyncExternalStore(EMPTY_SUBSCRIBE, () => true, () => false);
-  const isDark = hasHydrated ? resolvedTheme !== "light" : true;
+  const isDark = hasHydrated ? resolvedTheme !== "light" : false;
   const [solvedIds, setSolvedIds] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
@@ -45,63 +45,51 @@ export function Header() {
   const progressPct = totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0;
 
   return (
-    <header className="shrink-0 border-b border-move-border bg-move-panel">
-      <div className="min-h-14 flex items-center px-3 sm:px-6 py-2 gap-2 flex-wrap">
-        <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-          <Link
-            href={`/${locale}`}
-            className="flex items-center shrink-0 gap-2 sm:gap-3 text-move-text hover:opacity-90 transition-opacity"
-            aria-label={t("header.home")}
-          >
-            <Image
-              src={isDark ? "/oz-logo.svg" : "/OZ-Logo-BlackBG.svg"}
-              alt="OpenZeppelin"
-              width={174}
-              height={31}
-              className="h-6 sm:h-8 w-auto max-w-[120px] sm:max-w-none"
-              priority
-            />
-          </Link>
-          <Typography.Span className="text-move-muted font-medium hidden sm:inline">·</Typography.Span>
-          <Link
-            href={`/${locale}`}
-            className="text-lg sm:text-xl font-bold text-move-text tracking-tight hover:opacity-90 transition-opacity shrink-0"
-          >
-            Move<Typography.Span className="text-oz-violet">-over</Typography.Span>
-          </Link>
-          <a
-            href="https://www.openzeppelin.com/careers"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group hidden sm:inline-flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gradient-to-r from-oz-violet to-indigo-500 text-white text-sm font-semibold shadow-lg shadow-oz-violet/25 hover:shadow-oz-violet/40 active:scale-[0.98] transition-all min-h-[44px]"
-          >
-            <Typography.Span className="inline-flex size-5 items-center justify-center rounded-full bg-white/20 text-xs">
-              ✨
-            </Typography.Span>
-            {t("header.weAreHiring")}
-            <Typography.Span className="opacity-80 group-hover:translate-x-0.5 transition-transform">→</Typography.Span>
-          </a>
-        </div>
+    <header className="shrink-0 border-b border-border bg-background">
+      <div className="flex h-14 items-center px-4 sm:px-6 md:px-10">
+        {/* Left: logo + app name inline */}
+        <Link
+          href={`/${locale}`}
+          className="flex items-center gap-2 shrink-0 hover:opacity-90 transition-opacity"
+          aria-label={t("header.home")}
+        >
+          <Image
+            src={isDark ? "/oz-logo.svg" : "/OZ-Logo-BlackBG.svg"}
+            alt="OpenZeppelin"
+            width={174}
+            height={31}
+            className="h-6 w-auto"
+            priority
+          />
+          <Typography.Span className="text-sm text-muted-foreground">
+            Move-over
+          </Typography.Span>
+        </Link>
+
+        {/* Spacer */}
+        <div className="flex-1 min-w-0" />
+
+        {/* Right: progress, locale, theme */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0" dir="ltr">
           <Tooltip>
             <TooltipTrigger asChild>
               <div
-                className="inline-flex cursor-default items-center gap-1.5 rounded-md border border-move-border bg-move-dark px-2 py-1"
+                className="hidden sm:inline-flex cursor-default items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5"
                 aria-label={t("header.progressAriaLabel")}
               >
-                <Typography.Span className="text-[10px] text-move-muted tabular-nums">
+                <Typography.Span className="text-xs text-muted-foreground tabular-nums">
                   {solvedCount}/{totalCount}
                 </Typography.Span>
                 <Progress
                   value={progressPct}
-                  className="h-1 w-14 overflow-hidden rounded-full bg-move-panel sm:w-16 [&>div]:bg-gradient-to-r [&>div]:from-oz-violet [&>div]:to-indigo-500"
+                  className="h-1 w-16 overflow-hidden rounded-full bg-muted [&>div]:bg-selected"
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={progressPct}
                 />
               </div>
             </TooltipTrigger>
-            <TooltipContent className="border-move-border bg-move-panel text-move-text">
+            <TooltipContent className="border-border bg-popover text-popover-foreground">
               <p className="text-xs">
                 {replaceTemplate(t("header.progressTooltip"), {
                   solvedCount,

@@ -70,20 +70,20 @@ export default async function HowToPlayPage({ params }: Props) {
       <MobileLevelPicker levels={levels} />
       <div className="flex-1 flex min-h-0 overflow-hidden">
         <LevelSidebar levels={levels} />
-        <main className="flex-1 overflow-auto p-4 sm:p-6 bg-move-dark">
-          <div className="mx-auto max-w-3xl rounded-lg border border-move-border bg-move-panel p-5 sm:p-6">
+        <main className="flex-1 overflow-auto p-5 sm:p-8 bg-background">
+          <div className="mx-auto max-w-3xl rounded-xl border border-border bg-card p-6 sm:p-8">
             <Typography.H1 variant="page">{t("howToPlay.title")}</Typography.H1>
             <Typography.P variant="muted" className="mt-3">
               {t("howToPlay.welcome")}
             </Typography.P>
 
-            <ol className="mt-5 space-y-3 text-sm sm:text-base text-move-text list-decimal list-inside">
+            <ol className="mt-5 space-y-3 text-sm sm:text-base text-foreground list-decimal list-inside">
               <li>{t("howToPlay.step1")}</li>
               <li>{t("howToPlay.step2")}</li>
               <li>{t("howToPlay.step3")}</li>
               <li>{t("howToPlay.step4")}</li>
             </ol>
-            <section className="mt-6 rounded-lg border border-move-border bg-move-dark/40 p-4">
+            <section className="mt-6 rounded-xl border border-border bg-muted/50 p-5">
               <Typography.H2 variant="compact">{t("howToPlay.addLevelTitle")}</Typography.H2>
               <Typography.P className="mt-2">
                 {t("howToPlay.addLevelBody")}
@@ -92,7 +92,7 @@ export default async function HowToPlayPage({ params }: Props) {
                 href="https://github.com/OpenZeppelin/move_over_ctf/blob/main/ADD_LEVEL_README.md"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center text-sm font-medium text-oz-violet hover:underline"
+                className="mt-3 inline-flex items-center text-sm font-medium text-selected hover:underline"
               >
                 {t("howToPlay.addLevelLink")}
               </a>
@@ -101,7 +101,7 @@ export default async function HowToPlayPage({ params }: Props) {
             <div className="mt-6">
               <Link
                 href={`/${loc}/levels/0`}
-                className="inline-flex items-center rounded-lg border border-oz-violet/40 bg-oz-violet/20 px-4 py-2 text-sm font-medium text-oz-violet hover:bg-oz-violet/30 transition-colors"
+                className="inline-flex items-center h-10 rounded-md bg-foreground px-4 text-sm font-medium text-background hover:bg-foreground/90 transition-colors"
               >
                 {t("howToPlay.startLevel0")}
               </Link>

@@ -10,7 +10,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@openzeppelin/ui-builder-ui";
+} from "@openzeppelin/ui-components";
 import { Typography } from "@/components/ui/Typography";
 
 type RunResult = { success: boolean; output: string } | null;
@@ -60,11 +60,11 @@ export function SolutionEditorCard({
         metaContent={
           <>
             {hasPassed && (
-              <Typography.Span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-move-text">
+              <Typography.Span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-foreground">
                 ✓ Passed
               </Typography.Span>
             )}
-            <Typography.Span className="hidden lg:inline text-[10px] text-move-muted/80">
+            <Typography.Span className="hidden lg:inline text-[10px] text-muted-foreground/80">
               Cmd/Ctrl+Enter to run
             </Typography.Span>
           </>
@@ -77,10 +77,10 @@ export function SolutionEditorCard({
                   onClick={onRun}
                   disabled={runLoading}
                   loading={runLoading}
-                  className={`inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold tracking-wide sm:text-sm ${
+                  className={`inline-flex items-center justify-center gap-2 rounded-md h-9 px-4 text-sm font-medium cursor-pointer disabled:cursor-not-allowed ${
                     hasPassed
-                      ? "border border-emerald-400/55 bg-emerald-500/15 text-move-text hover:bg-emerald-500/22"
-                      : "border border-oz-violet/70 bg-gradient-to-r from-oz-violet to-indigo-500 text-white shadow-[0_0_18px_rgba(124,58,237,0.35)] hover:brightness-110"
+                      ? "border border-success/40 bg-success/10 text-foreground hover:bg-success/15"
+                      : "bg-foreground text-background hover:bg-foreground/90"
                   }`}
                   aria-label={
                     runLoading
@@ -92,10 +92,10 @@ export function SolutionEditorCard({
                 >
                   <Typography.Span
                     aria-hidden
-                    className={`inline-flex size-4 items-center justify-center rounded-full border text-[10px] ${
+                    className={`inline-flex size-4 items-center justify-center rounded-full text-[10px] ${
                       hasPassed
-                        ? "border-emerald-400/60 bg-emerald-500/20 text-move-text"
-                        : "border-white/35 bg-white/15 text-white"
+                        ? "bg-success/20 text-foreground"
+                        : "bg-background/15 text-background"
                     }`}
                   >
                     {runLoading ? "…" : hasPassed ? "✓" : "▶"}
@@ -103,14 +103,14 @@ export function SolutionEditorCard({
                   {runLoading ? "Running…" : hasPassed ? "Run Again" : runLabel}
                 </LoadingButton>
               </TooltipTrigger>
-              <TooltipContent className="border-move-border bg-move-panel text-move-text">
+              <TooltipContent className="border-border bg-popover text-popover-foreground">
                 <p className="text-xs">Run solution (Cmd+Enter or Ctrl+Enter)</p>
               </TooltipContent>
             </Tooltip>
           </>
         }
       />
-      <div className="border-l-[3px] border-l-[var(--oz-violet)] bg-move-panel">
+      <div className="border-l-[3px] border-l-[var(--selected)] bg-card">
         <SyntaxHighlighter
           language="rust"
           style={codeStyle}
@@ -193,7 +193,7 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
             spellCheck={false}
             aria-label={`Solution editor for level ${levelId}`}
             aria-keyshortcuts="Control+Enter Meta+Enter"
-            className="absolute inset-0 w-full min-h-full overflow-auto resize-none border-0 focus:ring-0 focus:outline-none focus:bg-move-dark/30 placeholder:text-move-muted/60 caret-[var(--code-text)] z-10 bg-transparent"
+            className="absolute inset-0 w-full min-h-full overflow-auto resize-none border-0 focus:ring-0 focus:outline-none focus:bg-background/30 placeholder:text-muted-foreground/60 caret-[var(--code-text)] z-10 bg-transparent"
             style={{
               padding: "0.25rem 1rem 0.25rem calc(1rem + 4ch)",
               fontFamily: "var(--font-jetbrains), ui-monospace, monospace",
@@ -227,25 +227,27 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
         </SyntaxHighlighter>
       </div>
       {runResult && (
-        <Alert
-          variant={runResult.success ? "success" : "destructive"}
-          className={`mx-4 mb-4 mt-5 rounded-lg border p-4 font-mono text-xs [&>svg]:hidden ${
-            runResult.success
-              ? "border-emerald-400/55 bg-emerald-500/12 text-emerald-200"
-              : "border-red-400/55 bg-red-500/12 text-red-200"
-          }`}
-          role="status"
-          aria-live="polite"
-        >
-          <AlertTitle
-            className={`mb-1 font-semibold ${
-              runResult.success ? "text-emerald-300" : "text-red-300"
+        <div className="px-4 pb-4 pt-5">
+          <Alert
+            variant={runResult.success ? "success" : "destructive"}
+            className={`rounded-xl border p-4 font-mono text-xs [&>svg]:hidden ${
+              runResult.success
+                ? "border-emerald-600/30 bg-emerald-50 text-emerald-800 dark:border-emerald-400/30 dark:bg-emerald-500/10 dark:text-emerald-200"
+                : "border-red-600/30 bg-red-50 text-red-800 dark:border-red-400/30 dark:bg-red-500/10 dark:text-red-200"
             }`}
+            role="status"
+            aria-live="polite"
           >
-            {runResult.success ? runSuccessLabel : runErrorLabel}
-          </AlertTitle>
-          <pre className="text-inherit overflow-x-auto whitespace-pre-wrap">{runResult.output}</pre>
-        </Alert>
+            <AlertTitle
+              className={`mb-1 font-semibold ${
+                runResult.success ? "text-emerald-700 dark:text-emerald-300" : "text-red-700 dark:text-red-300"
+              }`}
+            >
+              {runResult.success ? runSuccessLabel : runErrorLabel}
+            </AlertTitle>
+            <pre className="text-inherit overflow-x-auto whitespace-pre-wrap break-words">{runResult.output}</pre>
+          </Alert>
+        </div>
       )}
     </PanelCard>
   );
