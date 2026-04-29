@@ -20,7 +20,7 @@ export function LevelTabs({ tab, onTabChange, instructionsLabel, contractCodeLab
           value="instructions"
           id="tab-instructions"
           aria-controls="panel-instructions"
-          className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+          className="inline-flex cursor-pointer items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm"
         >
           {instructionsLabel}
         </TabsTrigger>
@@ -28,7 +28,7 @@ export function LevelTabs({ tab, onTabChange, instructionsLabel, contractCodeLab
           value="code"
           id="tab-code"
           aria-controls="panel-code"
-          className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+          className="inline-flex cursor-pointer items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm"
         >
           {contractCodeLabel}
         </TabsTrigger>

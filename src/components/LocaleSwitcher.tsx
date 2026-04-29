@@ -26,7 +26,7 @@ export function LocaleSwitcher() {
   return (
     <Select value={locale} onValueChange={handleValueChange} dir="ltr">
       <SelectTrigger
-        className="min-h-[40px] min-w-[100px] gap-1.5 rounded-md border border-input bg-background text-foreground hover:bg-accent sm:min-w-[140px] [&>svg]:size-4 [&>svg]:text-muted-foreground"
+        className="min-h-[40px] min-w-[100px] cursor-pointer gap-1.5 rounded-md border border-input bg-background text-foreground hover:bg-accent sm:min-w-[140px] [&>svg]:size-4 [&>svg]:text-muted-foreground"
         aria-label={t("header.language")}
       >
         <SelectValue placeholder={t("header.language")} className="max-w-[120px] truncate sm:max-w-[140px]" />

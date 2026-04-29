@@ -36,7 +36,7 @@ export function ContractCodeCard({
               <TabsTrigger
                 key={`${contract.module}-${idx}`}
                 value={String(idx)}
-                className="rounded-md px-2.5 py-1 text-[11px] font-mono text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm sm:text-xs"
+                className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-mono text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm sm:text-xs"
                 title={`Open ${contract.module}.move`}
                 aria-label={`Open ${contract.module}.move`}
               >

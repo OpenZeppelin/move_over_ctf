@@ -77,7 +77,7 @@ export function SolutionEditorCard({
                   onClick={onRun}
                   disabled={runLoading}
                   loading={runLoading}
-                  className={`inline-flex items-center justify-center gap-2 rounded-md h-9 px-4 text-sm font-medium ${
+                  className={`inline-flex items-center justify-center gap-2 rounded-md h-9 px-4 text-sm font-medium cursor-pointer disabled:cursor-not-allowed ${
                     hasPassed
                       ? "border border-success/40 bg-success/10 text-foreground hover:bg-success/15"
                       : "bg-foreground text-background hover:bg-foreground/90"
