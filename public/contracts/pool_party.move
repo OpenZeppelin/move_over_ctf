@@ -5,6 +5,7 @@ public struct Pool has key {
     name: vector<u8>,
     balance: u64,
     next_nonce: u64,
+    is_treasury: bool,
 }
 
 /// No abilities — must be consumed within the transaction.
@@ -24,6 +25,7 @@ const ENONCE_MISMATCH: u64 = 3;
 const EINSUFFICIENT_REPAYMENT: u64 = 4;
 const ENOT_DRAINED: u64 = 5;
 const EINVALID_POOL_ID: u64 = 6;
+const ENOT_TREASURY: u64 = 7;
 
 public fun create_pool_a(ctx: &mut TxContext): Pool {
     Pool {
@@ -31,6 +33,7 @@ public fun create_pool_a(ctx: &mut TxContext): Pool {
         name: b"Treasury",
         balance: 100_000,
         next_nonce: 3,
+        is_treasury: true,
     }
 }
 
@@ -40,6 +43,7 @@ public fun create_pool_b(ctx: &mut TxContext): Pool {
         name: b"DryRun",
         balance: 0,
         next_nonce: 1,
+        is_treasury: false,
     }
 }
 
@@ -49,6 +53,7 @@ public fun create_pool_c(ctx: &mut TxContext): Pool {
         name: b"Auxiliary",
         balance: 10,
         next_nonce: 2,
+        is_treasury: false,
     }
 }
 
@@ -88,12 +93,14 @@ public fun repay(
 }
 
 public fun solve(pool_a: Pool): PoolPartyFlag {
+    assert!(pool_a.is_treasury, ENOT_TREASURY);
     assert!(pool_a.balance == 0, ENOT_DRAINED);
     let Pool {
         id,
         name: _,
         balance: _,
         next_nonce: _,
+        is_treasury: _,
     } = pool_a;
     id.delete();
     PoolPartyFlag {}
@@ -105,6 +112,7 @@ public fun destroy_pool(pool: Pool) {
         name: _,
         balance: _,
         next_nonce: _,
+        is_treasury: _,
     } = pool;
     id.delete();
 }

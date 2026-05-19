@@ -1,9 +1,13 @@
+"use client";
+
 import type { CSSProperties } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import type { LevelContractModule } from "@/data/levels/types";
 import { CodeWindowHeader } from "@/components/ui/CodeWindowHeader";
 import { PanelCard } from "@/components/ui/PanelCard";
 import { Tabs, TabsList, TabsTrigger } from "@openzeppelin/ui-components";
+import { useLocale } from "@/contexts/LocaleContext";
+import { replaceTemplate } from "@/i18n/utils";
 
 type Props = {
   modulePath: string;
@@ -22,9 +26,10 @@ export function ContractCodeCard({
   activeContractCode,
   codeStyle,
 }: Props) {
+  const { t } = useLocale();
   return (
     <PanelCard>
-      <CodeWindowHeader label="Contract:" value={`${modulePath}.move`} />
+      <CodeWindowHeader label={t("level.contractLabel")} value={`${modulePath}.move`} />
       {contractModules.length > 1 && (
         <Tabs
           value={String(activeContractIndex)}
@@ -32,17 +37,22 @@ export function ContractCodeCard({
           className="w-full"
         >
           <TabsList className="flex h-auto w-full justify-start gap-1 rounded-none border-b border-border bg-card px-3 py-2 shadow-none">
-            {contractModules.map((contract, idx) => (
-              <TabsTrigger
-                key={`${contract.module}-${idx}`}
-                value={String(idx)}
-                className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-mono text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm sm:text-xs"
-                title={`Open ${contract.module}.move`}
-                aria-label={`Open ${contract.module}.move`}
-              >
-                {contract.module}.move
-              </TabsTrigger>
-            ))}
+            {contractModules.map((contract, idx) => {
+              const openLabel = replaceTemplate(t("level.openContractAriaLabel"), {
+                module: contract.module,
+              });
+              return (
+                <TabsTrigger
+                  key={`${contract.module}-${idx}`}
+                  value={String(idx)}
+                  className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-mono text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm sm:text-xs"
+                  title={openLabel}
+                  aria-label={openLabel}
+                >
+                  {contract.module}.move
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
         </Tabs>
       )}

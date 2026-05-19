@@ -1,5 +1,9 @@
+"use client";
+
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
+import { useLocale } from "@/contexts/LocaleContext";
+import { replaceTemplate } from "@/i18n/utils";
 
 type Props = {
   levelId: number;
@@ -9,30 +13,35 @@ type Props = {
 };
 
 export function HintsPanel({ levelId, hints, revealedHintCount, onRevealNextHint }: Props) {
+  const { t } = useLocale();
   if (!hints.length) return null;
 
+  const allRevealed = revealedHintCount >= hints.length;
+  const sectionAriaLabel = replaceTemplate(t("level.hintsSectionAriaLabel"), { id: levelId });
+  const buttonAriaLabel = allRevealed
+    ? t("level.hintsAllRevealedAriaLabel")
+    : replaceTemplate(t("level.hintsRevealHintAriaLabel"), { n: revealedHintCount + 1 });
+
   return (
-    <section className="rounded-xl border border-border bg-card p-5" aria-label={`Hints for level ${levelId}`}>
+    <section className="rounded-xl border border-border bg-card p-5" aria-label={sectionAriaLabel}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <Typography.H2 variant="unstyled" className="text-sm font-semibold text-foreground">
-            Hints
+            {t("level.hintsTitle")}
           </Typography.H2>
           <Typography.P variant="smallMuted" className="mt-1">
-            Reveal hints one by one to unblock yourself while solving the level.
+            {t("level.hintsDescription")}
           </Typography.P>
         </div>
         <Button
           onClick={onRevealNextHint}
-          disabled={revealedHintCount >= hints.length}
+          disabled={allRevealed}
           variant="accentSoft"
           size="sm"
           className="shrink-0"
-          aria-label={
-            revealedHintCount >= hints.length ? "All hints already revealed" : `Reveal hint ${revealedHintCount + 1}`
-          }
+          aria-label={buttonAriaLabel}
         >
-          {revealedHintCount >= hints.length ? "All hints shown" : "Reveal next hint"}
+          {allRevealed ? t("level.hintsAllShown") : t("level.hintsRevealNext")}
         </Button>
       </div>
       {revealedHintCount > 0 && (

@@ -403,6 +403,8 @@ public struct Receipt {
 
 public struct FlashVaultFlag has copy, drop {}
 
+const VAULT_LIQUIDITY: u64 = 1_000;
+
 const EZERO_AMOUNT: u64 = 0;
 const EINSUFFICIENT_LIQUIDITY: u64 = 1;
 const EWRONG_VAULT: u64 = 2;
@@ -411,11 +413,11 @@ const ENONCE_MISMATCH: u64 = 4;
 const EINSUFFICIENT_REPAYMENT: u64 = 5;
 const ENOT_DRAINED: u64 = 6;
 
-/// Initialize the flash loan vault with available liquidity.
-public fun create_vault(amount: u64, ctx: &mut TxContext): FlashVault {
+/// Initialize the flash loan vault with a fixed amount of liquidity.
+public fun create_vault(ctx: &mut TxContext): FlashVault {
     FlashVault {
         id: object::new(ctx),
-        balance: amount,
+        balance: VAULT_LIQUIDITY,
         next_nonce: 1,
     }
 }
@@ -505,6 +507,8 @@ public struct Receipt {
 
 public struct FlashVaultFlag has copy, drop {}
 
+const VAULT_LIQUIDITY: u64 = 1_000;
+
 const EZERO_AMOUNT: u64 = 0;
 const EINSUFFICIENT_LIQUIDITY: u64 = 1;
 const EWRONG_VAULT: u64 = 2;
@@ -513,11 +517,11 @@ const ENONCE_MISMATCH: u64 = 4;
 const EINSUFFICIENT_REPAYMENT: u64 = 5;
 const ENOT_DRAINED: u64 = 6;
 
-/// Initialize the flash loan vault with available liquidity.
-public fun create_vault(amount: u64, ctx: &mut TxContext): FlashVault {
+/// Initialize the flash loan vault with a fixed amount of liquidity.
+public fun create_vault(ctx: &mut TxContext): FlashVault {
     FlashVault {
         id: object::new(ctx),
-        balance: amount,
+        balance: VAULT_LIQUIDITY,
         next_nonce: 1,
     }
 }
@@ -594,6 +598,7 @@ public struct Pool has key {
     name: vector<u8>,
     balance: u64,
     next_nonce: u64,
+    is_treasury: bool,
 }
 
 /// No abilities — must be consumed within the transaction.
@@ -613,6 +618,7 @@ const ENONCE_MISMATCH: u64 = 3;
 const EINSUFFICIENT_REPAYMENT: u64 = 4;
 const ENOT_DRAINED: u64 = 5;
 const EINVALID_POOL_ID: u64 = 6;
+const ENOT_TREASURY: u64 = 7;
 
 public fun create_pool_a(ctx: &mut TxContext): Pool {
     Pool {
@@ -620,6 +626,7 @@ public fun create_pool_a(ctx: &mut TxContext): Pool {
         name: b"Treasury",
         balance: 100_000,
         next_nonce: 3,
+        is_treasury: true,
     }
 }
 
@@ -629,6 +636,7 @@ public fun create_pool_b(ctx: &mut TxContext): Pool {
         name: b"DryRun",
         balance: 0,
         next_nonce: 1,
+        is_treasury: false,
     }
 }
 
@@ -638,6 +646,7 @@ public fun create_pool_c(ctx: &mut TxContext): Pool {
         name: b"Auxiliary",
         balance: 10,
         next_nonce: 2,
+        is_treasury: false,
     }
 }
 
@@ -677,12 +686,14 @@ public fun repay(
 }
 
 public fun solve(pool_a: Pool): PoolPartyFlag {
+    assert!(pool_a.is_treasury, ENOT_TREASURY);
     assert!(pool_a.balance == 0, ENOT_DRAINED);
     let Pool {
         id,
         name: _,
         balance: _,
         next_nonce: _,
+        is_treasury: _,
     } = pool_a;
     id.delete();
     PoolPartyFlag {}
@@ -694,6 +705,7 @@ public fun destroy_pool(pool: Pool) {
         name: _,
         balance: _,
         next_nonce: _,
+        is_treasury: _,
     } = pool;
     id.delete();
 }
@@ -720,6 +732,7 @@ public struct Pool has key {
     name: vector<u8>,
     balance: u64,
     next_nonce: u64,
+    is_treasury: bool,
 }
 
 /// No abilities — must be consumed within the transaction.
@@ -739,6 +752,7 @@ const ENONCE_MISMATCH: u64 = 3;
 const EINSUFFICIENT_REPAYMENT: u64 = 4;
 const ENOT_DRAINED: u64 = 5;
 const EINVALID_POOL_ID: u64 = 6;
+const ENOT_TREASURY: u64 = 7;
 
 public fun create_pool_a(ctx: &mut TxContext): Pool {
     Pool {
@@ -746,6 +760,7 @@ public fun create_pool_a(ctx: &mut TxContext): Pool {
         name: b"Treasury",
         balance: 100_000,
         next_nonce: 3,
+        is_treasury: true,
     }
 }
 
@@ -755,6 +770,7 @@ public fun create_pool_b(ctx: &mut TxContext): Pool {
         name: b"DryRun",
         balance: 0,
         next_nonce: 1,
+        is_treasury: false,
     }
 }
 
@@ -764,6 +780,7 @@ public fun create_pool_c(ctx: &mut TxContext): Pool {
         name: b"Auxiliary",
         balance: 10,
         next_nonce: 2,
+        is_treasury: false,
     }
 }
 
@@ -803,12 +820,14 @@ public fun repay(
 }
 
 public fun solve(pool_a: Pool): PoolPartyFlag {
+    assert!(pool_a.is_treasury, ENOT_TREASURY);
     assert!(pool_a.balance == 0, ENOT_DRAINED);
     let Pool {
         id,
         name: _,
         balance: _,
         next_nonce: _,
+        is_treasury: _,
     } = pool_a;
     id.delete();
     PoolPartyFlag {}
@@ -820,6 +839,7 @@ public fun destroy_pool(pool: Pool) {
         name: _,
         balance: _,
         next_nonce: _,
+        is_treasury: _,
     } = pool;
     id.delete();
 }
@@ -916,8 +936,10 @@ public fun pool_liquidity(pool: &Pool): u128 {
     pool.total_liquidity
 }
 
-public fun solve(pool: Pool, stolen: u64): TickTockFlag {
-    assert!(stolen >= 900_000, 0);
+public fun solve(pool: Pool): TickTockFlag {
+    // Initial token_balance is 1_000_000; the pool is drained only when at
+    // least 900_000 has been pulled out (token_balance <= 100_000).
+    assert!(pool.token_balance <= 100_000, 0);
     let Pool { id, total_liquidity: _, token_balance: _ } = pool;
     id.delete();
     TickTockFlag {}
@@ -999,11 +1021,378 @@ public fun pool_liquidity(pool: &Pool): u128 {
     pool.total_liquidity
 }
 
-public fun solve(pool: Pool, stolen: u64): TickTockFlag {
-    assert!(stolen >= 900_000, 0);
+public fun solve(pool: Pool): TickTockFlag {
+    // Initial token_balance is 1_000_000; the pool is drained only when at
+    // least 900_000 has been pulled out (token_balance <= 100_000).
+    assert!(pool.token_balance <= 100_000, 0);
     let Pool { id, total_liquidity: _, token_balance: _ } = pool;
     id.delete();
     TickTockFlag {}
+}`,
+      },
+    ],
+  },
+  {
+    id: 8,
+    difficulty: "hard",
+    contractCode: `module move_over::blackbook;
+
+use move_over::blackbook_math;
+
+const EINSUFFICIENT_MARGIN: u64 = 0;
+const EMULTIPLICATION_OVERFLOW: u64 = 1;
+const EINSUFFICIENT_RESERVE: u64 = 2;
+const EINSUFFICIENT_VALUE: u64 = 3;
+const EZERO_LIQUIDITY: u64 = 4;
+const EINVALID_MARGIN_NOTE: u64 = 5;
+
+const INITIAL_RESERVE: u64 = 25_000_000;
+const TARGET_VALUE: u64 = 10_000_000;
+const PAYOUT_SHIFT: u8 = 28;
+
+public struct Ledger has key {
+    id: UID,
+    reserve: u64,
+    epoch: u64,
+}
+
+public struct MarginNote has key, store {
+    id: UID,
+    value: u64,
+}
+
+public struct Position has key, store {
+    id: UID,
+    liquidity: u128,
+    margin_paid: u64,
+    epoch: u64,
+}
+
+public struct BlackbookFlag has copy, drop {}
+
+fun root_price_0(): u128 {
+    1u128 << 60
+}
+
+fun root_price_1(): u128 {
+    (1u128 << 60) + (1u128 << 44) + 17u128
+}
+
+public fun bootstrap(ctx: &mut TxContext): Ledger {
+    Ledger {
+        id: object::new(ctx),
+        reserve: INITIAL_RESERVE,
+        epoch: 0,
+    }
+}
+
+public fun faucet(ctx: &mut TxContext): MarginNote {
+    MarginNote {
+        id: object::new(ctx),
+        value: 1,
+    }
+}
+
+public fun open_position(
+    ledger: &mut Ledger,
+    payment: MarginNote,
+    liquidity: u128,
+    ctx: &mut TxContext,
+): Position {
+    assert!(liquidity > 0, EZERO_LIQUIDITY);
+
+    let required = required_margin(liquidity);
+    let MarginNote {
+        id: payment_id,
+        value,
+    } = payment;
+    assert!(value == 1, EINVALID_MARGIN_NOTE);
+    assert!(value >= required, EINSUFFICIENT_MARGIN);
+    payment_id.delete();
+
+    ledger.reserve = ledger.reserve + required;
+    let position = Position {
+        id: object::new(ctx),
+        liquidity,
+        margin_paid: required,
+        epoch: ledger.epoch,
+    };
+    ledger.epoch = ledger.epoch + 1;
+    position
+}
+
+public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxContext): MarginNote {
+    let Position {
+        id,
+        liquidity,
+        margin_paid: _,
+        epoch: _,
+    } = position;
+    id.delete();
+
+    let payout = blackbook_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
+    assert!(ledger.reserve >= payout, EINSUFFICIENT_RESERVE);
+    ledger.reserve = ledger.reserve - payout;
+
+    MarginNote {
+        id: object::new(ctx),
+        value: payout,
+    }
+}
+
+public fun solve(note: MarginNote): BlackbookFlag {
+    let MarginNote { id, value } = note;
+    assert!(value >= TARGET_VALUE, EINSUFFICIENT_VALUE);
+    id.delete();
+    BlackbookFlag {}
+}
+
+public fun discard_ledger(ledger: Ledger) {
+    let Ledger {
+        id,
+        reserve: _,
+        epoch: _,
+    } = ledger;
+    id.delete();
+}
+
+public fun value(note: &MarginNote): u64 {
+    note.value
+}
+
+fun required_margin(liquidity: u128): u64 {
+    let (required, overflowing) =
+        blackbook_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
+    if (overflowing) {
+        abort EMULTIPLICATION_OVERFLOW
+    };
+    required
+}`,
+    contractModules: [
+      {
+        module: "blackbook",
+        contractCode: `module move_over::blackbook;
+
+use move_over::blackbook_math;
+
+const EINSUFFICIENT_MARGIN: u64 = 0;
+const EMULTIPLICATION_OVERFLOW: u64 = 1;
+const EINSUFFICIENT_RESERVE: u64 = 2;
+const EINSUFFICIENT_VALUE: u64 = 3;
+const EZERO_LIQUIDITY: u64 = 4;
+const EINVALID_MARGIN_NOTE: u64 = 5;
+
+const INITIAL_RESERVE: u64 = 25_000_000;
+const TARGET_VALUE: u64 = 10_000_000;
+const PAYOUT_SHIFT: u8 = 28;
+
+public struct Ledger has key {
+    id: UID,
+    reserve: u64,
+    epoch: u64,
+}
+
+public struct MarginNote has key, store {
+    id: UID,
+    value: u64,
+}
+
+public struct Position has key, store {
+    id: UID,
+    liquidity: u128,
+    margin_paid: u64,
+    epoch: u64,
+}
+
+public struct BlackbookFlag has copy, drop {}
+
+fun root_price_0(): u128 {
+    1u128 << 60
+}
+
+fun root_price_1(): u128 {
+    (1u128 << 60) + (1u128 << 44) + 17u128
+}
+
+public fun bootstrap(ctx: &mut TxContext): Ledger {
+    Ledger {
+        id: object::new(ctx),
+        reserve: INITIAL_RESERVE,
+        epoch: 0,
+    }
+}
+
+public fun faucet(ctx: &mut TxContext): MarginNote {
+    MarginNote {
+        id: object::new(ctx),
+        value: 1,
+    }
+}
+
+public fun open_position(
+    ledger: &mut Ledger,
+    payment: MarginNote,
+    liquidity: u128,
+    ctx: &mut TxContext,
+): Position {
+    assert!(liquidity > 0, EZERO_LIQUIDITY);
+
+    let required = required_margin(liquidity);
+    let MarginNote {
+        id: payment_id,
+        value,
+    } = payment;
+    assert!(value == 1, EINVALID_MARGIN_NOTE);
+    assert!(value >= required, EINSUFFICIENT_MARGIN);
+    payment_id.delete();
+
+    ledger.reserve = ledger.reserve + required;
+    let position = Position {
+        id: object::new(ctx),
+        liquidity,
+        margin_paid: required,
+        epoch: ledger.epoch,
+    };
+    ledger.epoch = ledger.epoch + 1;
+    position
+}
+
+public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxContext): MarginNote {
+    let Position {
+        id,
+        liquidity,
+        margin_paid: _,
+        epoch: _,
+    } = position;
+    id.delete();
+
+    let payout = blackbook_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
+    assert!(ledger.reserve >= payout, EINSUFFICIENT_RESERVE);
+    ledger.reserve = ledger.reserve - payout;
+
+    MarginNote {
+        id: object::new(ctx),
+        value: payout,
+    }
+}
+
+public fun solve(note: MarginNote): BlackbookFlag {
+    let MarginNote { id, value } = note;
+    assert!(value >= TARGET_VALUE, EINSUFFICIENT_VALUE);
+    id.delete();
+    BlackbookFlag {}
+}
+
+public fun discard_ledger(ledger: Ledger) {
+    let Ledger {
+        id,
+        reserve: _,
+        epoch: _,
+    } = ledger;
+    id.delete();
+}
+
+public fun value(note: &MarginNote): u64 {
+    note.value
+}
+
+fun required_margin(liquidity: u128): u64 {
+    let (required, overflowing) =
+        blackbook_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
+    if (overflowing) {
+        abort EMULTIPLICATION_OVERFLOW
+    };
+    required
+}`,
+      },
+      {
+        module: "blackbook_math",
+        contractCode: `module move_over::blackbook_math;
+
+const SHIFT_BITS: u8 = 32;
+const HIGH_BITS_OFFSET: u8 = 96;
+
+public fun full_mul_u128(a: u128, b: u128): u128 {
+    a * b
+}
+
+public fun quote_required_margin(
+    sqrt_price_0: u128,
+    sqrt_price_1: u128,
+    liquidity: u128,
+    round_up: bool,
+): (u64, bool) {
+    quote_from_roots(sqrt_price_0, sqrt_price_1, liquidity, round_up)
+}
+
+public fun payout_from_liquidity(liquidity: u128, shift: u8): u64 {
+    let scaled = (liquidity >> shift) as u64;
+    if (scaled == 0) {
+        1
+    } else {
+        scaled
+    }
+}
+
+fun quote_from_roots(
+    sqrt_price_0: u128,
+    sqrt_price_1: u128,
+    liquidity: u128,
+    round_up: bool,
+): (u64, bool) {
+    let sqrt_price_diff = abs_diff(sqrt_price_0, sqrt_price_1);
+
+    if (sqrt_price_diff == 0 || liquidity == 0) {
+        return (0, false)
+    };
+
+    let (numerator, overflowing) = checked_shlw(full_mul_u128(liquidity, sqrt_price_diff));
+
+    if (overflowing) {
+        return (0, true)
+    };
+
+    let denominator = full_mul_u128(sqrt_price_0, sqrt_price_1);
+    let quotient = div_round(numerator, denominator, round_up);
+
+    ((quotient as u64), false)
+}
+
+public fun checked_shlw(n: u128): (u128, bool) {
+    let mask = 0xffffffffu128 << HIGH_BITS_OFFSET;
+    if (n > mask) {
+        (0, true)
+    } else {
+        (n << SHIFT_BITS, false)
+    }
+}
+
+public fun checked_shlw_strict(n: u128): (u128, bool) {
+    let limit = 1u128 << HIGH_BITS_OFFSET;
+    if (n >= limit) {
+        (0, true)
+    } else {
+        (n << SHIFT_BITS, false)
+    }
+}
+
+public fun div_round(numerator: u128, denominator: u128, round_up: bool): u128 {
+    let quotient = numerator / denominator;
+    let remainder = numerator % denominator;
+
+    if (round_up && remainder > 0) {
+        quotient + 1
+    } else {
+        quotient
+    }
+}
+
+public fun abs_diff(a: u128, b: u128): u128 {
+    if (a > b) {
+        a - b
+    } else {
+        b - a
+    }
 }`,
       },
     ],

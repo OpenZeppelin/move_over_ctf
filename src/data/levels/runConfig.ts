@@ -48,4 +48,9 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "TickTockFlag",
     solutionModule: "level_7_solution",
   },
+  8: {
+    module: "blackbook",
+    typeName: "BlackbookFlag",
+    solutionModule: "level_8_solution",
+  },
 };

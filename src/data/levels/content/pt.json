@@ -7,38 +7,108 @@
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": []
+    "hints": [
+      "Repare no que `charge` realmente faz com um `Artifact`. Existe alguma proteção sobre o valor de energia?",
+      "`shatter` exige `power == 100`. Tudo que você precisa para satisfazer essa verificação está disponível na API pública."
+    ],
+    "explanation": "O Nível 0 é um aquecimento que apresenta o modelo de objetos do Sui. `forge` cria um `Artifact`, `charge` o modifica via `&mut`, e `shatter` o consome por valor. Note como o Move torna a propriedade explícita: você empresta um objeto de forma mutável para alterar um campo, mas para desestruturá-lo é preciso mover a propriedade. Não há uma vulnerabilidade real aqui; a lição é o próprio contrato da API, incluindo como as assinaturas de tipo `&mut Artifact` vs `Artifact` descrevem o que cada função pode fazer."
   },
   "1": {
     "name": "Colecionador de moedas",
-    "description": "O objetivo deste nível é comprar o prémio na máquina de vending. O prémio custa 1.000 tokens mas a torneira só...",
-    "instructions": "# Nível 1: Colecionador de moedas\n\nO objetivo deste nível é comprar o prémio na máquina de vending. O prémio custa 1.000 tokens mas a torneira só te dá 100.\n\nCoisas que podem ajudar:\n\n- Modelo de moedas do Sui: moedas são objetos, não mapas de saldo\n- Operações `split` e `merge`",
+    "description": "O objetivo deste nível é comprar o prêmio da máquina de vendas. O prêmio custa 1.000 tokens mas a torneira só...",
+    "instructions": "# Nível 1: Colecionador de moedas\n\nO objetivo deste nível é comprar o prêmio da máquina de vendas. O prêmio custa 1.000 tokens mas a torneira só te dá 100.\n\nCoisas que podem ajudar:\n\n- Modelo de moedas do Sui: moedas são objetos, não mapeamentos de saldo\n- Operações `split` e `merge`",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
     "hints": [
-      "O que é que `buy_prize` valida realmente?"
-    ]
+      "O que `buy_prize` realmente valida?",
+      "A função desempacota o `Token` e vincula seu `value` a `_`. Observe a ordem das operações: algo é comparado com um preço *antes* disso?"
+    ],
+    "explanation": "`buy_prize` desestrutura o token de pagamento mas vincula `value` a `_` e nunca o lê. O 'preço' de 1.000 vive na descrição, não no código. Qualquer `Token` resgata o prêmio, até mesmo a saída de 100 tokens da torneira. Este nível ensina um padrão recorrente de auditoria: o *comportamento* de uma função é apenas o que o código faz, nunca o que comentários, nomes ou descrições afirmam. Sempre verifique quais asserções são realmente aplicadas e quais são documentação se passando por verificação."
   },
   "3": {
-    "name": "Tesouro pegajoso",
-    "description": "O objetivo deste nível é resgatar o prémio do baú do tesouro e capturar a bandeira.",
-    "instructions": "# Nível 3: Tesouro pegajoso\n\nO objetivo deste nível é resgatar o prémio do baú do tesouro e capturar a bandeira.\n\nCoisas que podem ajudar:\n\n- `sui::dynamic_field`\n- Campos órfãos\n- Ordem das operações",
+    "name": "Tesouro Grudento",
+    "description": "O objetivo deste nível é resgatar o prêmio do baú do tesouro e capturar a bandeira.",
+    "instructions": "# Nível 3: Tesouro Grudento\n\nO objetivo deste nível é resgatar o prêmio do baú do tesouro e capturar a bandeira.\n\nCoisas que podem ajudar:\n\n- `sui::dynamic_field`\n- Campos órfãos\n- Ordem das operações",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": []
+    "hints": [
+      "Liste todas as funções públicas que tocam em um `Chest`. Quais operam diretamente no campo dinâmico, e quais destroem o baú?",
+      "`smash` consome o baú mas retorna um `Prize { value: 0 }` fixo no código, descartando o que estava armazenado. Existe uma função que retira o prêmio real *antes* de você destruir o baú?"
+    ],
+    "explanation": "Tesouro Grudento expõe dois caminhos contra o baú. `smash` parece a ação principal mas descarta o prêmio armazenado e te entrega uma substituição de valor zero. `extract_prize` discretamente retira o campo dinâmico sem modificações. No Move, toda `public fun` pode ser chamada por qualquer um — nomes, comentários e intenção *não* controlam o acesso. Ao auditar, enumere cada função pública em cada tipo público e pergunte o que cada uma permite de forma independente, em vez de assumir que o 'caminho feliz' é o único caminho."
   },
   "4": {
-    "name": "Baú de objetos",
-    "description": "Resgata o prémio do baú e captura a bandeira—mesma ideia que Tesouro pegajoso, mas o prémio está guardado como campo de objeto dinâmico.",
-    "instructions": "# Nível 4: Baú de objetos\n\nO objetivo deste nível é resgatar o prémio do baú do tesouro e capturar a bandeira. O baú guarda o prémio como **campo de objeto dinâmico** (um objeto com `key`), por isso continua a ser encontrável por ID.\n\nCoisas que podem ajudar:\n\n- `sui::dynamic_object_field`\n- Mesmo fluxo que Tesouro pegajoso: criar, extrair, resolver\n- Ordem das operações",
+    "name": "Baú de Objetos",
+    "description": "Resgate o prêmio do baú e capture a bandeira — mesma ideia do Tesouro Grudento, mas o prêmio está armazenado como um campo de objeto dinâmico.",
+    "instructions": "# Nível 4: Baú de Objetos\n\nO objetivo deste nível é resgatar o prêmio do baú do tesouro e capturar a bandeira. O baú armazena o prêmio como um **campo de objeto dinâmico** (um objeto com `key`), então ele continua descobrível por ID.\n\nCoisas que podem ajudar:\n\n- `sui::dynamic_object_field`\n- Mesmo fluxo do Tesouro Grudento: criar, extrair, resolver\n- Ordem das operações",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": []
+    "hints": [
+      "Este é o Tesouro Grudento com uma reviravolta: o `Prize` agora tem `key`, então é armazenado como `dynamic_object_field` em vez de `dynamic_field`. Isso muda quais funções continuam chamáveis?",
+      "Compare a superfície pública com o nível anterior. A primitiva de armazenamento é diferente, mas a história do acesso também é?"
+    ],
+    "explanation": "Campos de objetos dinâmicos (`dynamic_object_field`) diferem dos campos dinâmicos simples (`dynamic_field`) no fato de que os objetos filhos permanecem endereçáveis individualmente por ID, suportando descoberta no lado da carteira e indexação por exploradores. Mas essa é uma diferença de *armazenamento*, não de controle de acesso. A vulnerabilidade é idêntica à do Nível 3: `extract_prize` continua público e continua contornando `smash`. A lição é que trocar primitivas de armazenamento sem revisitar a superfície de funções normalmente deixa o mesmo buraco vestindo uma roupa diferente."
+  },
+  "5": {
+    "name": "Cofre Flash",
+    "description": "Drene o cofre completamente e capture a bandeira.",
+    "instructions": "# Nível 5: Cofre Flash\n\nO objetivo deste nível é drenar o cofre completamente e capturar a bandeira.\n\nCoisas que podem ajudar:\n\n- Structs do Move e suas habilidades\n- Invariantes de flash loan",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "`Receipt` não tem habilidades — é uma batata quente que precisa ser consumida antes do fim da transação. Liste todas as funções que consomem um `Receipt`.",
+      "Existem dois caminhos de liquidação: `repay` e `cancel`. Compare-os lado a lado. Quais entradas cada um exige, e quais cada um *não* exige?"
+    ],
+    "explanation": "Flash loans dependem de recibos do tipo 'batata quente': structs sem habilidades que precisam ser desempacotados na mesma transação. O padrão em si é sólido — o recibo *força* uma função de liquidação a ser chamada. Mas o Cofre Flash oferece dois caminhos de liquidação, e apenas `repay` realmente exige que o token emprestado seja devolvido. `cancel` consome o recibo sem verificar se a liquidez foi restaurada. A lição geral: o padrão batata quente apenas garante que *algo* finalize o recibo — cada consumidor do tipo batata quente precisa preservar o invariante do protocolo por conta própria. Uma auditoria deve enumerar todos os lugares onde um tipo batata quente é desempacotado e verificar cada um de forma independente."
+  },
+  "6": {
+    "name": "Festa dos Pools",
+    "description": "O objetivo deste nível é drenar o Pool A e capturar a bandeira.",
+    "instructions": "# Nível 6: Festa dos Pools\n\nO objetivo deste nível é drenar o Pool A e capturar a bandeira. Três pools compartilham a mesma API de estilo flash loan, mas apenas o Pool A guarda o tesouro real.\n\nCoisas que podem ajudar:\n\n- As invariantes de flash loan do Cofre Flash, aplicadas em múltiplos pools\n- O que `repay` realmente prova sobre o recibo que consome\n- Recibos são batatas quentes — precisam ser liquidados, mas onde?",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "Três pools, um único `repay`. Leia `repay` com atenção. Quais argumentos vêm do chamador, e quais vêm do pool que está sendo pago?",
+      "O recibo armazena `pool_id`, mas `repay` o compara contra o parâmetro `receipt_pool_id` *fornecido pelo chamador* — não contra o ID real do pool. Dois valores controlados pelo chamador não provam nada."
+    ],
+    "explanation": "O bug da Festa dos Pools é uma validação fora de lugar. `repay` verifica se o `pool_id` armazenado no recibo combina com um parâmetro `receipt_pool_id` *fornecido pelo chamador*, em vez de compará-lo com o ID real do pool sendo pago (`object::id(&pool.id)`). Quando os dois lados de uma verificação de igualdade vêm do chamador, a restrição não prova nada — é decorativa. A única amarração estrutural restante é o nonce, mas nonces podem ser avançados em qualquer pool emitindo empréstimos descartáveis. A lição geral: uma verificação só é significativa quando um dos lados vem de uma fonte confiável. Sempre rastreie de onde vem cada operando de um `assert!` crítico."
+  },
+  "7": {
+    "name": "Tick Tock",
+    "description": "O objetivo deste nível é drenar pelo menos 900.000 tokens do pool e capturar a bandeira.",
+    "instructions": "# Nível 7: Tick Tock\n\nO objetivo deste nível é drenar pelo menos 900.000 tokens do pool e capturar a bandeira. O pool precifica a liquidez usando um `sqrt_price` derivado do tick, e o custo de abrir uma posição escala com esse preço.\n\nCoisas que podem ajudar:\n\n- Liquidez concentrada e precificação baseada em ticks\n- Conversões de inteiros no Move: o que acontece quando um `u64` é convertido para `u8`\n- A relação entre tokens depositados, liquidez reivindicada e pagamentos pro-rata",
+    "author": {
+      "name": "Kose",
+      "github": "https://github.com/kosedogus"
+    },
+    "hints": [
+      "Leia `tick_to_sqrt_price`. O que acontece com `tick / 100` quando o quociente é maior que 255?",
+      "A conversão `as u8` do Move silenciosamente mantém apenas os 8 bits mais baixos. Encontre um valor de tick onde `(tick / 100) % 256 == 0` — o deslocamento colapsa para zero e `sqrt_price` se torna 1."
+    ],
+    "explanation": "O bug do Tick Tock é uma conversão silenciosa de redução: `(tick / 100) as u8` descarta todos os bits acima do oitavo. Para qualquer tick que seja múltiplo de 25.600, o deslocamento colapsa para zero, fazendo `1u128 << 0 = 1` — o menor `sqrt_price` possível. De repente o depósito necessário para liquidez arbitrária se torna efetivamente zero, e um pagamento minúsculo compra uma posição grande o suficiente para drenar o pool através do pagamento pro-rata. A lição: toda conversão de um inteiro mais largo para um mais estreito é um ponto potencial de overflow, e o Move (diferente do `try_into` do Rust) *não* aborta em truncamento. Esse padrão exato de bug já apareceu em DEXes em produção — audite locais de conversão da mesma forma que você audita aritmética."
+  },
+  "8": {
+    "name": "Livro Noturno",
+    "description": "O objetivo deste nível é sair com uma nota de margem que valha pelo menos 10.000.000 — mesmo que a torneira só emita uma nota que vale 1.",
+    "instructions": "# Nível 8: Livro Noturno\n\nO objetivo deste nível é capturar a bandeira resgatando uma `MarginNote` que valha pelo menos 10.000.000, partindo de uma torneira que só emite uma nota que vale 1.\n\nO livro cota a margem necessária através de um módulo de matemática de ponto fixo que desloca à esquerda valores intermediários para obter precisão. Abra uma posição, feche-a e inspecione a nota resultante.\n\nCoisas que podem ajudar:\n\n- Matemática de ponto fixo e escalonamento baseado em deslocamento\n- Verificações de overflow: o que a máscara realmente permite versus o que o deslocamento pode suportar\n- A diferença entre *margem exigida* e *pagamento a partir da liquidez*",
+    "author": {
+      "name": "km",
+      "github": "https://github.com/km631"
+    },
+    "hints": [
+      "Compare `checked_shlw` e `checked_shlw_strict` em `blackbook_math`. Eles afirmam fazer a mesma coisa — fazem mesmo?",
+      "O limite seguro para um deslocamento à esquerda de 32 bits sem sinal em um `u128` é `1 << 96`. Olhe para a máscara que `checked_shlw` usa. É o mesmo valor?"
+    ],
+    "explanation": "O desafio depende de uma verificação de overflow falha em um auxiliar de deslocamento à esquerda de largura fixa. A máscara em `checked_shlw` é `0xffffffff << 96`, que permite valores *maiores* do que o verdadeiro limite seguro de `1 << 96` para um deslocamento à esquerda de 32 bits. Uma entrada `liquidity` grande pode passar pela verificação, perder seus bits altos durante o deslocamento de precisão e truncar silenciosamente. Esse truncamento colapsa a cotação de margem exigida, então uma nota da torneira que vale 1 satisfaz o requisito de margem — enquanto a posição ainda registra a liquidez total. No fechamento, `payout_from_liquidity` retorna `liquidity >> 28`, pagando uma `MarginNote` que vale milhões. Este é o padrão de bug de verificação de overflow estilo Cetus: um erro de trinta e dois em um limite de segurança que permite que a aritmética subjacente faça wrap. Sempre valide que o limite usado por um auxiliar `checked_*` corresponde à largura real que a operação consegue suportar — e prefira o limite estrito de bit único (`1 << N`) em vez de uma máscara `0xff...`."
   }
 }
