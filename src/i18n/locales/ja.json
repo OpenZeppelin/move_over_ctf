@@ -109,7 +109,9 @@
     "levels": "レベル一覧",
     "howToPlay": "遊び方",
     "completed": "クリア済み",
-    "levelsListAriaLabel": "レベル一覧"
+    "levelsListAriaLabel": "レベル一覧",
+    "completion": "コンプリート",
+    "completionLockedTooltip": "全レベルをクリアするとシェアカードが解放されます"
   },
   "howToPlay": {
     "title": "遊び方",
@@ -135,5 +137,23 @@
     "levelTitle": "レベル{id}: {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "Move-overの流れを学びましょう。脆弱なコントラクトを読み、run()を書き、Flagオブジェクトを返して、ブラウザだけでレベルをクリアしていきます。"
+  },
+  "completion": {
+    "modalTitle": "CTFクリア！",
+    "modalDescription": "すべてのフラグを獲得しました。カードをカスタマイズして記念にダウンロードしましょう。",
+    "nameLabel": "表示名",
+    "namePlaceholder": "あなたの名前",
+    "downloadPng": "PNGをダウンロード",
+    "downloading": "生成中…",
+    "downloadAriaLabel": "完了カードをPNGとしてダウンロード",
+    "viewLater": "カードは /completion でいつでも確認できます",
+    "pageTitle": "コンプリート",
+    "pageDescription": "Move-over CTFの完了カード — 全レベル制覇の証明。",
+    "lockedTitle": "全クリアでカードが解放されます",
+    "lockedBody": "すべてのレベルを解くと、完了カードがここに表示されます。",
+    "progressLabel": "進捗：{solved} / {total} レベル攻略",
+    "continueCta": "解き続ける",
+    "unlockedTitle": "すべてのフラグを獲得しました",
+    "unlockedBody": "表示名でカードをカスタマイズし、PNGとしてダウンロードしてください。"
   }
 }

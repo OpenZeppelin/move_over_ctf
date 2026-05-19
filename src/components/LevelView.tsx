@@ -5,7 +5,16 @@ import { useTheme } from "next-themes";
 import { useLocale } from "@/contexts/LocaleContext";
 import { LEVEL_RUN_CONFIG, type Level } from "@/data/levels";
 import { codeStyleDark, codeStyleLight } from "@/lib/codeHighlight";
-import { markLevelSolved, saveSolutionForLevel } from "@/lib/progressStorage";
+import {
+  getSolvedIdsFromStorage,
+  markLevelSolved,
+  saveSolutionForLevel,
+} from "@/lib/progressStorage";
+import {
+  getCompletionAcknowledged,
+  setCompletionAcknowledged,
+} from "@/lib/completionStorage";
+import { CompletionModal } from "@/components/completion/CompletionModal";
 import { LevelHeader } from "@/components/level-view/LevelHeader";
 import { ContractCodeCard } from "@/components/level-view/ContractCodeCard";
 import { LevelTabs, type LevelTab } from "@/components/level-view/LevelTabs";
@@ -17,7 +26,7 @@ import { useLevelPersistence } from "@/components/level-view/hooks/useLevelPersi
 import { useLevelRunner } from "@/components/level-view/hooks/useLevelRunner";
 import { useAutoResizeCodeEditor } from "@/components/level-view/hooks/useAutoResizeCodeEditor";
 
-export function LevelView({ level }: { level: Level }) {
+export function LevelView({ level, levelsTotal }: { level: Level; levelsTotal: number }) {
   const [tab, setTab] = useState<LevelTab>("instructions");
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const solutionHighlightRef = useRef<HTMLDivElement>(null);
@@ -68,11 +77,21 @@ export function LevelView({ level }: { level: Level }) {
     hintsLength: hints.length,
   });
 
+  const [completionOpen, setCompletionOpen] = useState(false);
+
   const handleSolved = useCallback(() => {
     setIsCompleted(true);
     markLevelSolved(level.id);
     saveSolutionForLevel(level.id, solutionCode);
-  }, [level.id, setIsCompleted, solutionCode]);
+    // After marking, check whether this was the final outstanding level
+    // AND the user hasn't already dismissed the celebration before.
+    if (typeof window !== "undefined") {
+      const solved = getSolvedIdsFromStorage();
+      if (solved.size >= levelsTotal && !getCompletionAcknowledged()) {
+        setCompletionOpen(true);
+      }
+    }
+  }, [level.id, levelsTotal, setIsCompleted, solutionCode]);
 
   const { runResult, runLoading, handleRun } = useLevelRunner({
     levelId: level.id,
@@ -174,6 +193,14 @@ export function LevelView({ level }: { level: Level }) {
           </div>
         )}
       </div>
+      <CompletionModal
+        open={completionOpen}
+        onClose={() => {
+          setCompletionAcknowledged();
+          setCompletionOpen(false);
+        }}
+        levelsTotal={levelsTotal}
+      />
     </div>
   );
 }

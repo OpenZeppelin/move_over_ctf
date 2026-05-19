@@ -109,7 +109,9 @@
     "levels": "Уровни",
     "howToPlay": "Как играть",
     "completed": "Пройдено",
-    "levelsListAriaLabel": "Список уровней"
+    "levelsListAriaLabel": "Список уровней",
+    "completion": "Карточка",
+    "completionLockedTooltip": "Реши все уровни — карточка откроется"
   },
   "howToPlay": {
     "title": "Как играть",
@@ -135,5 +137,23 @@
     "levelTitle": "Уровень {id}: {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "Разберись, как устроен Move-over: изучай уязвимые контракты, пиши run(), возвращай объект Flag и проходи уровни прямо в браузере."
+  },
+  "completion": {
+    "modalTitle": "CTF пройден!",
+    "modalDescription": "Ты собрал все флаги. Настрой карточку и скачай её на память.",
+    "nameLabel": "Отображаемое имя",
+    "namePlaceholder": "Твоё имя",
+    "downloadPng": "Скачать PNG",
+    "downloading": "Готовим…",
+    "downloadAriaLabel": "Скачать карточку прохождения в PNG",
+    "viewLater": "Карточку можно посмотреть в любой момент на /completion",
+    "pageTitle": "Прохождение",
+    "pageDescription": "Твоя карточка прохождения Move-over CTF — доказательство, что ты прошёл все уровни.",
+    "lockedTitle": "Карточка откроется после полного прохождения",
+    "lockedBody": "Реши все уровни — и карточка появится здесь.",
+    "progressLabel": "Прогресс: {solved} / {total} уровней пройдено",
+    "continueCta": "Продолжить",
+    "unlockedTitle": "Ты собрал все флаги",
+    "unlockedBody": "Настрой карточку именем и скачай как PNG."
   }
 }

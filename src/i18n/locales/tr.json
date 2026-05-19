@@ -109,7 +109,9 @@
     "levels": "Seviyeler",
     "howToPlay": "Nasıl oynanır",
     "completed": "Tamamlandı",
-    "levelsListAriaLabel": "Seviye listesi"
+    "levelsListAriaLabel": "Seviye listesi",
+    "completion": "Tamamlama kartı",
+    "completionLockedTooltip": "Tüm seviyeleri çöz, paylaşım kartını aç"
   },
   "howToPlay": {
     "title": "Nasıl oynanır",
@@ -135,5 +137,23 @@
     "levelTitle": "Seviye {id}: {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "Move-over akışını öğren: zafiyetli sözleşmeleri incele, run() yaz, Flag nesnesini döndür ve seviyeleri tarayıcıda geç."
+  },
+  "completion": {
+    "modalTitle": "CTF tamamlandı!",
+    "modalDescription": "Tüm bayrakları yakaladın. Kartını özelleştir ve hatıra olarak indir.",
+    "nameLabel": "Görünen ad",
+    "namePlaceholder": "Adın",
+    "downloadPng": "PNG indir",
+    "downloading": "Hazırlanıyor…",
+    "downloadAriaLabel": "Tamamlama kartını PNG olarak indir",
+    "viewLater": "Kartını istediğin zaman /completion sayfasından görebilirsin",
+    "pageTitle": "Tamamlandı",
+    "pageDescription": "Move-over CTF tamamlama kartın — tüm seviyeleri bitirdiğinin kanıtı.",
+    "lockedTitle": "Kart, tüm seviyeleri bitirince açılır",
+    "lockedBody": "Tüm seviyeleri çöz — tamamlama kartın burada görünecek.",
+    "progressLabel": "İlerleme: {solved} / {total} seviye çözüldü",
+    "continueCta": "Çözmeye devam et",
+    "unlockedTitle": "Tüm bayrakları yakaladın",
+    "unlockedBody": "Kartını görünen ad ile özelleştir ve PNG olarak indir."
   }
 }

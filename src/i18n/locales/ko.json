@@ -109,7 +109,9 @@
     "levels": "레벨",
     "howToPlay": "플레이 방법",
     "completed": "클리어",
-    "levelsListAriaLabel": "레벨 목록"
+    "levelsListAriaLabel": "레벨 목록",
+    "completion": "완료 카드",
+    "completionLockedTooltip": "모든 레벨을 풀면 공유 카드가 열립니다"
   },
   "howToPlay": {
     "title": "플레이 방법",
@@ -135,5 +137,23 @@
     "levelTitle": "레벨 {id}: {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "Move-over의 핵심 흐름을 익혀 보세요. 취약한 컨트랙트를 분석하고, run()을 작성하고, Flag 객체를 반환해 브라우저에서 바로 레벨을 클리어합니다."
+  },
+  "completion": {
+    "modalTitle": "CTF 완료!",
+    "modalDescription": "모든 플래그를 획득했습니다. 카드를 꾸미고 기념으로 내려받아 보세요.",
+    "nameLabel": "표시 이름",
+    "namePlaceholder": "이름을 입력하세요",
+    "downloadPng": "PNG 다운로드",
+    "downloading": "생성 중…",
+    "downloadAriaLabel": "완료 카드를 PNG로 다운로드",
+    "viewLater": "/completion 에서 언제든 카드를 다시 볼 수 있습니다",
+    "pageTitle": "완료",
+    "pageDescription": "Move-over CTF 완료 카드 — 모든 레벨을 클리어했다는 증명서입니다.",
+    "lockedTitle": "모든 레벨을 완료하면 카드가 열립니다",
+    "lockedBody": "모든 레벨을 해결하면 완료 카드가 여기에 나타납니다.",
+    "progressLabel": "진행도: {solved} / {total} 레벨 해결",
+    "continueCta": "계속 풀기",
+    "unlockedTitle": "모든 플래그를 획득했습니다",
+    "unlockedBody": "표시 이름으로 카드를 꾸미고 PNG로 다운로드하세요."
   }
 }

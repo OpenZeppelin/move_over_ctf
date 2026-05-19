@@ -109,7 +109,9 @@
     "levels": "المستويات",
     "howToPlay": "كيف تلعب",
     "completed": "مكتمل",
-    "levelsListAriaLabel": "قائمة المستويات"
+    "levelsListAriaLabel": "قائمة المستويات",
+    "completion": "بطاقة الإنجاز",
+    "completionLockedTooltip": "حلّ كل المستويات لتفعيل بطاقة المشاركة"
   },
   "howToPlay": {
     "title": "كيف تلعب",
@@ -135,5 +137,23 @@
     "levelTitle": "المستوى {id}: {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "تعرّف على سير عمل Move-over: افحص العقود المعرّضة للثغرات، واكتب run()، وأرجِع كائن Flag، واجتز المستويات داخل المتصفح."
+  },
+  "completion": {
+    "modalTitle": "اكتمل التحدّي!",
+    "modalDescription": "لقد التقطت كل الأعلام. خصّص بطاقتك ونزّلها كذكرى.",
+    "nameLabel": "الاسم الظاهر",
+    "namePlaceholder": "اسمك",
+    "downloadPng": "تنزيل PNG",
+    "downloading": "جاري التوليد…",
+    "downloadAriaLabel": "نزّل بطاقة الإنجاز بصيغة PNG",
+    "viewLater": "يمكنك معاينة بطاقتك في أي وقت على /completion",
+    "pageTitle": "الإنجاز",
+    "pageDescription": "بطاقة إنجازك لتحدّي Move-over CTF — دليل على إنهائك جميع المستويات.",
+    "lockedTitle": "تنفتح البطاقة عند إنهاء كل المستويات",
+    "lockedBody": "حلّ كل المستويات وستظهر بطاقتك هنا.",
+    "progressLabel": "التقدّم: {solved} / {total} مستوى مُنجَز",
+    "continueCta": "تابع الحلّ",
+    "unlockedTitle": "لقد التقطت كل الأعلام",
+    "unlockedBody": "خصّص بطاقتك باسمك ونزّلها بصيغة PNG."
   }
 }

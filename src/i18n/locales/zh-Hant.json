@@ -109,7 +109,9 @@
     "levels": "關卡",
     "howToPlay": "玩法說明",
     "completed": "已通關",
-    "levelsListAriaLabel": "關卡列表"
+    "levelsListAriaLabel": "關卡列表",
+    "completion": "通關卡片",
+    "completionLockedTooltip": "通關所有關卡後即可解鎖分享卡片"
   },
   "howToPlay": {
     "title": "玩法說明",
@@ -135,5 +137,23 @@
     "levelTitle": "第 {id} 關：{name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "了解 Move-over 的流程：審視有漏洞的合約、寫出 run()、回傳 Flag 物件，並在瀏覽器中通關。"
+  },
+  "completion": {
+    "modalTitle": "CTF 通關！",
+    "modalDescription": "你已經拿下所有旗標。客製化你的卡片並下載留作紀念。",
+    "nameLabel": "顯示名稱",
+    "namePlaceholder": "你的名字",
+    "downloadPng": "下載 PNG",
+    "downloading": "產生中…",
+    "downloadAriaLabel": "將通關卡片下載為 PNG",
+    "viewLater": "隨時回到 /completion 查看你的卡片",
+    "pageTitle": "通關",
+    "pageDescription": "你的 Move-over CTF 通關卡片——你已通關所有關卡的證明。",
+    "lockedTitle": "全部通關後才會解鎖卡片",
+    "lockedBody": "解決全部關卡，你的通關卡片會出現在這裡。",
+    "progressLabel": "進度：{solved} / {total} 關已通關",
+    "continueCta": "繼續闖關",
+    "unlockedTitle": "你已拿下所有旗標",
+    "unlockedBody": "用顯示名稱客製化你的卡片，並下載 PNG 留念。"
   }
 }
