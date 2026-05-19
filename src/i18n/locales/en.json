@@ -109,7 +109,9 @@
     "levels": "Levels",
     "howToPlay": "How to Play",
     "completed": "Completed",
-    "levelsListAriaLabel": "Level list"
+    "levelsListAriaLabel": "Level list",
+    "completion": "Completion",
+    "completionLockedTooltip": "Solve every level to unlock your share card"
   },
   "howToPlay": {
     "title": "How to Play",
@@ -126,6 +128,24 @@
   "mobilePicker": {
     "selectLevelAriaLabel": "Select level",
     "howToPlay": "How to Play"
+  },
+  "completion": {
+    "modalTitle": "CTF complete!",
+    "modalDescription": "You captured every flag. Customise your card and download it as a keepsake.",
+    "nameLabel": "Display name",
+    "namePlaceholder": "Your name",
+    "downloadPng": "Download PNG",
+    "downloading": "Generating…",
+    "downloadAriaLabel": "Download your completion card as a PNG",
+    "viewLater": "View your card anytime at /completion",
+    "pageTitle": "Completion",
+    "pageDescription": "Your Move-over CTF completion card — proof that you cleared every level.",
+    "lockedTitle": "Card unlocks at full completion",
+    "lockedBody": "Solve every level and your completion card will appear here.",
+    "progressLabel": "Progress: {solved} / {total} levels solved",
+    "continueCta": "Continue solving",
+    "unlockedTitle": "You captured every flag",
+    "unlockedBody": "Customise your card with a display name and download it as a PNG."
   },
   "seo": {
     "defaultTitle": "Move-over CTF: Learn Move Smart Contract Security on Sui",

@@ -109,7 +109,9 @@
     "levels": "Níveis",
     "howToPlay": "Como Jogar",
     "completed": "Concluído",
-    "levelsListAriaLabel": "Lista de níveis"
+    "levelsListAriaLabel": "Lista de níveis",
+    "completion": "Placa de conclusão",
+    "completionLockedTooltip": "Resolva todos os níveis para desbloquear sua placa"
   },
   "howToPlay": {
     "title": "Como Jogar",
@@ -135,5 +137,23 @@
     "levelTitle": "Nível {id}: {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "Aprenda o fluxo do Move-over: inspecione contratos vulneráveis, escreva run(), devolva o objeto Flag e passe os níveis direto no navegador."
+  },
+  "completion": {
+    "modalTitle": "CTF concluído!",
+    "modalDescription": "Você capturou todas as bandeiras. Personalize sua placa e baixe-a como recordação.",
+    "nameLabel": "Nome de exibição",
+    "namePlaceholder": "Seu nome",
+    "downloadPng": "Baixar PNG",
+    "downloading": "Gerando…",
+    "downloadAriaLabel": "Baixar sua placa de conclusão como PNG",
+    "viewLater": "Veja sua placa a qualquer momento em /completion",
+    "pageTitle": "Conclusão",
+    "pageDescription": "Sua placa de conclusão do CTF Move-over — prova de que você zerou todos os níveis.",
+    "lockedTitle": "A placa libera ao concluir tudo",
+    "lockedBody": "Resolva todos os níveis e sua placa aparecerá aqui.",
+    "progressLabel": "Progresso: {solved} / {total} níveis resolvidos",
+    "continueCta": "Continuar resolvendo",
+    "unlockedTitle": "Você capturou todas as bandeiras",
+    "unlockedBody": "Personalize sua placa com um nome e baixe-a como PNG."
   }
 }

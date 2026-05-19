@@ -83,7 +83,7 @@ export default async function LevelPage({ params }: Props) {
       <MobileLevelPicker levels={levels} />
       <div className="flex-1 flex min-h-0 overflow-hidden">
         <LevelSidebar levels={levels} />
-        <LevelView level={level} />
+        <LevelView level={level} levelsTotal={levels.length} />
       </div>
     </div>
   );

@@ -109,7 +109,9 @@
     "levels": "Niveaux",
     "howToPlay": "Comment jouer",
     "completed": "Terminé",
-    "levelsListAriaLabel": "Liste des niveaux"
+    "levelsListAriaLabel": "Liste des niveaux",
+    "completion": "Carte de fin",
+    "completionLockedTooltip": "Résous tous les niveaux pour débloquer ta carte"
   },
   "howToPlay": {
     "title": "Comment jouer",
@@ -135,5 +137,23 @@
     "levelTitle": "Niveau {id} : {name} | Move-over",
     "siteName": "Move-over",
     "howToPlayDescription": "Découvre le flux Move-over : inspecte les contrats vulnérables, écris run(), renvoie l'objet Flag et valide les niveaux directement dans le navigateur."
+  },
+  "completion": {
+    "modalTitle": "CTF terminé !",
+    "modalDescription": "Tu as capturé tous les drapeaux. Personnalise ta carte et télécharge-la en souvenir.",
+    "nameLabel": "Nom affiché",
+    "namePlaceholder": "Ton nom",
+    "downloadPng": "Télécharger en PNG",
+    "downloading": "Génération…",
+    "downloadAriaLabel": "Télécharger ta carte de fin au format PNG",
+    "viewLater": "Retrouve ta carte à tout moment sur /completion",
+    "pageTitle": "Terminé",
+    "pageDescription": "Ta carte de fin du CTF Move-over — preuve que tu as bouclé tous les niveaux.",
+    "lockedTitle": "La carte se débloque une fois tout terminé",
+    "lockedBody": "Résous tous les niveaux et ta carte de fin apparaîtra ici.",
+    "progressLabel": "Progression : {solved} / {total} niveaux résolus",
+    "continueCta": "Continuer à résoudre",
+    "unlockedTitle": "Tu as capturé tous les drapeaux",
+    "unlockedBody": "Personnalise ta carte avec un nom et télécharge-la en PNG."
   }
 }
