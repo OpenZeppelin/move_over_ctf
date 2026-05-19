@@ -1,4 +1,7 @@
+"use client";
+
 import { Tabs, TabsList, TabsTrigger } from "@openzeppelin/ui-components";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export type LevelTab = "instructions" | "code";
 
@@ -10,11 +13,12 @@ type Props = {
 };
 
 export function LevelTabs({ tab, onTabChange, instructionsLabel, contractCodeLabel }: Props) {
+  const { t } = useLocale();
   return (
     <Tabs value={tab} onValueChange={(v) => onTabChange(v as LevelTab)} className="w-full">
       <TabsList
         className="flex h-11 w-full items-center justify-start gap-1 rounded-none border-b border-border bg-card px-4 sm:px-6"
-        aria-label="Level content tabs"
+        aria-label={t("level.tabsAriaLabel")}
       >
         <TabsTrigger
           value="instructions"

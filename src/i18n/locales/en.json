@@ -57,7 +57,7 @@
     "footerGitHub": "GitHub",
     "footerX": "X",
     "footerLinkedIn": "LinkedIn",
-    "footerCopyright": "© 2026 Zeppelin Group Ltd"
+    "footerCopyright": "© {year} Zeppelin Group Ltd"
   },
   "level": {
     "instructions": "Instructions",
@@ -79,17 +79,37 @@
     "passedMessage": "Flag captured. This level is officially passed.",
     "explanationTitle": "What this level taught",
     "contractLabel": "Contract:",
+    "solutionLabel": "Solution:",
     "authorLabel": "Author:",
     "goToLevel": "Go to level {id}",
     "goToHowToPlay": "Go to How to Play",
     "prevLevel": "Previous level ({id})",
     "nextLevel": "Next level ({id})",
-    "levelAriaLabel": "Level {id}"
+    "levelAriaLabel": "Level {id}",
+    "hintsTitle": "Hints",
+    "hintsDescription": "Reveal hints one by one to unblock yourself while solving the level.",
+    "hintsRevealNext": "Reveal next hint",
+    "hintsAllShown": "All hints shown",
+    "hintsSectionAriaLabel": "Hints for level {id}",
+    "hintsRevealHintAriaLabel": "Reveal hint {n}",
+    "hintsAllRevealedAriaLabel": "All hints already revealed",
+    "passedBadge": "Passed",
+    "runShortcutHint": "Cmd/Ctrl+Enter to run",
+    "running": "Running…",
+    "runAgain": "Run Again",
+    "runningAriaLabel": "Running solution",
+    "runAgainAriaLabel": "Run solution again",
+    "runShortcutAriaLabel": "Run solution with Cmd or Control plus Enter shortcut",
+    "runTooltip": "Run solution (Cmd+Enter or Ctrl+Enter)",
+    "solutionEditorAriaLabel": "Solution editor for level {id}",
+    "openContractAriaLabel": "Open {module}.move",
+    "tabsAriaLabel": "Level content tabs"
   },
   "sidebar": {
     "levels": "Levels",
     "howToPlay": "How to Play",
-    "completed": "Completed"
+    "completed": "Completed",
+    "levelsListAriaLabel": "Level list"
   },
   "howToPlay": {
     "title": "How to Play",

@@ -31,7 +31,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
       <div className="px-6 pt-6 pb-3">
         <Typography.H2 variant="sidebar">{t("sidebar.levels")}</Typography.H2>
       </div>
-      <nav className="flex-1 overflow-y-auto px-3 pb-6" aria-label="Level list">
+      <nav className="flex-1 overflow-y-auto px-3 pb-6" aria-label={t("sidebar.levelsListAriaLabel")}>
         <Link
           href={`/${locale}/levels/how-to-play`}
           className={`

@@ -1,4 +1,8 @@
+"use client";
+
 import { Typography } from "@/components/ui/Typography";
+import { useLocale } from "@/contexts/LocaleContext";
+import { replaceTemplate } from "@/i18n/utils";
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -25,25 +29,27 @@ function LinkedInIcon({ className }: { className?: string }) {
 }
 
 export function Footer() {
+  const { t } = useLocale();
   const year = new Date().getFullYear();
+  const copyright = replaceTemplate(t("landing.footerCopyright"), { year });
   return (
     <footer className="shrink-0 border-t border-border bg-background">
       <div className="flex items-center px-6 sm:px-10 py-5">
         {/* Left: social icons */}
         <div className="flex items-center gap-4">
-          <a href="https://github.com/OpenZeppelin" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+          <a href="https://github.com/OpenZeppelin" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label={t("landing.footerGitHub")}>
             <GitHubIcon className="size-5" />
           </a>
-          <a href="https://x.com/openzeppelin" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="X">
+          <a href="https://x.com/openzeppelin" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label={t("landing.footerX")}>
             <XIcon className="size-5" />
           </a>
-          <a href="https://www.linkedin.com/company/openzeppelin/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/company/openzeppelin/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label={t("landing.footerLinkedIn")}>
             <LinkedInIcon className="size-5" />
           </a>
         </div>
         {/* Center: copyright */}
         <Typography.Span className="mx-auto text-sm text-muted-foreground">
-          &copy; {year} Zeppelin Group Ltd
+          {copyright}
         </Typography.Span>
       </div>
     </footer>

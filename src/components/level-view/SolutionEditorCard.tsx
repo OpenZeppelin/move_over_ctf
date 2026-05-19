@@ -1,3 +1,5 @@
+"use client";
+
 import type { CSSProperties, RefObject } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import type { LevelRunConfig } from "@/data/levels";
@@ -12,6 +14,8 @@ import {
   TooltipTrigger,
 } from "@openzeppelin/ui-components";
 import { Typography } from "@/components/ui/Typography";
+import { useLocale } from "@/contexts/LocaleContext";
+import { replaceTemplate } from "@/i18n/utils";
 
 type RunResult = { success: boolean; output: string } | null;
 
@@ -52,20 +56,27 @@ export function SolutionEditorCard({
   solutionHighlightRef,
   solutionTextareaRef,
 }: Props) {
+  const { t } = useLocale();
+  const editorAriaLabel = replaceTemplate(t("level.solutionEditorAriaLabel"), { id: levelId });
+  const runButtonAriaLabel = runLoading
+    ? t("level.runningAriaLabel")
+    : hasPassed
+      ? t("level.runAgainAriaLabel")
+      : t("level.runShortcutAriaLabel");
   return (
     <PanelCard>
       <CodeWindowHeader
-        label="Solution:"
+        label={t("level.solutionLabel")}
         value={`level_${levelId}_solution.move`}
         metaContent={
           <>
             {hasPassed && (
               <Typography.Span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-foreground">
-                ✓ Passed
+                ✓ {t("level.passedBadge")}
               </Typography.Span>
             )}
             <Typography.Span className="hidden lg:inline text-[10px] text-muted-foreground/80">
-              Cmd/Ctrl+Enter to run
+              {t("level.runShortcutHint")}
             </Typography.Span>
           </>
         }
@@ -82,13 +93,7 @@ export function SolutionEditorCard({
                       ? "border border-success/40 bg-success/10 text-foreground hover:bg-success/15"
                       : "bg-foreground text-background hover:bg-foreground/90"
                   }`}
-                  aria-label={
-                    runLoading
-                      ? "Running solution"
-                      : hasPassed
-                        ? "Run solution again"
-                        : "Run solution with Cmd or Control plus Enter shortcut"
-                  }
+                  aria-label={runButtonAriaLabel}
                 >
                   <Typography.Span
                     aria-hidden
@@ -100,11 +105,11 @@ export function SolutionEditorCard({
                   >
                     {runLoading ? "…" : hasPassed ? "✓" : "▶"}
                   </Typography.Span>
-                  {runLoading ? "Running…" : hasPassed ? "Run Again" : runLabel}
+                  {runLoading ? t("level.running") : hasPassed ? t("level.runAgain") : runLabel}
                 </LoadingButton>
               </TooltipTrigger>
               <TooltipContent className="border-border bg-popover text-popover-foreground">
-                <p className="text-xs">Run solution (Cmd+Enter or Ctrl+Enter)</p>
+                <p className="text-xs">{t("level.runTooltip")}</p>
               </TooltipContent>
             </Tooltip>
           </>
@@ -191,7 +196,7 @@ public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.
             }}
             placeholder={solutionPlaceholder}
             spellCheck={false}
-            aria-label={`Solution editor for level ${levelId}`}
+            aria-label={editorAriaLabel}
             aria-keyshortcuts="Control+Enter Meta+Enter"
             className="absolute inset-0 w-full min-h-full overflow-auto resize-none border-0 focus:ring-0 focus:outline-none focus:bg-background/30 placeholder:text-muted-foreground/60 caret-[var(--code-text)] z-10 bg-transparent"
             style={{

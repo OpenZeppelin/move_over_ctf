@@ -54,5 +54,14 @@
     "modules": [
       "tick_tock"
     ]
+  },
+  {
+    "id": 8,
+    "difficulty": "hard",
+    "module": "blackbook",
+    "modules": [
+      "blackbook",
+      "blackbook_math"
+    ]
   }
 ]

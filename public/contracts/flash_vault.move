@@ -21,6 +21,8 @@ public struct Receipt {
 
 public struct FlashVaultFlag has copy, drop {}
 
+const VAULT_LIQUIDITY: u64 = 1_000;
+
 const EZERO_AMOUNT: u64 = 0;
 const EINSUFFICIENT_LIQUIDITY: u64 = 1;
 const EWRONG_VAULT: u64 = 2;
@@ -29,11 +31,11 @@ const ENONCE_MISMATCH: u64 = 4;
 const EINSUFFICIENT_REPAYMENT: u64 = 5;
 const ENOT_DRAINED: u64 = 6;
 
-/// Initialize the flash loan vault with available liquidity.
-public fun create_vault(amount: u64, ctx: &mut TxContext): FlashVault {
+/// Initialize the flash loan vault with a fixed amount of liquidity.
+public fun create_vault(ctx: &mut TxContext): FlashVault {
     FlashVault {
         id: object::new(ctx),
-        balance: amount,
+        balance: VAULT_LIQUIDITY,
         next_nonce: 1,
     }
 }

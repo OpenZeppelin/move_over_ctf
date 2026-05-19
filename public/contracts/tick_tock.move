@@ -72,8 +72,10 @@ public fun pool_liquidity(pool: &Pool): u128 {
     pool.total_liquidity
 }
 
-public fun solve(pool: Pool, stolen: u64): TickTockFlag {
-    assert!(stolen >= 900_000, 0);
+public fun solve(pool: Pool): TickTockFlag {
+    // Initial token_balance is 1_000_000; the pool is drained only when at
+    // least 900_000 has been pulled out (token_balance <= 100_000).
+    assert!(pool.token_balance <= 100_000, 0);
     let Pool { id, total_liquidity: _, token_balance: _ } = pool;
     id.delete();
     TickTockFlag {}
