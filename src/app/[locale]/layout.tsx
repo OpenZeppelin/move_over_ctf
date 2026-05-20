@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "@/i18n";
 import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale, isValidLocale } from "@/i18n/locales";
 import { LocaleProvider } from "@/contexts/LocaleContext";
-import { BASE_URL } from "@/config";
+import { BASE_URL, SOCIAL_CARD_OG_IMAGES, SOCIAL_CARD_TWITTER_IMAGES } from "@/config";
 
 const SOCIAL_PROFILES = [
   "https://x.com/openzeppelin",
@@ -50,20 +50,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: ogDescription,
       url: localeUrl,
       siteName,
-      images: [
-        {
-          url: "/card-preview.png",
-          width: 1200,
-          height: 671,
-          alt: ogTitle,
-        },
-      ],
+      images: [...SOCIAL_CARD_OG_IMAGES],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images: ["/card-preview.png"],
+      images: [...SOCIAL_CARD_TWITTER_IMAGES],
     },
     alternates: {
       canonical: localeUrl,

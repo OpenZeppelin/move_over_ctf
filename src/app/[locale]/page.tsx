@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { Landing } from "@/components/Landing";
-import { BASE_URL } from "@/config";
+import { BASE_URL, SOCIAL_CARD_OG_IMAGES, SOCIAL_CARD_TWITTER_IMAGES } from "@/config";
 import { getTranslations } from "@/i18n";
 import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale } from "@/i18n/locales";
 
@@ -47,11 +47,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: t("seo.siteName"),
       type: "website",
+      images: [...SOCIAL_CARD_OG_IMAGES],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description,
+      images: [...SOCIAL_CARD_TWITTER_IMAGES],
     },
   };
 }

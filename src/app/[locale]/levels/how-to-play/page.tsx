@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { LevelSidebar } from "@/components/LevelSidebar";
 import { MobileLevelPicker } from "@/components/MobileLevelPicker";
 import { Typography } from "@/components/ui/Typography";
-import { BASE_URL } from "@/config";
+import { BASE_URL, SOCIAL_CARD_OG_IMAGES, SOCIAL_CARD_TWITTER_IMAGES } from "@/config";
 import { getLevels } from "@/data/levels";
 import { getTranslations } from "@/i18n";
 import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale } from "@/i18n/locales";
@@ -44,11 +44,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: t("seo.siteName"),
       type: "website",
+      images: [...SOCIAL_CARD_OG_IMAGES],
     },
     twitter: {
       card: "summary_large_image",
       title: pageTitle,
       description: pageDescription,
+      images: [...SOCIAL_CARD_TWITTER_IMAGES],
     },
   };
 }

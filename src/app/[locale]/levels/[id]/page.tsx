@@ -7,7 +7,7 @@ import { MobileLevelPicker } from "@/components/MobileLevelPicker";
 import { getLevel, getLevels } from "@/data/levels";
 import { getTranslations } from "@/i18n";
 import { replaceTemplate } from "@/i18n/utils";
-import { BASE_URL } from "@/config";
+import { BASE_URL, SOCIAL_CARD_OG_IMAGES, SOCIAL_CARD_TWITTER_IMAGES } from "@/config";
 import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale } from "@/i18n/locales";
 
 type Props = {
@@ -50,11 +50,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: t("seo.siteName"),
       type: "website",
+      images: [...SOCIAL_CARD_OG_IMAGES],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [...SOCIAL_CARD_TWITTER_IMAGES],
     },
     alternates: {
       canonical: url,

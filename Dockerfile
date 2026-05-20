@@ -19,4 +19,9 @@ COPY --from=builder /app/out ./out
 RUN npm install -g serve
 
 EXPOSE 3000
-CMD ["serve", "-s", "out", "-l", "3000"]
+# NOTE: do NOT add `-s` (single-page-app) — that flag rewrites every request
+# to /index.html, which strips per-page <meta> tags (og:image, canonical, …)
+# and breaks Slack/X social previews. With `output: "export"` +
+# `trailingSlash: true` every route already ships its own index.html, and
+# `serve` falls back to the Next-built 404.html for missing routes on its own.
+CMD ["serve", "out", "-l", "3000"]
