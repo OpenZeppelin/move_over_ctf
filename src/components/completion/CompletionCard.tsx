@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { deriveHue, deriveStamp } from "@/lib/completionStorage";
+import { deriveStamp } from "@/lib/completionStorage";
 
 type Props = {
   name: string;
@@ -10,52 +10,50 @@ type Props = {
 
 const PALETTE = {
   dark: {
-    bg: "#0b0f14",
-    bgInner: "#0e131a",
-    frame: "#1f2937",
-    titleBar: "#11161e",
-    text: "#d6dee8",
-    muted: "#6b7785",
-    accent: "#7ee787",
-    accentDim: "#3fb950",
-    prompt: "#79c0ff",
-    ozText: "#d6dee8",
-    accentLightness: 60,
+    bg: "#0e1116",
+    text: "#e6edf3",
+    muted: "#8b949e",
+    rule: "#30363d",
+    ozAsset: "/oz-logo.svg", // white wordmark
+    moveSuiAsset: "/move-sui-logo-white.svg",
+    stampAsset: "/stamp-white.svg",
   },
   light: {
-    bg: "#f6f8fa",
-    bgInner: "#ffffff",
-    frame: "#d0d7de",
-    titleBar: "#f3f5f8",
-    text: "#1f2328",
-    muted: "#656d76",
-    accent: "#1a7f37",
-    accentDim: "#2da44e",
-    prompt: "#0969da",
-    ozText: "#1f2328",
-    accentLightness: 48,
+    bg: "#f3f5f7",
+    text: "#0d1117",
+    muted: "#5b6471",
+    rule: "#d0d7de",
+    ozAsset: "/OZ-Logo-BlackBG.svg", // black wordmark (named "BlackBG" but the fill is black, used on light bg)
+    moveSuiAsset: "/move-sui-logo-black.svg",
+    stampAsset: "/stamp-black.svg",
   },
 } as const;
 
 const FONT_FAMILY = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+const SANS_FAMILY = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 
-const LEVEL_NAMES = [
-  "ARTIFACT",
-  "COIN COLLECTOR",
-  "STICKY TREASURE",
-  "OBJECT CHEST",
-  "FLASH VAULT",
-  "POOL PARTY",
-  "TICK TOCK",
-  "NIGHT LEDGER",
+const MONTHS = [
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ] as const;
 
+function formatStampDate(iso: string): { line1: string; line2: string } {
+  const parts = iso.split("-");
+  const y = parts[0] ?? "";
+  const m = parseInt(parts[1] ?? "1", 10);
+  const d = parseInt(parts[2] ?? "1", 10);
+  const monthIdx = Math.max(0, Math.min(11, m - 1));
+  return { line1: `${MONTHS[monthIdx]} ${d}`, line2: y };
+}
+
 /**
- * Move-over completion card — code-terminal core, Uniswap-style flair.
+ * Completion certificate — matches the Move-over CTF certificate design.
  *
- * Everything is inline so the SVG can be rasterised to PNG via Canvas
- * without losing fidelity. The per-name gradient is the unique signature:
- * same name → same hue, same colour story every time.
+ * Layout is inline SVG so the card can be rasterised to PNG via Canvas
+ * (see CompletionShare#svgToPngBlob). External brand assets — the
+ * "MOVE-OVER CTF · Sui" lockup and the round completion stamp — are
+ * referenced via <image href> and pre-inlined as data URIs by the
+ * rasteriser before serialising, so they render in the PNG export too.
  */
 export const CompletionCard = forwardRef<SVGSVGElement, Props>(function CompletionCard(
   { name, levelsTotal, date, theme },
@@ -64,13 +62,25 @@ export const CompletionCard = forwardRef<SVGSVGElement, Props>(function Completi
   const p = PALETTE[theme];
   const displayName = (name.trim() || "anonymous").slice(0, 24);
   const stamp = deriveStamp(name);
-  const hue = deriveHue(name);
+  const stampDate = formatStampDate(date);
 
-  // Per-name 3-stop gradient — Sui-ish color story shifted by name hash.
-  const L = p.accentLightness;
-  const stopA = `hsl(${hue}, 80%, ${L}%)`;
-  const stopB = `hsl(${(hue + 35) % 360}, 78%, ${L - 4}%)`;
-  const stopC = `hsl(${(hue + 70) % 360}, 80%, ${L}%)`;
+  // move-sui-logo asset is 286×31; we render at native size, top-right.
+  const moveSuiW = 286;
+  const moveSuiH = 31;
+  const moveSuiX = 1140 - moveSuiW;
+  const moveSuiY = 56;
+
+  // stamp asset is 277×277; we render at 200×200, bottom-right.
+  const stampSize = 200;
+  const stampX = 1140 - stampSize;
+  const stampY = 360;
+  // Centre of the stamp in card coordinates — used for the date overlay.
+  const stampCx = stampX + stampSize / 2;
+  // The "MAY 21 / 2026" date sits in the inner ~90px-tall white area; two
+  // baselines, stacked. Tuned visually to land in the same spot the asset
+  // used to render its baked-in date.
+  const dateLine1Y = stampY + stampSize * 0.50;
+  const dateLine2Y = stampY + stampSize * 0.63;
 
   return (
     <svg
@@ -82,251 +92,94 @@ export const CompletionCard = forwardRef<SVGSVGElement, Props>(function Completi
       preserveAspectRatio="xMidYMid meet"
       style={{ width: "100%", height: "auto", display: "block" }}
       role="img"
-      aria-label={`Move-over CTF completion card for ${displayName}`}
+      aria-label={`Move-over CTF completion certificate for ${displayName}`}
     >
-      <defs>
-        <linearGradient id="grad-h" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={stopA} />
-          <stop offset="50%" stopColor={stopB} />
-          <stop offset="100%" stopColor={stopC} />
-        </linearGradient>
-        <linearGradient id="grad-d" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={stopA} stopOpacity={theme === "dark" ? 0.28 : 0.18} />
-          <stop offset="55%" stopColor={stopB} stopOpacity="0.08" />
-          <stop offset="100%" stopColor={stopC} stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id="grad-r" cx="92%" cy="8%" r="55%">
-          <stop offset="0%" stopColor={stopC} stopOpacity={theme === "dark" ? 0.32 : 0.18} />
-          <stop offset="70%" stopColor={stopC} stopOpacity="0" />
-        </radialGradient>
-        {/* Subtle dot grid (drawn behind curves) */}
-        <pattern id="dotgrid" width="24" height="24" patternUnits="userSpaceOnUse">
-          <circle cx="1" cy="1" r="0.7" fill={p.frame} opacity="0.6" />
-        </pattern>
-      </defs>
-
-      {/* Page background + per-name gradient washes */}
+      {/* Card background */}
       <rect width="1200" height="630" fill={p.bg} />
-      <rect width="1200" height="630" fill="url(#dotgrid)" />
-      <rect width="1200" height="630" fill="url(#grad-d)" />
-      <rect width="1200" height="630" fill="url(#grad-r)" />
 
-      {/* Uniswap-style organic curves — per-name gradient strokes */}
-      <g fill="none" strokeLinecap="round">
-        <path
-          d="M -40 200 C 220 80, 460 360, 700 200 S 1080 60, 1260 250"
-          stroke="url(#grad-h)"
-          strokeWidth="2.5"
-          opacity={theme === "dark" ? 0.55 : 0.42}
-        />
-        <path
-          d="M -40 240 C 200 140, 480 400, 720 230 S 1120 100, 1260 290"
-          stroke="url(#grad-h)"
-          strokeWidth="1.25"
-          opacity={theme === "dark" ? 0.4 : 0.32}
-        />
-        <path
-          d="M -40 460 C 240 340, 520 560, 800 440 S 1100 360, 1260 510"
-          stroke="url(#grad-h)"
-          strokeWidth="2"
-          opacity={theme === "dark" ? 0.45 : 0.36}
-        />
-        <path
-          d="M -40 500 C 220 380, 540 600, 800 470 S 1140 400, 1260 540"
-          stroke="url(#grad-h)"
-          strokeWidth="1"
-          opacity={theme === "dark" ? 0.3 : 0.24}
-        />
-      </g>
+      {/* ───── Header ────────────────────────────────────────────── */}
 
-      {/* Header band — wordmark, subtitle, tier badge, OZ logo */}
-      <g transform="translate(60, 48)">
-        <text
-          fontFamily={FONT_FAMILY}
-          fontSize="34"
-          fontWeight="800"
-          fill={p.text}
-          letterSpacing="-1"
-        >
-          MOVE-OVER
+      {/* OpenZeppelin logo — top-left. Asset is 522×93, render at ~178×32. */}
+      <image
+        href={p.ozAsset}
+        x={60}
+        y={50}
+        width={178}
+        height={32}
+        preserveAspectRatio="xMinYMid meet"
+      />
+
+      {/* "MOVE-OVER CTF | Sui" lockup — top-right */}
+      <image
+        href={p.moveSuiAsset}
+        x={moveSuiX}
+        y={moveSuiY}
+        width={moveSuiW}
+        height={moveSuiH}
+        preserveAspectRatio="xMidYMid meet"
+      />
+
+      {/* ───── Center: command title + rule + stats ───────────────── */}
+
+      <text
+        x="600"
+        y="270"
+        textAnchor="middle"
+        fontFamily={FONT_FAMILY}
+        fontSize="48"
+        fontWeight="800"
+        fill={p.text}
+        letterSpacing="-1"
+      >
+        $ ./move-over --solved-all
+      </text>
+
+      <line x1="260" y1="310" x2="940" y2="310" stroke={p.rule} strokeWidth="1" />
+
+      <g
+        fontFamily={FONT_FAMILY}
+        fontSize="26"
+        fill={p.text}
+        textAnchor="middle"
+      >
+        <text x="600" y="368">User: {displayName}</text>
+        <text x="600" y="412">
+          Flags: {levelsTotal} / {levelsTotal} captured
         </text>
-        <rect x="0" y="14" width="64" height="2" fill="url(#grad-h)" />
-        <text
-          x="0"
-          y="40"
-          fontFamily={FONT_FAMILY}
-          fontSize="11"
-          fill={p.muted}
-          letterSpacing="4"
-        >
-          CTF · MOVE ⟷ SUI
-        </text>
+        <text x="600" y="456">Stamp: {stamp}</text>
       </g>
 
-      {/* Tier badge — Uniswap-position-style chip */}
-      <g transform="translate(660, 50)">
-        <rect
-          width="200"
-          height="30"
-          rx="15"
-          fill="none"
-          stroke="url(#grad-h)"
-          strokeWidth="1.5"
-        />
-        <circle cx="18" cy="15" r="4" fill="url(#grad-h)" />
-        <text
-          x="34"
-          y="19"
-          fontFamily={FONT_FAMILY}
-          fontSize="11"
-          fontWeight="700"
-          fill={p.text}
-          letterSpacing="2.5"
-        >
-          FLAGS · {levelsTotal} OF {levelsTotal}
-        </text>
+      {/* ───── Bottom-left: terminal output ───────────────────────── */}
+
+      <g transform="translate(60, 540)" fontFamily={FONT_FAMILY} fontSize="14" fill={p.muted}>
+        <text x="0" y="0">&gt; level_8::solve(margin_note)</text>
+        <text x="0" y="22">BlackbookFlag {`{ }`}</text>
+        <text x="0" y="44">completed: {date}</text>
       </g>
 
-      {/* OpenZeppelin logo — top-right */}
-      <g transform="translate(990, 38) scale(0.28)" aria-label="OpenZeppelin">
-        <path d="M480.533 70.1149V35.9305H488.592V40.0899H489.047C490.411 37.5553 493.791 35.0857 498.665 35.0857C506.334 35.0857 511.013 40.4798 511.013 47.7586V70.1149H502.564V49.9682C502.564 45.8089 499.9 43.0144 496 43.0144C491.906 43.0144 488.982 46.2638 488.982 50.5531V70.1149H480.533Z" fill={p.ozText}/>
-        <path d="M471.949 32.8887C468.895 32.8887 466.75 31.004 466.75 27.9495C466.75 25.025 468.895 23.0753 471.949 23.0753C475.004 23.0753 477.148 25.025 477.148 27.9495C477.148 31.004 475.004 32.8887 471.949 32.8887ZM467.725 70.1143V35.9299H476.173V70.1143H467.725Z" fill={p.ozText}/>
-        <path d="M433.956 70.9598C423.883 70.9598 416.734 63.421 416.734 53.2177C416.734 42.4295 423.948 35.0857 433.956 35.0857C444.939 35.0857 450.918 43.2093 450.918 52.8278V55.4923H424.923C425.183 60.6915 428.757 64.2009 434.216 64.2009C438.375 64.2009 441.56 62.2512 442.73 59.4567H450.593C448.904 66.4105 442.795 70.9598 433.956 70.9598ZM425.053 49.5133H442.86C442.47 44.8991 438.895 41.8446 433.956 41.8446C429.212 41.8446 425.572 45.224 425.053 49.5133Z" fill={p.ozText}/>
-        <path d="M377.282 82.8547V35.9305H385.6V40.2848H386.055C386.965 38.8551 390.084 35.0857 396.323 35.0857C405.877 35.0857 412.441 42.2345 412.441 52.8927C412.441 63.551 405.942 70.9598 396.583 70.9598C390.539 70.9598 387.29 67.5803 386.185 65.6956H385.73V82.8547H377.282ZM394.699 63.291C400.158 63.291 403.862 59.0667 403.862 53.0227C403.862 46.7838 400.158 42.7544 394.634 42.7544C389.045 42.7544 385.535 47.2387 385.535 53.0227C385.535 59.3917 389.435 63.291 394.699 63.291Z" fill={p.ozText}/>
-        <path d="M316.554 70.9598C306.48 70.9598 299.331 63.421 299.331 53.2177C299.331 42.4295 306.545 35.0857 316.554 35.0857C327.537 35.0857 333.516 43.2093 333.516 52.8278V55.4923H307.52C307.78 60.6915 311.354 64.2009 316.814 64.2009C320.973 64.2009 324.157 62.2512 325.327 59.4567H333.191C331.501 66.4105 325.392 70.9598 316.554 70.9598ZM307.65 49.5133H325.457C325.067 44.8991 321.493 41.8446 316.554 41.8446C311.809 41.8446 308.17 45.224 307.65 49.5133Z" fill={p.ozText}/>
-        <path d="M260.462 70.1141V62.1175L284.118 31.2735V30.8031H261.307V23.0753H294.906V31.0047L271.25 61.8488V62.3863H295.036V70.1141H260.462Z" fill={p.ozText}/>
-        <path d="M225.673 70.1149V35.9305H233.731V40.0899H234.186C235.551 37.5553 238.93 35.0857 243.805 35.0857C251.473 35.0857 256.153 40.4798 256.153 47.7586V70.1149H247.704V49.9682C247.704 45.8089 245.039 43.0144 241.14 43.0144C237.046 43.0144 234.121 46.2638 234.121 50.5531V70.1149H225.673Z" fill={p.ozText}/>
-        <path d="M204.413 70.9598C194.34 70.9598 187.191 63.421 187.191 53.2177C187.191 42.4295 194.405 35.0857 204.413 35.0857C215.396 35.0857 221.375 43.2093 221.375 52.8278V55.4923H195.38C195.64 60.6915 199.214 64.2009 204.673 64.2009C208.833 64.2009 212.017 62.2512 213.187 59.4567H221.051C219.361 66.4105 213.252 70.9598 204.413 70.9598ZM195.51 49.5133H213.317C212.927 44.8991 209.352 41.8446 204.413 41.8446C199.669 41.8446 196.03 45.224 195.51 49.5133Z" fill={p.ozText}/>
-        <path d="M147.739 82.8059V35.8112H156.057V40.2848H156.512C157.422 38.8551 160.542 35.0857 166.781 35.0857C176.334 35.0857 182.898 42.2345 182.898 52.8927C182.898 63.551 176.399 70.9598 167.04 70.9598C160.997 70.9598 157.747 67.5803 156.642 65.6956H156.187V82.8059H147.739ZM165.156 63.291C170.615 63.291 174.319 59.0667 174.319 53.0227C174.319 46.7838 170.615 42.7544 165.091 42.7544C159.502 42.7544 155.992 47.2387 155.992 53.0227C155.992 59.3917 159.892 63.291 165.156 63.291Z" fill={p.ozText}/>
-        <path d="M118.541 70.9596C104.263 70.9596 93.7572 60.5207 93.7572 46.5124C93.7572 32.6388 104.331 22.0652 118.608 22.0652C132.886 22.0652 143.46 32.7735 143.46 46.5124C143.46 60.386 132.819 70.9596 118.541 70.9596ZM118.608 62.4064C127.633 62.4064 134.098 55.6717 134.098 46.5124C134.098 37.4878 127.633 30.6184 118.608 30.6184C109.517 30.6184 103.051 37.4878 103.051 46.5124C103.051 55.6717 109.517 62.4064 118.608 62.4064Z" fill={p.ozText}/>
-        <rect x="455.215" y="22.8765" width="8.19647" height="47.2383" fill={p.ozText}/>
-        <path d="M337.813 82.854V35.9298H346.132V40.2841H346.587C347.496 38.8543 350.616 35.085 356.855 35.085C366.408 35.085 372.972 42.2338 372.972 52.892C372.972 63.5503 366.473 70.9591 357.115 70.9591C351.071 70.9591 347.821 67.5796 346.716 65.6949H346.262V82.854H337.813ZM355.23 63.2903C360.689 63.2903 364.394 59.066 364.394 53.022C364.394 46.783 360.689 42.7537 355.165 42.7537C349.576 42.7537 346.067 47.238 346.067 53.022C346.067 59.391 349.966 63.2903 355.23 63.2903Z" fill={p.ozText}/>
-        <path d="M10.4995 82.9224C18.5557 68.9835 25.4014 57.4879 34.1023 41.7324C37.1758 36.4158 42.4865 33.1122 49.0425 33.1122H59.3439L30.5759 82.9224H10.4995Z" fill="#2E99FF"/>
-        <path d="M10.5907 10.3589H72.404L61.8422 28.7742H10.5907V10.3589Z" fill="#4F56FA"/>
-        <path d="M41.5527 71.4535C43.8772 67.3443 47.6136 64.7914 52.8471 64.7914L72.4153 64.738V82.9238H34.921C37.2685 78.8978 39.3069 75.4237 41.5527 71.4535Z" fill="#09C2FF"/>
+      {/* Round "Certificate of Completion" stamp — bottom-right */}
+      <image
+        href={p.stampAsset}
+        x={stampX}
+        y={stampY}
+        width={stampSize}
+        height={stampSize}
+        preserveAspectRatio="xMidYMid meet"
+      />
+
+      {/* Dynamic date overlay — sits inside the stamp where the original
+          static "MAY 21 / 2026" path used to be. */}
+      <g
+        fontFamily={SANS_FAMILY}
+        fontSize="20"
+        fontWeight="700"
+        fill={p.text}
+        textAnchor="middle"
+        letterSpacing="0.5"
+      >
+        <text x={stampCx} y={dateLine1Y}>{stampDate.line1}</text>
+        <text x={stampCx} y={dateLine2Y}>{stampDate.line2}</text>
       </g>
-
-      {/* Terminal window (now overlaying the curves) */}
-      <g transform="translate(60, 130)">
-        <rect
-          x="0"
-          y="0"
-          width="1080"
-          height="380"
-          rx="14"
-          ry="14"
-          fill={p.bgInner}
-          stroke={p.frame}
-          strokeWidth="1"
-        />
-        {/* Title bar */}
-        <rect x="0" y="0" width="1080" height="40" rx="14" ry="14" fill={p.titleBar} />
-        <rect x="0" y="26" width="1080" height="14" fill={p.titleBar} />
-        <line x1="0" y1="40" x2="1080" y2="40" stroke={p.frame} strokeWidth="0.5" />
-        <circle cx="22" cy="20" r="5.5" fill="#ff5f57" />
-        <circle cx="42" cy="20" r="5.5" fill="#febc2e" />
-        <circle cx="62" cy="20" r="5.5" fill="#28c840" />
-        <text
-          x="540"
-          y="25"
-          textAnchor="middle"
-          fontFamily={FONT_FAMILY}
-          fontSize="12"
-          fill={p.muted}
-        >
-          move-over@ctf:~
-        </text>
-
-        {/* Body */}
-        <g transform="translate(48, 78)">
-          <text fontFamily={FONT_FAMILY} fontSize="17" fill={p.text}>
-            <tspan fill={p.prompt}>$ </tspan>
-            <tspan>./move-over --solved-all</tspan>
-          </text>
-          <text
-            x="0"
-            y="22"
-            fontFamily={FONT_FAMILY}
-            fontSize="13"
-            fill={p.muted}
-            letterSpacing="0.5"
-          >
-            ═════════════════════════════════════════════════════
-          </text>
-
-          {/* Stats block */}
-          <g transform="translate(0, 66)">
-            <text fontFamily={FONT_FAMILY} fontSize="18" fill={p.muted}>
-              user:
-            </text>
-            <text
-              x="92"
-              y="0"
-              fontFamily={FONT_FAMILY}
-              fontSize="28"
-              fontWeight="800"
-              fill="url(#grad-h)"
-              letterSpacing="-0.5"
-            >
-              {displayName}
-            </text>
-
-            <text x="0" y="40" fontFamily={FONT_FAMILY} fontSize="18" fill={p.muted}>
-              flags:
-            </text>
-            <text x="92" y="40" fontFamily={FONT_FAMILY} fontSize="20" fill={p.accent}>
-              {levelsTotal} / {levelsTotal}{" "}
-              <tspan fill={p.muted} fontSize="18">
-                captured
-              </tspan>
-            </text>
-
-            <text x="0" y="76" fontFamily={FONT_FAMILY} fontSize="18" fill={p.muted}>
-              stamp:
-            </text>
-            <text x="92" y="76" fontFamily={FONT_FAMILY} fontSize="18" fill={p.accentDim}>
-              {stamp}
-            </text>
-          </g>
-
-          {/* Output */}
-          <g transform="translate(0, 200)">
-            <text fontFamily={FONT_FAMILY} fontSize="15" fill={p.text}>
-              <tspan fill={p.prompt}>{">"} </tspan>
-              <tspan>level_8::solve(margin_note)</tspan>
-            </text>
-            <text x="0" y="26" fontFamily={FONT_FAMILY} fontSize="15" fill={p.accent}>
-              ✓ BlackbookFlag {`{}`}
-            </text>
-          </g>
-
-          <text
-            x="0"
-            y="278"
-            fontFamily={FONT_FAMILY}
-            fontSize="12"
-            fill={p.muted}
-          >
-            completed: {date}
-          </text>
-        </g>
-      </g>
-
-      {/* Level recitation band — Move-over-specific signature */}
-      <g transform="translate(60, 552)">
-        <text
-          fontFamily={FONT_FAMILY}
-          fontSize="10"
-          fill={p.muted}
-          letterSpacing="2"
-          opacity="0.65"
-        >
-          {LEVEL_NAMES.join("  ·  ")}
-        </text>
-      </g>
-
-      {/* Footer accent strip */}
-      <rect x="0" y="626" width="1200" height="4" fill="url(#grad-h)" />
     </svg>
   );
 });

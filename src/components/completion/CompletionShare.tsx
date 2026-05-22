@@ -33,9 +33,48 @@ function fileNameFor(name: string): string {
   return `move-over-ctf-${slug || "completion"}.png`;
 }
 
+/**
+ * Convert a same-origin URL to a `data:` URI so we can embed it inside a
+ * serialised-SVG-loaded-as-Image() rasteriser. Without this, external
+ * <image href="/foo.svg"> refs do not resolve when the SVG is loaded via
+ * a blob URL (no base origin), so they vanish in the PNG export.
+ */
+async function fetchAsDataUri(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return await new Promise<string | null>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(typeof reader.result === "string" ? reader.result : null);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 async function svgToPngBlob(svgEl: SVGSVGElement): Promise<Blob | null> {
+  // Clone so we can mutate hrefs without affecting the live preview.
+  const clone = svgEl.cloneNode(true) as SVGSVGElement;
+
+  // Inline every <image> that points at a same-origin asset (a leading "/").
+  const images = Array.from(clone.querySelectorAll("image"));
+  await Promise.all(
+    images.map(async (img) => {
+      const href =
+        img.getAttribute("href") ?? img.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+      if (!href || !href.startsWith("/")) return;
+      const dataUri = await fetchAsDataUri(href);
+      if (!dataUri) return;
+      img.setAttribute("href", dataUri);
+      img.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+    }),
+  );
+
   const serializer = new XMLSerializer();
-  const xml = serializer.serializeToString(svgEl);
+  const xml = serializer.serializeToString(clone);
   const svgBlob = new Blob([xml], { type: "image/svg+xml;charset=utf-8" });
   const url = URL.createObjectURL(svgBlob);
 
