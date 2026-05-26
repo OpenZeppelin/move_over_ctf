@@ -4,7 +4,7 @@ import type { LevelContractModule } from "@/data/levels/types";
 import { parseModulePath } from "@/lib/contractCode";
 
 type Input = {
-  levelId: number;
+  levelId: string;
   locale: string;
   contractCode: string;
   contractModules: LevelContractModule[];

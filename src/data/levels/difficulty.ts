@@ -29,15 +29,14 @@ export const DIFFICULTY_RANK: Record<Difficulty, number> = {
 };
 
 /**
- * Canonical level ordering for the UI: easy → medium → hard, then by id
- * ascending within a difficulty. `id` stays the stable identifier (URLs,
- * progress storage); only the display position is derived.
+ * Canonical level ordering for the UI: easy → medium → hard. Within a
+ * difficulty, insertion order in `meta.config.json` is preserved (JS sort is
+ * stable). `id` is the slug used in URLs and storage; display position is
+ * derived from the sorted index.
  */
 export function compareLevels(
-  a: { id: number; difficulty: Difficulty },
-  b: { id: number; difficulty: Difficulty }
+  a: { difficulty: Difficulty },
+  b: { difficulty: Difficulty }
 ): number {
-  const byDifficulty = DIFFICULTY_RANK[a.difficulty] - DIFFICULTY_RANK[b.difficulty];
-  if (byDifficulty !== 0) return byDifficulty;
-  return a.id - b.id;
+  return DIFFICULTY_RANK[a.difficulty] - DIFFICULTY_RANK[b.difficulty];
 }

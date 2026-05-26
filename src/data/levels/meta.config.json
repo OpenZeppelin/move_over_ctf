@@ -1,6 +1,6 @@
 [
   {
-    "id": 0,
+    "id": "artifact",
     "difficulty": "easy",
     "module": "artifact",
     "modules": [
@@ -8,7 +8,7 @@
     ]
   },
   {
-    "id": 1,
+    "id": "coin_collector",
     "difficulty": "easy",
     "module": "coin_collector",
     "modules": [
@@ -16,7 +16,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": "sticky_treasure",
     "difficulty": "easy",
     "module": "sticky_treasure",
     "modules": [
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "id": 5,
+    "id": "flash_vault",
     "difficulty": "easy",
     "module": "flash_vault",
     "modules": [
@@ -32,7 +32,7 @@
     ]
   },
   {
-    "id": 6,
+    "id": "pool_party",
     "difficulty": "medium",
     "module": "pool_party",
     "modules": [
@@ -40,7 +40,7 @@
     ]
   },
   {
-    "id": 7,
+    "id": "tick_tock",
     "difficulty": "medium",
     "module": "tick_tock",
     "modules": [
@@ -48,7 +48,7 @@
     ]
   },
   {
-    "id": 8,
+    "id": "night_ledger",
     "difficulty": "hard",
     "module": "night_ledger",
     "modules": [
@@ -57,7 +57,7 @@
     ]
   },
   {
-    "id": 9,
+    "id": "mailbox",
     "difficulty": "medium",
     "module": "mailbox",
     "modules": [

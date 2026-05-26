@@ -9,18 +9,18 @@ import {
 } from "@/lib/progressStorage";
 
 type Input = {
-  levelId: number;
+  levelId: string;
   hintsLength: number;
 };
 
 type PersistenceState = {
-  levelId: number;
+  levelId: string;
   solutionCode: string;
   isCompleted: boolean;
   revealedHintCount: number;
 };
 
-function getDefaultState(levelId: number, hintsLength: number): PersistenceState {
+function getDefaultState(levelId: string, hintsLength: number): PersistenceState {
   return {
     levelId,
     solutionCode: "",
@@ -31,7 +31,7 @@ function getDefaultState(levelId: number, hintsLength: number): PersistenceState
 
 export function useLevelPersistence({ levelId, hintsLength }: Input) {
   const readStateForLevel = useCallback(
-    (targetLevelId: number): PersistenceState => {
+    (targetLevelId: string): PersistenceState => {
       if (typeof window === "undefined") return getDefaultState(targetLevelId, hintsLength);
       const persistedHints = getRevealedHintCountForLevel(targetLevelId);
       return {

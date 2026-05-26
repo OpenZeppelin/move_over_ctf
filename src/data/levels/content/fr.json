@@ -1,5 +1,5 @@
 {
-  "0": {
+  "artifact": {
     "name": "Artefact",
     "description": "Forge un artefact, charge-le en énergie, puis brise-le lorsqu'il atteint la bonne puissance pour capturer le drapeau.",
     "instructions": "# Level 0: Artefact\n\nForge un artefact, charge-le en énergie, puis brise-le lorsqu'il atteint la bonne puissance pour capturer le drapeau.",
@@ -9,7 +9,7 @@
     },
     "explanation": "Le niveau 0 est un échauffement qui introduit le modèle d'objets de Sui. `forge` crée un `Artifact`, `charge` le mute via `&mut`, et `shatter` le consomme par valeur. Remarque comme Move rend l'ownership explicite : tu empruntes un objet de manière mutable pour modifier un champ, mais pour le déstructurer tu dois en transférer la propriété. Il n'y a pas de vraie vulnérabilité ici ; la leçon, c'est le contrat de l'API lui-même, et notamment comment les signatures de type `&mut Artifact` vs `Artifact` décrivent ce que chaque fonction est autorisée à faire."
   },
-  "1": {
+  "coin_collector": {
     "name": "Collectionneur de Pièces",
     "description": "Achète le lot à la machine et capture le drapeau. Le robinet ne distribue que des jetons d'une valeur de 100, alors que le lot est censé coûter 1 000.",
     "instructions": "# Level 1: Collectionneur de Pièces\n\nAchète le lot à la machine et capture le drapeau. Le robinet ne distribue que des jetons d'une valeur de 100, alors que le lot est censé coûter 1 000.",
@@ -19,7 +19,7 @@
     },
     "explanation": "`buy_prize` déstructure le token de paiement mais lie `value` à `_` et ne le lit jamais. Le « prix » de 1 000 vit dans la description, pas dans le code. N'importe quel `Token` permet de récupérer le lot, même la sortie de 100 jetons du robinet. Ce niveau enseigne un motif d'audit récurrent : le *comportement* d'une fonction, c'est uniquement ce que fait le code, jamais ce que prétendent les commentaires, les noms ou les descriptions. Vérifie toujours quelles assertions sont réellement appliquées et lesquelles ne sont que de la documentation déguisée en contrôle."
   },
-  "3": {
+  "sticky_treasure": {
     "name": "Trésor Collant",
     "description": "Récupère le lot dans le coffre au trésor et capture le drapeau. Le coffre le stocke sous forme de champ dynamique.",
     "instructions": "# Level 3: Trésor Collant\n\nRécupère le lot dans le coffre au trésor et capture le drapeau. Le coffre le stocke sous forme de champ dynamique.",
@@ -29,7 +29,7 @@
     },
     "explanation": "Trésor Collant expose deux chemins contre le coffre. `smash` ressemble à l'action principale, mais jette le lot stocké et te remet un remplaçant à valeur zéro. `extract_prize` extrait discrètement le champ dynamique sans le modifier. En Move, chaque `public fun` est appelable par n'importe qui — les noms, les commentaires et les intentions ne contrôlent *pas* l'accès. Lors d'un audit, recense chaque fonction publique sur chaque type public et demande-toi ce que chacune autorise, indépendamment, plutôt que de supposer que le « chemin nominal » est le seul chemin possible."
   },
-  "5": {
+  "flash_vault": {
     "name": "Coffre-fort Flash",
     "description": "Vide entièrement le coffre-fort de flash loans et capture le drapeau. Chaque emprunt produit un reçu qui doit être réglé avant la fin de la transaction.",
     "instructions": "# Level 5: Coffre-fort Flash\n\nVide entièrement le coffre-fort de flash loans et capture le drapeau. Chaque emprunt produit un reçu qui doit être réglé avant la fin de la transaction.",
@@ -39,7 +39,7 @@
     },
     "explanation": "Les flash loans reposent sur des reçus « patate chaude » : des structs sans abilities qui doivent être dépaquetées dans la même transaction. Le motif lui-même est solide — le reçu *force* l'appel d'une fonction de règlement. Mais Coffre-fort Flash propose deux chemins de règlement, et seul `repay` exige réellement le retour du token emprunté. `cancel` consomme le reçu sans vérifier que la liquidité a été restaurée. La leçon générale : le motif de la patate chaude garantit seulement que *quelque chose* finalise le reçu — chaque consommateur du type patate chaude doit préserver l'invariant du protocole de son côté. Un audit doit recenser tous les endroits où un type patate chaude est dépaqueté et vérifier chacun de façon indépendante."
   },
-  "6": {
+  "pool_party": {
     "name": "Fête des Pools",
     "description": "Vide la trésorerie du Pool A et capture le drapeau. Trois pools partagent la même API de type flash loan, mais seul le Pool A détient la véritable liquidité.",
     "instructions": "# Level 6: Fête des Pools\n\nVide la trésorerie du Pool A et capture le drapeau. Trois pools partagent la même API de type flash loan, mais seul le Pool A détient la véritable liquidité.",
@@ -49,7 +49,7 @@
     },
     "explanation": "Le bug de Fête des Pools est une validation mal placée. `repay` vérifie que le `pool_id` stocké dans le reçu correspond à un paramètre `receipt_pool_id` *fourni par l'appelant*, au lieu de le comparer à l'ID réel du pool remboursé (`object::id(&pool.id)`). Quand les deux côtés d'une égalité viennent de l'appelant, la contrainte ne prouve rien — c'est purement décoratif. Le seul lien structurel restant est le nonce, mais les nonces peuvent être avancés sur n'importe quel pool en émettant des emprunts jetables. La leçon générale : une vérification n'a de sens que si l'un de ses côtés provient d'une source de confiance. Trace toujours l'origine de chaque opérande d'un `assert!` critique."
   },
-  "7": {
+  "tick_tock": {
     "name": "Tick Tock",
     "description": "Drain au moins 900 000 jetons du pool de liquidité concentrée et capture le drapeau. Les positions sont valorisées via un `sqrt_price` dérivé du tick, et le coût d'ouverture est proportionnel à ce prix.",
     "instructions": "# Level 7: Tick Tock\n\nDrain au moins 900 000 jetons du pool de liquidité concentrée et capture le drapeau. Les positions sont valorisées via un `sqrt_price` dérivé du tick, et le coût d'ouverture est proportionnel à ce prix.",
@@ -59,7 +59,7 @@
     },
     "explanation": "Le bug de Tick Tock est un cast de rétrécissement silencieux : `(tick / 100) as u8` jette tous les bits au-delà du huitième. Pour tout tick multiple de 25 600, le shift s'effondre à zéro, ce qui donne `1u128 << 0 = 1` — le `sqrt_price` le moins cher possible. D'un coup, le dépôt nécessaire pour une liquidité arbitraire devient pratiquement nul, et un paiement minuscule achète une position assez grande pour vider le pool via le payout au prorata. La leçon : tout cast d'un entier plus large vers un entier plus étroit est un point d'overflow potentiel, et Move (contrairement au `try_into` de Rust) *n'avorte pas* en cas de troncature. Ce motif de bug exact a été déployé en production sur de vrais DEX — audite les sites de cast avec la même rigueur que tu audites l'arithmétique."
   },
-  "8": {
+  "night_ledger": {
     "name": "Grand Livre Nocturne",
     "description": "Repars avec un `MarginNote` d'une valeur d'au moins 10 000 000 et capture le drapeau. Le robinet ne frappe qu'une note d'une valeur de 1, et le grand livre cote la marge requise via un utilitaire de calcul en virgule fixe.",
     "instructions": "# Level 8: Grand Livre Nocturne\n\nRepars avec un `MarginNote` d'une valeur d'au moins 10 000 000 et capture le drapeau. Le robinet ne frappe qu'une note d'une valeur de 1, et le grand livre cote la marge requise via un utilitaire de calcul en virgule fixe qui décale les valeurs intermédiaires vers la gauche pour gagner en précision.",

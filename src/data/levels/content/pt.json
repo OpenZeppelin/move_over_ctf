@@ -1,5 +1,5 @@
 {
-  "0": {
+  "artifact": {
     "name": "Artefato",
     "description": "Forje um artefato, carregue-o com energia e, quando atingir a potência certa, quebre-o para capturar a bandeira.",
     "instructions": "# Level 0: Artefato\n\nForje um artefato, carregue-o com energia e, quando atingir a potência certa, quebre-o para capturar a bandeira.",
@@ -9,7 +9,7 @@
     },
     "explanation": "O Nível 0 é um aquecimento que apresenta o modelo de objetos do Sui. `forge` cria um `Artifact`, `charge` o modifica via `&mut`, e `shatter` o consome por valor. Note como o Move torna a propriedade explícita: você empresta um objeto de forma mutável para alterar um campo, mas para desestruturá-lo é preciso mover a propriedade. Não há uma vulnerabilidade real aqui; a lição é o próprio contrato da API, incluindo como as assinaturas de tipo `&mut Artifact` vs `Artifact` descrevem o que cada função pode fazer."
   },
-  "1": {
+  "coin_collector": {
     "name": "Colecionador de moedas",
     "description": "Compre o prêmio na máquina de vendas e capture a bandeira. A torneira só dispensa tokens no valor de 100, e o prêmio deveria custar 1.000.",
     "instructions": "# Level 1: Colecionador de moedas\n\nCompre o prêmio na máquina de vendas e capture a bandeira. A torneira só dispensa tokens no valor de 100, e o prêmio deveria custar 1.000.",
@@ -19,7 +19,7 @@
     },
     "explanation": "`buy_prize` desestrutura o token de pagamento mas vincula `value` a `_` e nunca o lê. O 'preço' de 1.000 vive na descrição, não no código. Qualquer `Token` resgata o prêmio, até mesmo a saída de 100 tokens da torneira. Este nível ensina um padrão recorrente de auditoria: o *comportamento* de uma função é apenas o que o código faz, nunca o que comentários, nomes ou descrições afirmam. Sempre verifique quais asserções são realmente aplicadas e quais são documentação se passando por verificação."
   },
-  "3": {
+  "sticky_treasure": {
     "name": "Tesouro Grudento",
     "description": "Resgate o prêmio do baú do tesouro e capture a bandeira. O baú o armazena como um campo dinâmico.",
     "instructions": "# Level 3: Tesouro Grudento\n\nResgate o prêmio do baú do tesouro e capture a bandeira. O baú o armazena como um campo dinâmico.",
@@ -29,7 +29,7 @@
     },
     "explanation": "Tesouro Grudento expõe dois caminhos contra o baú. `smash` parece a ação principal mas descarta o prêmio armazenado e te entrega uma substituição de valor zero. `extract_prize` discretamente retira o campo dinâmico sem modificações. No Move, toda `public fun` pode ser chamada por qualquer um — nomes, comentários e intenção *não* controlam o acesso. Ao auditar, enumere cada função pública em cada tipo público e pergunte o que cada uma permite de forma independente, em vez de assumir que o 'caminho feliz' é o único caminho."
   },
-  "5": {
+  "flash_vault": {
     "name": "Cofre Flash",
     "description": "Drene completamente o cofre de flash loans e capture a bandeira. Todo empréstimo gera um recibo que precisa ser liquidado antes do fim da transação.",
     "instructions": "# Level 5: Cofre Flash\n\nDrene completamente o cofre de flash loans e capture a bandeira. Todo empréstimo gera um recibo que precisa ser liquidado antes do fim da transação.",
@@ -39,7 +39,7 @@
     },
     "explanation": "Flash loans dependem de recibos do tipo 'batata quente': structs sem habilidades que precisam ser desempacotados na mesma transação. O padrão em si é sólido — o recibo *força* uma função de liquidação a ser chamada. Mas o Cofre Flash oferece dois caminhos de liquidação, e apenas `repay` realmente exige que o token emprestado seja devolvido. `cancel` consome o recibo sem verificar se a liquidez foi restaurada. A lição geral: o padrão batata quente apenas garante que *algo* finalize o recibo — cada consumidor do tipo batata quente precisa preservar o invariante do protocolo por conta própria. Uma auditoria deve enumerar todos os lugares onde um tipo batata quente é desempacotado e verificar cada um de forma independente."
   },
-  "6": {
+  "pool_party": {
     "name": "Festa dos Pools",
     "description": "Drene o tesouro do Pool A e capture a bandeira. Três pools compartilham a mesma API estilo flash loan, mas apenas o Pool A guarda liquidez real.",
     "instructions": "# Level 6: Festa dos Pools\n\nDrene o tesouro do Pool A e capture a bandeira. Três pools compartilham a mesma API estilo flash loan, mas apenas o Pool A guarda liquidez real.",
@@ -49,7 +49,7 @@
     },
     "explanation": "O bug da Festa dos Pools é uma validação fora de lugar. `repay` verifica se o `pool_id` armazenado no recibo combina com um parâmetro `receipt_pool_id` *fornecido pelo chamador*, em vez de compará-lo com o ID real do pool sendo pago (`object::id(&pool.id)`). Quando os dois lados de uma verificação de igualdade vêm do chamador, a restrição não prova nada — é decorativa. A única amarração estrutural restante é o nonce, mas nonces podem ser avançados em qualquer pool emitindo empréstimos descartáveis. A lição geral: uma verificação só é significativa quando um dos lados vem de uma fonte confiável. Sempre rastreie de onde vem cada operando de um `assert!` crítico."
   },
-  "7": {
+  "tick_tock": {
     "name": "Tick Tock",
     "description": "Drene pelo menos 900.000 tokens do pool de liquidez concentrada e capture a bandeira. As posições são precificadas por um `sqrt_price` derivado do tick, e o custo de abrir uma escala com esse preço.",
     "instructions": "# Level 7: Tick Tock\n\nDrene pelo menos 900.000 tokens do pool de liquidez concentrada e capture a bandeira. As posições são precificadas por um `sqrt_price` derivado do tick, e o custo de abrir uma escala com esse preço.",
@@ -59,7 +59,7 @@
     },
     "explanation": "O bug do Tick Tock é uma conversão silenciosa de redução: `(tick / 100) as u8` descarta todos os bits acima do oitavo. Para qualquer tick que seja múltiplo de 25.600, o deslocamento colapsa para zero, fazendo `1u128 << 0 = 1` — o menor `sqrt_price` possível. De repente o depósito necessário para liquidez arbitrária se torna efetivamente zero, e um pagamento minúsculo compra uma posição grande o suficiente para drenar o pool através do pagamento pro-rata. A lição: toda conversão de um inteiro mais largo para um mais estreito é um ponto potencial de overflow, e o Move (diferente do `try_into` do Rust) *não* aborta em truncamento. Esse padrão exato de bug já apareceu em DEXes em produção — audite locais de conversão da mesma forma que você audita aritmética."
   },
-  "8": {
+  "night_ledger": {
     "name": "Livro Noturno",
     "description": "Saia com um `MarginNote` valendo pelo menos 10.000.000 e capture a bandeira. A torneira só cunha uma nota que vale 1, e o livro cota a margem necessária através de uma função auxiliar de aritmética de ponto fixo.",
     "instructions": "# Level 8: Livro Noturno\n\nSaia com um `MarginNote` valendo pelo menos 10.000.000 e capture a bandeira. A torneira só cunha uma nota que vale 1, e o livro cota a margem necessária através de uma função auxiliar de aritmética de ponto fixo que desloca valores intermediários à esquerda para obter precisão.",

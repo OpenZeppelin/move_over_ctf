@@ -12,7 +12,7 @@ type ScrollSnapshot = {
 };
 
 type Input = {
-  levelId: number;
+  levelId: string;
   contractCode: string;
   contractModules: LevelContractModule[];
   runConfig: LevelRunConfig | null | undefined;
@@ -24,7 +24,7 @@ type Input = {
 };
 
 type RunnerState = {
-  levelId: number;
+  levelId: string;
   runResult: RunResult;
   runLoading: boolean;
 };

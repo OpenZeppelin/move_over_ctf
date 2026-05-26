@@ -10,7 +10,7 @@ import { LEVEL_SOLVED_EVENT, getSolvedIdsFromStorage } from "@/lib/progressStora
 export function MobileLevelPicker({ levels }: { levels: Level[] }) {
   const params = useParams();
   const pathname = usePathname();
-  const currentId = typeof params?.id === "string" ? Number(params.id) : Number.NaN;
+  const currentId = typeof params?.id === "string" ? params.id : "";
   const isHowToPlayActive = pathname?.includes("/levels/how-to-play") ?? false;
   const isCompletionActive = pathname?.includes("/completion") ?? false;
   const { locale, t } = useLocale();

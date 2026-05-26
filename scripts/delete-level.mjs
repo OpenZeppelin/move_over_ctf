@@ -28,50 +28,26 @@ function levelModulesFromMetaEntry(entry) {
   return [...new Set(modules)];
 }
 
-function shiftLevelIds(levelEntries, removedId) {
-  return levelEntries
-    .filter((entry) => Number(entry.id) !== removedId)
-    .map((entry) => {
-      const id = Number(entry.id);
-      const nextId = id > removedId ? id - 1 : id;
-      return {
-        ...entry,
-        id: nextId,
-      };
-    })
-    .sort((a, b) => Number(a.id) - Number(b.id));
+function dropLevelById(levelEntries, removedId) {
+  return levelEntries.filter((entry) => String(entry.id) !== removedId);
 }
 
-function shiftRunConfig(configMap, removedId) {
+function dropFromRunConfig(configMap, removedId) {
   const out = {};
-  const ids = Object.keys(configMap).map(Number).sort((a, b) => a - b);
-
-  for (const oldId of ids) {
-    if (oldId === removedId) continue;
-    const newId = oldId > removedId ? oldId - 1 : oldId;
-    const oldCfg = configMap[oldId];
-    const cfg = { ...oldCfg };
-
-    if (cfg.solutionModule === `level_${oldId}_solution`) {
-      cfg.solutionModule = `level_${newId}_solution`;
-    }
-    out[newId] = cfg;
+  for (const [id, cfg] of Object.entries(configMap)) {
+    if (id === removedId) continue;
+    out[id] = cfg;
   }
   return out;
 }
 
-function shiftContentMap(contentMap, removedId) {
+function dropFromContentMap(contentMap, removedId) {
   const next = {};
   for (const [key, value] of Object.entries(contentMap || {})) {
-    const id = Number(key);
-    if (!Number.isInteger(id) || id < 0) continue;
-    if (id === removedId) continue;
-    const newId = id > removedId ? id - 1 : id;
-    next[String(newId)] = value;
+    if (key === removedId) continue;
+    next[key] = value;
   }
-  return Object.fromEntries(
-    Object.entries(next).sort((a, b) => Number(a[0]) - Number(b[0]))
-  );
+  return next;
 }
 
 function printHelp() {
@@ -111,18 +87,16 @@ async function run() {
   const enContent = JSON.parse(enContentRaw);
   assert(enContent && typeof enContent === "object", "Invalid en.json.");
 
-  const levels = metaConfig
-    .map((entry) => ({
-      id: Number(entry.id),
-      module: String(entry.module ?? ""),
-      modules: levelModulesFromMetaEntry(entry),
-      difficulty: String(entry.difficulty),
-      name:
-        typeof enContent[String(entry.id)]?.name === "string"
-          ? enContent[String(entry.id)].name
-          : "(missing name)",
-    }))
-    .sort((a, b) => a.id - b.id);
+  const levels = metaConfig.map((entry) => ({
+    id: String(entry.id),
+    module: String(entry.module ?? ""),
+    modules: levelModulesFromMetaEntry(entry),
+    difficulty: String(entry.difficulty),
+    name:
+      typeof enContent[String(entry.id)]?.name === "string"
+        ? enContent[String(entry.id)].name
+        : "(missing name)",
+  }));
 
   output.write("Available levels:\n");
   for (const level of levels) {
@@ -135,21 +109,17 @@ async function run() {
   const rl = readline.createInterface({ input, output });
   let levelId;
   try {
-    const idInput = await askRequired(rl, "Level id to delete: ", (value) => {
-      if (!/^\d+$/.test(value)) return "Enter a non-negative integer id.";
-      const id = Number(value);
-      return levels.some((level) => level.id === id)
+    const idInput = await askRequired(rl, "Level id (slug) to delete: ", (value) =>
+      levels.some((level) => level.id === value)
         ? null
-        : `Level id ${id} does not exist.`;
-    });
-    levelId = Number(idInput);
+        : `Level id '${value}' does not exist.`
+    );
+    levelId = idInput;
 
     const target = levels.find((level) => level.id === levelId);
     assert(target, `Level id ${levelId} not found.`);
 
-    output.write(
-      `\nThis will delete level ${levelId} (${target.name}) and reindex higher ids by -1.\n`
-    );
+    output.write(`\nThis will delete level '${levelId}' (${target.name}).\n`);
     const confirm = await askRequired(
       rl,
       'Type "delete" to confirm: ',
@@ -160,7 +130,7 @@ async function run() {
     rl.close();
   }
 
-  const targetMeta = metaConfig.find((entry) => Number(entry.id) === levelId);
+  const targetMeta = metaConfig.find((entry) => String(entry.id) === levelId);
   assert(targetMeta, `Level id ${levelId} not found in meta config.`);
   const targetModules = levelModulesFromMetaEntry(targetMeta);
   const targetModuleLabel = targetModules.join(", ");
@@ -169,8 +139,8 @@ async function run() {
   const runConfigMap = parseRunConfigMap(runConfigRaw);
   assert(runConfigMap[levelId], `runConfig.ts does not contain level id ${levelId}.`);
 
-  const nextMeta = shiftLevelIds(metaConfig, levelId);
-  const nextRunConfig = shiftRunConfig(runConfigMap, levelId);
+  const nextMeta = dropLevelById(metaConfig, levelId);
+  const nextRunConfig = dropFromRunConfig(runConfigMap, levelId);
 
   await fs.writeFile(metaConfigPath, `${JSON.stringify(nextMeta, null, 2)}\n`, "utf8");
   await fs.writeFile(runConfigPath, renderRunConfigFile(nextRunConfig), "utf8");
@@ -184,8 +154,8 @@ async function run() {
     const raw = await fs.readFile(localeFile, "utf8");
     const parsed = JSON.parse(raw);
     assert(parsed && typeof parsed === "object" && !Array.isArray(parsed), `Invalid JSON at ${localeFile}`);
-    const shifted = shiftContentMap(parsed, levelId);
-    await fs.writeFile(localeFile, `${JSON.stringify(shifted, null, 2)}\n`, "utf8");
+    const stripped = dropFromContentMap(parsed, levelId);
+    await fs.writeFile(localeFile, `${JSON.stringify(stripped, null, 2)}\n`, "utf8");
   }
 
   for (const moduleName of targetModules) {
@@ -209,7 +179,6 @@ async function run() {
   output.write("\nLevel deleted successfully.\n");
   output.write(`- removed id: ${levelId}\n`);
   output.write(`- removed modules: move_over::${targetModuleLabel}\n`);
-  output.write("- reindexed higher level ids by -1\n");
 }
 
 run().catch((err) => {

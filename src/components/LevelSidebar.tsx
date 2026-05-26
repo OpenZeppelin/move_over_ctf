@@ -11,11 +11,11 @@ import { Typography } from "@/components/ui/Typography";
 export function LevelSidebar({ levels }: { levels: Level[] }) {
   const params = useParams();
   const pathname = usePathname();
-  const currentId = typeof params?.id === "string" ? Number(params.id) : Number.NaN;
+  const currentId = typeof params?.id === "string" ? params.id : "";
   const isHowToPlayActive = pathname?.includes("/levels/how-to-play") ?? false;
   const isCompletionActive = pathname?.includes("/completion") ?? false;
   const { t, locale } = useLocale();
-  const [solvedIds, setSolvedIds] = useState<Set<number>>(() => new Set());
+  const [solvedIds, setSolvedIds] = useState<Set<string>>(() => new Set());
   const allSolved = solvedIds.size >= levels.length && levels.length > 0;
 
   useEffect(() => {

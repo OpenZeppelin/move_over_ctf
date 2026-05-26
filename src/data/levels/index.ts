@@ -77,9 +77,9 @@ export function getLevels(locale: Locale): Level[] {
 }
 
 /**
- * Get a single level by id and locale. Returns null if id is invalid.
+ * Get a single level by id (slug) and locale. Returns null if id is invalid.
  */
-export function getLevel(locale: Locale, id: number): Level | null {
+export function getLevel(locale: Locale, id: string): Level | null {
   const levels = getLevels(locale);
   return levels.find((l) => l.id === id) ?? null;
 }

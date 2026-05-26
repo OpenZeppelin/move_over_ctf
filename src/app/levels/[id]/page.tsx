@@ -6,13 +6,11 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  return LEVEL_IDS.map((id: number) => ({ id: String(id) }));
+  return LEVEL_IDS.map((id) => ({ id }));
 }
 
 export default async function LevelRedirectPage({ params }: Props) {
   const { id } = await params;
-  const numericId = Number(id);
-  const validId = Number.isInteger(numericId) && LEVEL_IDS.includes(numericId) ? numericId : 0;
+  const validId = LEVEL_IDS.includes(id) ? id : LEVEL_IDS[0];
   permanentRedirect(`/en/levels/${validId}`);
 }
-
