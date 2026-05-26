@@ -19,7 +19,7 @@
   "landing": {
     "title": "لعبة حربية للغة Move على Sui",
     "description": "Move-over لعبة حربية مبنية على Web3 ولغة Move، مستوحاة من Ethernaut و overthewire.org، وتُلعَب على بلوكتشين Sui. كل مستوى عبارة عن عقد ذكي عليك «اختراقه». المشروع مفتوح المصدر بالكامل، وجميع المستويات مساهمات من لاعبين آخرين. هل لديك فكرة مميزة؟ طلبات السحب مرحَّب بها.",
-    "cta": "انتقل إلى المستوى 0",
+    "cta": "انتقل إلى المستوى 1",
     "subtitle": "لعبة حربية لأمن لغة Move داخل المتصفح",
     "intro": "Move-over تحدي CTF يعمل في المتصفح أولاً ومخصّص لأمن لغة Move. اقرأ العقود المعرّضة للثغرات، واكتب مسار الاستغلال داخل `run()`، ثم أرجِع `*Flag` الصحيح لاجتياز كل مستوى.",
     "introMuted": "Move-over مشروع مفتوح المصدر. استكشف الكود على",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "أرجِع `*Flag`",
     "feedTitle": "بثّ الأمن المباشر",
     "feedLine1": "[00:00:01] إقلاع بيئة تشغيل move-over في المتصفح...",
-    "feedLine2": "[00:00:02] تحميل مجموعة التحديات: genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] تحميل مجموعة التحديات: artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] رُصد الهدف: إرجاع level::Flag",
     "feedLine4": "[00:00:04] تحليل قالب run()... جاهز",
     "feedLine5": "[00:00:05] لا حاجة إلى محفظة ولا إلى شبكة",
@@ -51,7 +51,7 @@
     "coreSkill2": "كتابة منطق موجَّه للاستغلال داخل بيئة متصفح محكومة.",
     "coreSkill3": "إرجاع كائنات الإثبات على نحوٍ صحيح والتحقّق من النتائج الحتمية.",
     "recommendedTitle": "المسار المقترح للبداية",
-    "recommendedBody": "ابدأ بمستوى Genesis للأساسيات، ثم انتقل إلى Lockbox لأنماط التعامل مع الكائنات، وبعدها واجه Fallout لتفكير استغلالي أعمق. يبني هذا التسلسل حدساً عملياً في أمن Move خطوةً بخطوة.",
+    "recommendedBody": "ابدأ بمستوى Artifact للأساسيات، ثم انتقل إلى Sticky Treasure لأنماط التعامل مع الكائنات، وبعدها واجه Flash Vault لتفكير استغلالي أعمق. يبني هذا التسلسل حدساً عملياً في أمن Move خطوةً بخطوة.",
     "startHowToPlay": "ابدأ من «كيف تلعب»",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "تم النسخ!",
     "runSuccess": "نجحت جميع الاختبارات!",
     "runError": "فشلت الاختبارات",
-    "runNotSupported": "هذا المستوى لا يدعمه المشغّل داخل المتصفح بعد. ثبّت Sui CLI وشغّل المستوى محلياً، أو جرّب المستوى 0.",
-    "solutionPlaceholder": "// مثال: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "هذا المستوى لا يدعمه المشغّل داخل المتصفح بعد. ثبّت Sui CLI وشغّل المستوى محلياً، أو جرّب المستوى 1.",
+    "solutionPlaceholder": "// مثال: let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "تم التقاط العلم. اجتزت هذا المستوى رسمياً.",
     "explanationTitle": "ما الذي تعلّمته من هذا المستوى",
     "contractLabel": "العقد:",
@@ -123,7 +123,7 @@
     "addLevelTitle": "هل تريد إضافة مستوى؟",
     "addLevelBody": "Move-over مفتوح المصدر والجميع مدعو للمساهمة. لإنشاء تحدٍّ جديد، اتبع دليل إضافة المستوى وأرسل طلب سحب:",
     "addLevelLink": "كيفية إضافة مستوى جديد على GitHub",
-    "startLevel0": "ابدأ المستوى 0 ←"
+    "startLevel0": "ابدأ المستوى 1 ←"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "اختر مستوى",

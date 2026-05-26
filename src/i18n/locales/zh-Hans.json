@@ -19,7 +19,7 @@
   "landing": {
     "title": "面向 Sui Move 的战争游戏",
     "description": "Move-over 是一款受 Ethernaut 与 overthewire.org 启发的 Web3/Move 战争游戏，运行在 Sui 区块链上。每一关都是一份等待被「攻破」的智能合约。项目 100% 开源，所有关卡均由其他玩家贡献。有有趣的点子？欢迎提交 PR。",
-    "cta": "进入 Move-over 第 0 关",
+    "cta": "进入 Move-over 第 1 关",
     "subtitle": "浏览器端的 Move 安全战争游戏",
     "intro": "Move-over 是一款主打浏览器体验的 Move 安全 CTF：阅读漏洞合约，编写 `run()` 利用逻辑，返回正确的 `*Flag` 即可通关。",
     "introMuted": "Move-over 完全开源，源码托管于",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "返回 `*Flag`",
     "feedTitle": "实时安全动态",
     "feedLine1": "[00:00:01] 正在启动 move-over 浏览器运行时……",
-    "feedLine2": "[00:00:02] 正在加载关卡集：genesis、lockbox、fallout",
+    "feedLine2": "[00:00:02] 正在加载关卡集：artifact、coin_collector、sticky_treasure",
     "feedLine3": "[00:00:03] 已识别目标：返回 level::Flag",
     "feedLine4": "[00:00:04] 解析 run() 模板…… 就绪",
     "feedLine5": "[00:00:05] 无需钱包，无需联网",
@@ -51,7 +51,7 @@
     "coreSkill2": "在受控的浏览器环境中编写面向漏洞利用的逻辑。",
     "coreSkill3": "正确返回证明对象，并验证结果的确定性。",
     "recommendedTitle": "推荐入门路线",
-    "recommendedBody": "先从 Genesis 打牢基础，再用 Lockbox 掌握对象操作套路，然后挑战 Fallout 进阶利用思路。沿着这条线，你能一步步建立起 Move 安全的实战手感。",
+    "recommendedBody": "先从 Artifact 打牢基础，再用 Sticky Treasure 掌握对象操作套路，然后挑战 Flash Vault 进阶利用思路。沿着这条线，你能一步步建立起 Move 安全的实战手感。",
     "startHowToPlay": "从「玩法说明」开始",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "已复制！",
     "runSuccess": "所有测试通过！",
     "runError": "测试未通过",
-    "runNotSupported": "本关暂不支持浏览器内运行。请安装 Sui CLI 在本地运行，或先去玩第 0 关。",
-    "solutionPlaceholder": "// 例如：let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "本关暂不支持浏览器内运行。请安装 Sui CLI 在本地运行，或先去玩第 1 关。",
+    "solutionPlaceholder": "// 例如：let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "旗标已夺取，本关正式通关。",
     "explanationTitle": "本关知识点",
     "contractLabel": "合约：",
@@ -123,7 +123,7 @@
     "addLevelTitle": "想加一关？",
     "addLevelBody": "Move-over 是开源项目，欢迎任何人参与共建。想创建新挑战，请参考添加关卡指南并提交 PR：",
     "addLevelLink": "在 GitHub 上查看「如何新增关卡」",
-    "startLevel0": "开始第 0 关 →"
+    "startLevel0": "开始第 1 关 →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "选择关卡",

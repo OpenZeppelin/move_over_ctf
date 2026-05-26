@@ -19,7 +19,7 @@
   "landing": {
     "title": "Um wargame de Move na Sui",
     "description": "Move-over é um wargame Web3/Move inspirado no Ethernaut e no overthewire.org, jogado na blockchain Sui. Cada nível é um contrato inteligente que precisa ser 'hackeado'. O jogo é 100% open source e todos os níveis são contribuições feitas por outros jogadores. Tem uma ideia interessante? PRs são bem-vindos.",
-    "cta": "Move-over para o Nível 0",
+    "cta": "Move-over para o Nível 1",
     "subtitle": "Wargame de segurança Move no navegador",
     "intro": "Move-over é um CTF feito para o navegador, focado em segurança Move. Leia contratos vulneráveis, escreva o caminho do exploit em `run()` e devolva o `*Flag` correto para concluir cada nível.",
     "introMuted": "Move-over é open source. Explore o código no",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "Devolva o `*Flag`",
     "feedTitle": "Feed de segurança ao vivo",
     "feedLine1": "[00:00:01] inicializando o runtime move-over no navegador...",
-    "feedLine2": "[00:00:02] carregando conjunto de desafios: genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] carregando conjunto de desafios: artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] objetivo detectado: devolver level::Flag",
     "feedLine4": "[00:00:04] analisando o template de run()... pronto",
     "feedLine5": "[00:00:05] nenhuma carteira solicitada, nenhuma rede necessária",
@@ -51,7 +51,7 @@
     "coreSkill2": "Escrever lógica orientada a exploits em um ambiente controlado no navegador.",
     "coreSkill3": "Devolver objetos de prova corretamente e validar resultados determinísticos.",
     "recommendedTitle": "Trajeto inicial recomendado",
-    "recommendedBody": "Comece pelo Genesis para os fundamentos, siga com o Lockbox para padrões de manipulação de objetos e depois encare o Fallout para um raciocínio de exploit mais profundo. Essa sequência constrói uma intuição prática de segurança Move passo a passo.",
+    "recommendedBody": "Comece pelo Artifact para os fundamentos, siga com o Sticky Treasure para padrões de manipulação de objetos e depois encare o Flash Vault para um raciocínio de exploit mais profundo. Essa sequência constrói uma intuição prática de segurança Move passo a passo.",
     "startHowToPlay": "Comece por Como Jogar",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "Copiado!",
     "runSuccess": "Todos os testes passaram!",
     "runError": "Os testes falharam",
-    "runNotSupported": "Este nível ainda não é suportado pelo executor no navegador. Instale a CLI do Sui e rode o nível localmente, ou experimente o Nível 0.",
-    "solutionPlaceholder": "// ex.: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "Este nível ainda não é suportado pelo executor no navegador. Instale a CLI do Sui e rode o nível localmente, ou experimente o Nível 1.",
+    "solutionPlaceholder": "// ex.: let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "Bandeira capturada. Este nível foi concluído oficialmente.",
     "explanationTitle": "O que este nível ensinou",
     "contractLabel": "Contrato:",
@@ -123,7 +123,7 @@
     "addLevelTitle": "Quer adicionar um nível?",
     "addLevelBody": "Move-over é open source e qualquer pessoa pode contribuir. Se quiser criar um novo desafio, siga o guia de criação de níveis e abra um PR:",
     "addLevelLink": "Como adicionar um novo nível no GitHub",
-    "startLevel0": "Começar Nível 0 →"
+    "startLevel0": "Começar Nível 1 →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "Selecionar nível",

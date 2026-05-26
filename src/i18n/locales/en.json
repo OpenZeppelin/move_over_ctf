@@ -19,7 +19,7 @@
   "landing": {
     "title": "A wargame for Move on Sui",
     "description": "Move-over is a Web3/Move-based wargame inspired by Ethernaut and overthewire.org, played on the Sui blockchain. Each level is a smart contract that needs to be 'hacked'. The game is 100% open source and all levels are contributions made by other players. Do you have an interesting idea? PRs are welcome.",
-    "cta": "Move-over to Level 0",
+    "cta": "Move-over to Level 1",
     "subtitle": "Browser-based Move security wargame",
     "intro": "Move-over is a browser-first CTF for Move security. Read vulnerable contracts, write the `run()` exploit path, and return the right `*Flag` to clear each level.",
     "introMuted": "Move-over is open source. Explore the code on",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "Return the `*Flag`",
     "feedTitle": "Live Security Feed",
     "feedLine1": "[00:00:01] booting move-over browser runtime...",
-    "feedLine2": "[00:00:02] loading challenge set: genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] loading challenge set: artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] objective detected: return level::Flag",
     "feedLine4": "[00:00:04] parsing run() template... ready",
     "feedLine5": "[00:00:05] no wallet requested, no network required",
@@ -51,7 +51,7 @@
     "coreSkill2": "Write exploit-oriented logic in a controlled browser environment.",
     "coreSkill3": "Return proof objects correctly and validate deterministic outcomes.",
     "recommendedTitle": "Recommended Starting Path",
-    "recommendedBody": "Start with Genesis for fundamentals, continue with Lockbox for object manipulation patterns, and then tackle Fallout for deeper exploit reasoning. This sequence builds practical Move security intuition step by step.",
+    "recommendedBody": "Start with Artifact for fundamentals, continue with Sticky Treasure for object manipulation patterns, and then tackle Flash Vault for deeper exploit reasoning. This sequence builds practical Move security intuition step by step.",
     "startHowToPlay": "Start with How to Play",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "Copied!",
     "runSuccess": "All tests passed!",
     "runError": "Tests failed",
-    "runNotSupported": "This level is not yet supported by the in-browser runner. Install the Sui CLI and run the level locally, or try Level 0.",
-    "solutionPlaceholder": "// e.g. let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "This level is not yet supported by the in-browser runner. Install the Sui CLI and run the level locally, or try Level 1.",
+    "solutionPlaceholder": "// e.g. let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "Flag captured. This level is officially passed.",
     "explanationTitle": "What this level taught",
     "contractLabel": "Contract:",
@@ -123,7 +123,7 @@
     "addLevelTitle": "Want to add a level?",
     "addLevelBody": "Move-over is open source and everyone is welcome to contribute. If you want to create a new challenge, follow the add-level guide and submit a PR:",
     "addLevelLink": "How to add a new level on GitHub",
-    "startLevel0": "Start Level 0 →"
+    "startLevel0": "Start Level 1 →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "Select level",

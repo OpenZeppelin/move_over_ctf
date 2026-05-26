@@ -19,7 +19,7 @@
   "landing": {
     "title": "Sui 위에서 즐기는 Move 워게임",
     "description": "Move-over는 Ethernaut와 overthewire.org에서 영감을 받은 Web3/Move 기반 워게임으로, Sui 블록체인 위에서 동작합니다. 각 레벨은 '해킹'해야 할 스마트 컨트랙트이며, 게임은 100% 오픈소스로 모든 레벨이 다른 플레이어들의 기여로 만들어집니다. 재미있는 아이디어가 있다면 언제든 PR을 보내주세요.",
-    "cta": "레벨 0부터 시작하기",
+    "cta": "레벨 1부터 시작하기",
     "subtitle": "브라우저에서 즐기는 Move 보안 워게임",
     "intro": "Move-over는 Move 보안을 위한 브라우저 우선 CTF입니다. 취약한 컨트랙트를 분석하고, `run()`에 익스플로잇 경로를 작성해 알맞은 `*Flag`를 반환하면 레벨이 클리어됩니다.",
     "introMuted": "Move-over는 오픈소스입니다. 코드는 여기에서 확인하세요",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "`*Flag` 반환하기",
     "feedTitle": "실시간 보안 피드",
     "feedLine1": "[00:00:01] move-over 브라우저 런타임 부팅 중...",
-    "feedLine2": "[00:00:02] 챌린지 세트 로딩 중: genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] 챌린지 세트 로딩 중: artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] 목표 감지됨: level::Flag 반환",
     "feedLine4": "[00:00:04] run() 템플릿 파싱 중... 준비 완료",
     "feedLine5": "[00:00:05] 지갑·네트워크 연결 불필요",
@@ -51,7 +51,7 @@
     "coreSkill2": "통제된 브라우저 환경에서 익스플로잇 관점의 로직 작성하기",
     "coreSkill3": "증명 객체를 정확히 반환하고 결정적인 결과를 검증하기",
     "recommendedTitle": "이런 순서로 시작해 보세요",
-    "recommendedBody": "먼저 Genesis로 기본기를 다지고, Lockbox에서 객체 조작 패턴을 익힌 뒤, Fallout으로 한 단계 깊은 익스플로잇 추론까지 도전해 보세요. 이 흐름을 따라가다 보면 Move 보안에 대한 실전 감각이 차곡차곡 쌓입니다.",
+    "recommendedBody": "먼저 Artifact로 기본기를 다지고, Sticky Treasure에서 객체 조작 패턴을 익힌 뒤, Flash Vault으로 한 단계 깊은 익스플로잇 추론까지 도전해 보세요. 이 흐름을 따라가다 보면 Move 보안에 대한 실전 감각이 차곡차곡 쌓입니다.",
     "startHowToPlay": "플레이 방법부터 보기",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "복사 완료!",
     "runSuccess": "모든 테스트를 통과했습니다!",
     "runError": "테스트가 실패했습니다",
-    "runNotSupported": "이 레벨은 아직 브라우저 러너에서 지원되지 않습니다. Sui CLI를 설치해 로컬에서 실행해 보거나, 우선 레벨 0부터 시도해 보세요.",
-    "solutionPlaceholder": "// 예: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "이 레벨은 아직 브라우저 러너에서 지원되지 않습니다. Sui CLI를 설치해 로컬에서 실행해 보거나, 우선 레벨 1부터 시도해 보세요.",
+    "solutionPlaceholder": "// 예: let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "플래그를 획득했습니다. 레벨을 정식으로 클리어했습니다.",
     "explanationTitle": "이 레벨에서 배운 것",
     "contractLabel": "컨트랙트:",
@@ -123,7 +123,7 @@
     "addLevelTitle": "레벨을 직접 추가해 보고 싶으신가요?",
     "addLevelBody": "Move-over는 오픈소스이며 누구나 기여할 수 있습니다. 새 챌린지를 만들고 싶다면 레벨 추가 가이드를 따라 PR을 열어 주세요.",
     "addLevelLink": "GitHub에서 새 레벨 추가하는 법",
-    "startLevel0": "레벨 0 시작하기 →"
+    "startLevel0": "레벨 1 시작하기 →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "레벨 선택",

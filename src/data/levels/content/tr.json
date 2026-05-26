@@ -2,17 +2,17 @@
   "artifact": {
     "name": "Eser",
     "description": "Bir eser döv, onu enerjiyle şarj et ve doğru güce ulaştığında bayrağı kapmak için paramparça et.",
-    "instructions": "# Level 0: Eser\n\nBir eser döv, onu enerjiyle şarj et ve doğru güce ulaştığında bayrağı kapmak için paramparça et.",
+    "instructions": "Bir eser döv, onu enerjiyle şarj et ve doğru güce ulaştığında bayrağı kapmak için paramparça et.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "explanation": "Seviye 0, Sui'nin nesne modelini tanıtan bir ısınma turu. `forge` bir `Artifact` üretir, `charge` onu `&mut` üzerinden değiştirir, `shatter` ise değer olarak alıp tüketir. Move'un sahipliği nasıl açıkça ifade ettiğine dikkat et: bir alanı değiştirmek için nesneyi değişken olarak ödünç alırsın, ama parçalamak için sahipliği taşımak zorundasın. Burada gerçek bir zafiyet yok; asıl ders API sözleşmesinin kendisi — yani `&mut Artifact` ile `Artifact` tip imzalarının her fonksiyonun ne yapmaya yetkili olduğunu nasıl anlattığı."
+    "explanation": "Bu seviye, Sui'nin nesne modelini tanıtan bir ısınma turu. `forge` bir `Artifact` üretir, `charge` onu `&mut` üzerinden değiştirir, `shatter` ise değer olarak alıp tüketir. Move'un sahipliği nasıl açıkça ifade ettiğine dikkat et: bir alanı değiştirmek için nesneyi değişken olarak ödünç alırsın, ama parçalamak için sahipliği taşımak zorundasın. Burada gerçek bir zafiyet yok; asıl ders API sözleşmesinin kendisi — yani `&mut Artifact` ile `Artifact` tip imzalarının her fonksiyonun ne yapmaya yetkili olduğunu nasıl anlattığı."
   },
   "coin_collector": {
     "name": "Sikke Toplayıcı",
     "description": "Otomattan ödülü satın al ve bayrağı kap. Musluk yalnızca 100 değerinde token veriyor, oysa ödülün fiyatı 1.000 olarak belirtilmiş.",
-    "instructions": "# Level 1: Sikke Toplayıcı\n\nOtomattan ödülü satın al ve bayrağı kap. Musluk yalnızca 100 değerinde token veriyor, oysa ödülün fiyatı 1.000 olarak belirtilmiş.",
+    "instructions": "Otomattan ödülü satın al ve bayrağı kap. Musluk yalnızca 100 değerinde token veriyor, oysa ödülün fiyatı 1.000 olarak belirtilmiş.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -22,7 +22,7 @@
   "sticky_treasure": {
     "name": "Yapışkan Hazine",
     "description": "Hazine sandığındaki ödülü kurtar ve bayrağı kap. Sandık, ödülü bir dinamik alan olarak saklıyor.",
-    "instructions": "# Level 3: Yapışkan Hazine\n\nHazine sandığındaki ödülü kurtar ve bayrağı kap. Sandık, ödülü bir dinamik alan olarak saklıyor.",
+    "instructions": "Hazine sandığındaki ödülü kurtar ve bayrağı kap. Sandık, ödülü bir dinamik alan olarak saklıyor.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -32,7 +32,7 @@
   "flash_vault": {
     "name": "Flaş Kasa",
     "description": "Flaş kredi kasasını tamamen boşalt ve bayrağı kap. Her ödünç alma, işlem bitmeden tasfiye edilmesi gereken bir makbuz üretir.",
-    "instructions": "# Level 5: Flaş Kasa\n\nFlaş kredi kasasını tamamen boşalt ve bayrağı kap. Her ödünç alma, işlem bitmeden tasfiye edilmesi gereken bir makbuz üretir.",
+    "instructions": "Flaş kredi kasasını tamamen boşalt ve bayrağı kap. Her ödünç alma, işlem bitmeden tasfiye edilmesi gereken bir makbuz üretir.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -42,7 +42,7 @@
   "pool_party": {
     "name": "Havuz Partisi",
     "description": "Havuz A'nın hazinesini boşalt ve bayrağı kap. Üç havuz aynı flaş kredi tarzı API'yi paylaşıyor, ama gerçek likiditeyi yalnızca Havuz A tutuyor.",
-    "instructions": "# Level 6: Havuz Partisi\n\nHavuz A'nın hazinesini boşalt ve bayrağı kap. Üç havuz aynı flaş kredi tarzı API'yi paylaşıyor, ama gerçek likiditeyi yalnızca Havuz A tutuyor.",
+    "instructions": "Havuz A'nın hazinesini boşalt ve bayrağı kap. Üç havuz aynı flaş kredi tarzı API'yi paylaşıyor, ama gerçek likiditeyi yalnızca Havuz A tutuyor.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -52,7 +52,7 @@
   "tick_tock": {
     "name": "Tik Tak",
     "description": "Yoğun likidite havuzundan en az 900.000 token çek ve bayrağı kap. Pozisyonlar, tick'ten türetilmiş bir `sqrt_price` ile fiyatlandırılır ve pozisyon açma maliyeti bu fiyatla doğru orantılıdır.",
-    "instructions": "# Level 7: Tik Tak\n\nYoğun likidite havuzundan en az 900.000 token çek ve bayrağı kap. Pozisyonlar, tick'ten türetilmiş bir `sqrt_price` ile fiyatlandırılır ve pozisyon açma maliyeti bu fiyatla doğru orantılıdır.",
+    "instructions": "Yoğun likidite havuzundan en az 900.000 token çek ve bayrağı kap. Pozisyonlar, tick'ten türetilmiş bir `sqrt_price` ile fiyatlandırılır ve pozisyon açma maliyeti bu fiyatla doğru orantılıdır.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -62,7 +62,7 @@
   "night_ledger": {
     "name": "Gece Defteri",
     "description": "En az 10.000.000 değerinde bir `MarginNote` ile çıkıp git ve bayrağı kap. Musluk yalnızca 1 değerinde bir not basıyor ve defter, gerekli marjini sabit nokta matematik yardımcısı üzerinden hesaplıyor.",
-    "instructions": "# Level 8: Gece Defteri\n\nEn az 10.000.000 değerinde bir `MarginNote` ile çıkıp git ve bayrağı kap. Musluk yalnızca 1 değerinde bir not basıyor ve defter, gerekli marjini sabit nokta matematik yardımcısı üzerinden hesaplıyor ara değerleri hassasiyet için sola kaydırıyor.",
+    "instructions": "En az 10.000.000 değerinde bir `MarginNote` ile çıkıp git ve bayrağı kap. Musluk yalnızca 1 değerinde bir not basıyor ve defter, gerekli marjini sabit nokta matematik yardımcısı üzerinden hesaplıyor ara değerleri hassasiyet için sola kaydırıyor.",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"

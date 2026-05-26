@@ -19,7 +19,7 @@
   "landing": {
     "title": "Un wargame pour Move sur Sui",
     "description": "Move-over est un wargame Web3/Move inspiré d'Ethernaut et d'overthewire.org, joué sur la blockchain Sui. Chaque niveau est un smart contract à « pirater ». Le jeu est 100 % open source et tous les niveaux sont des contributions de la communauté. Tu as une idée intéressante ? Les PR sont les bienvenues.",
-    "cta": "Move-over vers le Niveau 0",
+    "cta": "Move-over vers le Niveau 1",
     "subtitle": "Wargame de sécurité Move, directement dans ton navigateur",
     "intro": "Move-over est un CTF pensé pour le navigateur, dédié à la sécurité Move. Lis les contrats vulnérables, écris l'exploit dans `run()` et renvoie le bon `*Flag` pour valider chaque niveau.",
     "introMuted": "Move-over est open source. Explore le code sur",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "Renvoyer le `*Flag`",
     "feedTitle": "Fil de sécurité en direct",
     "feedLine1": "[00:00:01] démarrage du runtime move-over dans le navigateur...",
-    "feedLine2": "[00:00:02] chargement du lot de défis : genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] chargement du lot de défis : artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] objectif détecté : renvoyer level::Flag",
     "feedLine4": "[00:00:04] analyse du modèle run()... prêt",
     "feedLine5": "[00:00:05] aucun wallet requis, aucun réseau requis",
@@ -51,7 +51,7 @@
     "coreSkill2": "Écrire une logique orientée exploit dans un environnement navigateur contrôlé.",
     "coreSkill3": "Renvoyer correctement les objets de preuve et valider des résultats déterministes.",
     "recommendedTitle": "Parcours de départ recommandé",
-    "recommendedBody": "Commence par Genesis pour les bases, enchaîne avec Lockbox pour les patterns de manipulation d'objets, puis attaque Fallout pour un raisonnement d'exploit plus poussé. Cette progression construit pas à pas une vraie intuition de la sécurité Move.",
+    "recommendedBody": "Commence par Artifact pour les bases, enchaîne avec Sticky Treasure pour les patterns de manipulation d'objets, puis attaque Flash Vault pour un raisonnement d'exploit plus poussé. Cette progression construit pas à pas une vraie intuition de la sécurité Move.",
     "startHowToPlay": "Commencer par Comment jouer",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "Copié !",
     "runSuccess": "Tous les tests sont passés !",
     "runError": "Échec des tests",
-    "runNotSupported": "Ce niveau n'est pas encore pris en charge par l'exécuteur dans le navigateur. Installe la CLI Sui pour le lancer en local, ou essaie le Niveau 0.",
-    "solutionPlaceholder": "// ex. : let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "Ce niveau n'est pas encore pris en charge par l'exécuteur dans le navigateur. Installe la CLI Sui pour le lancer en local, ou essaie le Niveau 1.",
+    "solutionPlaceholder": "// ex. : let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "Drapeau capturé. Ce niveau est officiellement réussi.",
     "explanationTitle": "Ce que ce niveau t'a appris",
     "contractLabel": "Contrat :",
@@ -123,7 +123,7 @@
     "addLevelTitle": "Envie d'ajouter un niveau ?",
     "addLevelBody": "Move-over est open source et tout le monde peut contribuer. Pour créer un nouveau défi, suis le guide d'ajout de niveau et ouvre une PR :",
     "addLevelLink": "Comment ajouter un nouveau niveau sur GitHub",
-    "startLevel0": "Commencer le Niveau 0 →"
+    "startLevel0": "Commencer le Niveau 1 →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "Sélectionner un niveau",

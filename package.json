@@ -5,7 +5,6 @@
   "scripts": {
     "create:level": "node scripts/create-level.mjs",
     "delete:level": "node scripts/delete-level.mjs",
-    "sync:contracts": "node scripts/sync-contracts.mjs",
     "sync:meta": "node scripts/sync-meta-from-public.mjs",
     "dev:next": "next dev --turbopack",
     "dev": "node scripts/dev-with-sync.mjs",

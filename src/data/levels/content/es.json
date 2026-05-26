@@ -2,17 +2,17 @@
   "artifact": {
     "name": "Artefacto",
     "description": "Forja un artefacto, cárgalo de energía y, cuando alcance la potencia adecuada, destrózalo para capturar la bandera.",
-    "instructions": "# Level 0: Artefacto\n\nForja un artefacto, cárgalo de energía y, cuando alcance la potencia adecuada, destrózalo para capturar la bandera.",
+    "instructions": "Forja un artefacto, cárgalo de energía y, cuando alcance la potencia adecuada, destrózalo para capturar la bandera.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "explanation": "El Nivel 0 es un calentamiento que introduce el modelo de objetos de Sui. `forge` crea un `Artifact`, `charge` lo muta mediante `&mut`, y `shatter` lo consume por valor. Fíjate en cómo Move hace explícito el modelo de propiedad: tomas el objeto prestado de forma mutable para modificar un campo, pero para desestructurarlo tienes que mover la propiedad. Aquí no hay una vulnerabilidad real; la lección está en el propio contrato de la API, incluyendo cómo las firmas de tipo `&mut Artifact` vs `Artifact` describen lo que cada función está autorizada a hacer."
+    "explanation": "Este nivel es un calentamiento que introduce el modelo de objetos de Sui. `forge` crea un `Artifact`, `charge` lo muta mediante `&mut`, y `shatter` lo consume por valor. Fíjate en cómo Move hace explícito el modelo de propiedad: tomas el objeto prestado de forma mutable para modificar un campo, pero para desestructurarlo tienes que mover la propiedad. Aquí no hay una vulnerabilidad real; la lección está en el propio contrato de la API, incluyendo cómo las firmas de tipo `&mut Artifact` vs `Artifact` describen lo que cada función está autorizada a hacer."
   },
   "coin_collector": {
     "name": "Coleccionista de monedas",
     "description": "Compra el premio en la máquina expendedora y captura la bandera. El grifo solo entrega tokens por valor de 100, y se supone que el premio cuesta 1.000.",
-    "instructions": "# Level 1: Coleccionista de monedas\n\nCompra el premio en la máquina expendedora y captura la bandera. El grifo solo entrega tokens por valor de 100, y se supone que el premio cuesta 1.000.",
+    "instructions": "Compra el premio en la máquina expendedora y captura la bandera. El grifo solo entrega tokens por valor de 100, y se supone que el premio cuesta 1.000.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -22,7 +22,7 @@
   "sticky_treasure": {
     "name": "Tesoro pegajoso",
     "description": "Rescata el premio del cofre del tesoro y captura la bandera. El cofre lo guarda como un campo dinámico.",
-    "instructions": "# Level 3: Tesoro pegajoso\n\nRescata el premio del cofre del tesoro y captura la bandera. El cofre lo guarda como un campo dinámico.",
+    "instructions": "Rescata el premio del cofre del tesoro y captura la bandera. El cofre lo guarda como un campo dinámico.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -32,7 +32,7 @@
   "flash_vault": {
     "name": "Bóveda Flash",
     "description": "Vacía por completo la bóveda de flash loans y captura la bandera. Cada préstamo genera un recibo que debe liquidarse antes de que termine la transacción.",
-    "instructions": "# Level 5: Bóveda Flash\n\nVacía por completo la bóveda de flash loans y captura la bandera. Cada préstamo genera un recibo que debe liquidarse antes de que termine la transacción.",
+    "instructions": "Vacía por completo la bóveda de flash loans y captura la bandera. Cada préstamo genera un recibo que debe liquidarse antes de que termine la transacción.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -42,7 +42,7 @@
   "pool_party": {
     "name": "Fiesta de Pools",
     "description": "Vacía la tesorería del Pool A y captura la bandera. Tres pools comparten la misma API estilo flash loan, pero solo el Pool A guarda liquidez real.",
-    "instructions": "# Level 6: Fiesta de Pools\n\nVacía la tesorería del Pool A y captura la bandera. Tres pools comparten la misma API estilo flash loan, pero solo el Pool A guarda liquidez real.",
+    "instructions": "Vacía la tesorería del Pool A y captura la bandera. Tres pools comparten la misma API estilo flash loan, pero solo el Pool A guarda liquidez real.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -52,7 +52,7 @@
   "tick_tock": {
     "name": "Tick Tock",
     "description": "Vacía al menos 900.000 tokens del pool de liquidez concentrada y captura la bandera. Las posiciones se cotizan a través de un `sqrt_price` derivado del tick, y el coste de abrir una escala con ese precio.",
-    "instructions": "# Level 7: Tick Tock\n\nVacía al menos 900.000 tokens del pool de liquidez concentrada y captura la bandera. Las posiciones se cotizan a través de un `sqrt_price` derivado del tick, y el coste de abrir una escala con ese precio.",
+    "instructions": "Vacía al menos 900.000 tokens del pool de liquidez concentrada y captura la bandera. Las posiciones se cotizan a través de un `sqrt_price` derivado del tick, y el coste de abrir una escala con ese precio.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -62,7 +62,7 @@
   "night_ledger": {
     "name": "Libro Nocturno",
     "description": "Sal con un `MarginNote` que valga al menos 10.000.000 y captura la bandera. El grifo solo emite una nota que vale 1, y el libro cotiza el margen requerido a través de una función auxiliar de aritmética de punto fijo.",
-    "instructions": "# Level 8: Libro Nocturno\n\nSal con un `MarginNote` que valga al menos 10.000.000 y captura la bandera. El grifo solo emite una nota que vale 1, y el libro cotiza el margen requerido a través de una función auxiliar de aritmética de punto fijo que desplaza valores intermedios a la izquierda para ganar precisión.",
+    "instructions": "Sal con un `MarginNote` que valga al menos 10.000.000 y captura la bandera. El grifo solo emite una nota que vale 1, y el libro cotiza el margen requerido a través de una función auxiliar de aritmética de punto fijo que desplaza valores intermedios a la izquierda para ganar precisión.",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"
