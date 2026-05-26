@@ -24,14 +24,6 @@
     ]
   },
   {
-    "id": 4,
-    "difficulty": "easy",
-    "module": "sticky_treasure_dof",
-    "modules": [
-      "sticky_treasure_dof"
-    ]
-  },
-  {
     "id": 5,
     "difficulty": "easy",
     "module": "flash_vault",
@@ -58,10 +50,19 @@
   {
     "id": 8,
     "difficulty": "hard",
-    "module": "blackbook",
+    "module": "night_ledger",
     "modules": [
-      "blackbook",
-      "blackbook_math"
+      "night_ledger",
+      "night_ledger_math"
+    ]
+  },
+  {
+    "id": 9,
+    "difficulty": "medium",
+    "module": "mailbox",
+    "modules": [
+      "mailbox",
+      "mailbox_relay"
     ]
   }
 ]

@@ -40,7 +40,8 @@ export function LocaleSwitcher() {
           <SelectItem
             key={option.code}
             value={option.code}
-            className="cursor-pointer px-3 py-2.5 text-sm transition-colors hover:bg-accent data-[highlighted]:bg-accent data-[state=checked]:bg-selected/10 data-[state=checked]:text-selected data-[state=checked]:font-medium"
+            className="cursor-pointer py-2.5 pl-8 pr-3 text-sm transition-colors hover:bg-accent data-[highlighted]:bg-accent data-[state=checked]:bg-selected/10 data-[state=checked]:text-selected data-[state=checked]:font-medium [&>[data-slot=select-item-indicator]]:top-1/2 [&>[data-slot=select-item-indicator]]:-translate-y-1/2 rtl:pl-3 rtl:pr-8 rtl:[&>[data-slot=select-item-indicator]]:left-auto rtl:[&>[data-slot=select-item-indicator]]:right-2"
+            lang={option.code}
             dir="auto"
           >
             {option.label}

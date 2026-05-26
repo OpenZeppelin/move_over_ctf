@@ -55,8 +55,10 @@ export function LevelView({ level, levelsTotal }: { level: Level; levelsTotal: n
     activeContractCode,
     modulePath,
     prevLevelId,
+    prevLevelPosition,
     prevHref,
     nextLevelId,
+    nextLevelPosition,
   } = useLevelNavigation({
     levelId: level.id,
     locale,
@@ -124,7 +126,9 @@ export function LevelView({ level, levelsTotal }: { level: Level; levelsTotal: n
         hasPassed={hasPassed}
         prevHref={prevHref}
         prevLevelId={prevLevelId}
+        prevLevelPosition={prevLevelPosition}
         nextLevelId={nextLevelId}
+        nextLevelPosition={nextLevelPosition}
         locale={locale}
       />
 
