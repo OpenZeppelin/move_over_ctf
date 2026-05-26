@@ -22,6 +22,8 @@ export interface LevelContent {
 
 export interface Level extends LevelContent {
   id: number;
+  /** 1-based display position derived from the canonical ordering (easy → hard, then id). */
+  position: number;
   difficulty: Difficulty;
   contractModules: LevelContractModule[];
   contractCode: string;

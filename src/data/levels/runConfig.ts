@@ -28,11 +28,6 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     typeName: "StickyTreasureFlag",
     solutionModule: "level_3_solution",
   },
-  4: {
-    module: "sticky_treasure_dof",
-    typeName: "ObjectChestFlag",
-    solutionModule: "level_4_solution",
-  },
   5: {
     module: "flash_vault",
     typeName: "FlashVaultFlag",
@@ -49,8 +44,13 @@ export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
     solutionModule: "level_7_solution",
   },
   8: {
-    module: "blackbook",
-    typeName: "BlackbookFlag",
+    module: "night_ledger",
+    typeName: "NightLedgerFlag",
     solutionModule: "level_8_solution",
+  },
+  9: {
+    module: "mailbox",
+    typeName: "MailboxFlag",
+    solutionModule: "level_9_solution",
   },
 };

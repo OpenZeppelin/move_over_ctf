@@ -1,4 +1,4 @@
-module move_over::blackbook_math;
+module move_over::night_ledger_math;
 
 const SHIFT_BITS: u8 = 32;
 const HIGH_BITS_OFFSET: u8 = 96;

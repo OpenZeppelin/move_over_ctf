@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const levels = getLevels(loc);
   const level = getLevel(loc, Number(id)) ?? levels[0];
   const t = getTranslations(loc);
-  const title = replaceTemplate(t("seo.levelTitle"), { id: level.id, name: level.name });
+  const title = replaceTemplate(t("seo.levelTitle"), { id: level.position, name: level.name });
   const description = level.description;
   const url = `${BASE_URL}/${loc}/levels/${level.id}`;
   const languageAlternates = Object.fromEntries(

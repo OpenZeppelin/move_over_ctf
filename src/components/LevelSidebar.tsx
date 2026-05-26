@@ -98,7 +98,7 @@ export function LevelSidebar({ levels }: { levels: Level[] }) {
               aria-current={isActive ? "page" : undefined}
             >
               <Typography.Span className="text-muted-foreground font-mono text-sm w-5">
-                {level.id}
+                {level.position}
               </Typography.Span>
               <Typography.Span className="flex-1 truncate">{level.name}</Typography.Span>
               <Typography.Span

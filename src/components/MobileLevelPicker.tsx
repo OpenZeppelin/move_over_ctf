@@ -68,7 +68,7 @@ export function MobileLevelPicker({ levels }: { levels: Level[] }) {
               `}
               aria-current={isActive ? "page" : undefined}
             >
-              {level.id}: {level.name}
+              {level.position}: {level.name}
             </Link>
           );
         })}
