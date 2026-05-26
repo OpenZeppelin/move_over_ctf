@@ -21,8 +21,9 @@ export interface LevelContent {
 }
 
 export interface Level extends LevelContent {
-  id: number;
-  /** 1-based display position derived from the canonical ordering (easy → hard, then id). */
+  /** snake_case slug used as the URL segment and storage key. */
+  id: string;
+  /** 1-based display position derived from the canonical ordering (easy → hard, then insertion). */
   position: number;
   difficulty: Difficulty;
   contractModules: LevelContractModule[];

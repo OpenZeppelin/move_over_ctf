@@ -306,8 +306,7 @@ async function run() {
       `Module '${moduleName}' already exists in meta.config.json.`
     );
   }
-  const nextId =
-    metaConfig.reduce((maxId, entry) => Math.max(maxId, Number(entry?.id ?? -1)), -1) + 1;
+  const existingIds = new Set(metaConfig.map((entry) => String(entry?.id ?? "")));
 
   for (const moduleName of moduleNames) {
     const contractPath = path.join(contractsDir, `${moduleName}.move`);
@@ -360,18 +359,22 @@ async function run() {
     }
   }
 
+  // Slug = primary module name (already snake_case per Move identifier rules).
+  const slug = runModuleName;
+  assert(!existingIds.has(slug), `Level id '${slug}' already exists in meta.config.json.`);
+
   const runConfigRaw = await fs.readFile(runConfigPath, "utf8");
   const runConfigMap = parseRunConfigMap(runConfigRaw);
-  runConfigMap[nextId] = {
+  runConfigMap[slug] = {
     module: runModuleName,
     typeName,
-    solutionModule: `level_${nextId}_solution`,
+    solutionModule: `${slug}_solution`,
   };
 
   const enContentRaw = await fs.readFile(enContentPath, "utf8");
   const enContent = JSON.parse(enContentRaw);
   assert(enContent && typeof enContent === "object" && !Array.isArray(enContent), "Invalid en.json.");
-  assert(!Object.prototype.hasOwnProperty.call(enContent, String(nextId)), `en.json already contains level ${nextId}.`);
+  assert(!Object.prototype.hasOwnProperty.call(enContent, slug), `en.json already contains level ${slug}.`);
 
   await fs.mkdir(contractsDir, { recursive: true });
   for (const entry of moduleEntries) {
@@ -380,12 +383,11 @@ async function run() {
   }
 
   metaConfig.push({
-    id: nextId,
+    id: slug,
     difficulty,
     module: runModuleName,
     modules: moduleNames,
   });
-  metaConfig.sort((a, b) => Number(a.id) - Number(b.id));
   await fs.writeFile(metaConfigPath, `${JSON.stringify(metaConfig, null, 2)}\n`, "utf8");
 
   const newRunConfig = renderRunConfigFile(runConfigMap);
@@ -399,11 +401,8 @@ async function run() {
   if (explanation && explanation.trim()) {
     levelEntry.explanation = normalizeNewlines(explanation).trim();
   }
-  enContent[String(nextId)] = levelEntry;
-  const sortedContent = Object.fromEntries(
-    Object.entries(enContent).sort((a, b) => Number(a[0]) - Number(b[0]))
-  );
-  await fs.writeFile(enContentPath, `${JSON.stringify(sortedContent, null, 2)}\n`, "utf8");
+  enContent[slug] = levelEntry;
+  await fs.writeFile(enContentPath, `${JSON.stringify(enContent, null, 2)}\n`, "utf8");
 
   const sync = spawnSync("node", [syncMetaScript], { cwd: root, stdio: "inherit" });
   if (sync.status !== 0) {
@@ -411,14 +410,14 @@ async function run() {
   }
 
   output.write("\nLevel created successfully.\n");
-  output.write(`- id: ${nextId}\n`);
+  output.write(`- id (slug): ${slug}\n`);
   output.write(`- primary module: move_over::${runModuleName}\n`);
   output.write(`- modules: ${moduleNames.map((name) => `move_over::${name}`).join(", ")}\n`);
   output.write(`- typeName: ${typeName}\n`);
   for (const moduleName of moduleNames) {
     output.write(`- contract: public/contracts/${moduleName}.move\n`);
   }
-  output.write(`- runConfig solutionModule: level_${nextId}_solution\n`);
+  output.write(`- runConfig solutionModule: ${slug}_solution\n`);
 }
 
 run().catch((err) => {

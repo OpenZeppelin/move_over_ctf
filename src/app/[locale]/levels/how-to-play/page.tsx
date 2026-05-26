@@ -6,7 +6,7 @@ import { LevelSidebar } from "@/components/LevelSidebar";
 import { MobileLevelPicker } from "@/components/MobileLevelPicker";
 import { Typography } from "@/components/ui/Typography";
 import { BASE_URL, SOCIAL_CARD_OG_IMAGES, SOCIAL_CARD_TWITTER_IMAGES } from "@/config";
-import { getLevels } from "@/data/levels";
+import { getLevels, LEVEL_IDS } from "@/data/levels";
 import { getTranslations } from "@/i18n";
 import { DEFAULT_LOCALE, VALID_LOCALES, getSafeLocale } from "@/i18n/locales";
 
@@ -102,7 +102,7 @@ export default async function HowToPlayPage({ params }: Props) {
 
             <div className="mt-6">
               <Link
-                href={`/${loc}/levels/0`}
+                href={`/${loc}/levels/${LEVEL_IDS[0]}`}
                 className="inline-flex items-center h-10 rounded-md bg-foreground px-4 text-sm font-medium text-background hover:bg-foreground/90 transition-colors"
               >
                 {t("howToPlay.startLevel0")}

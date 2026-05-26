@@ -12,9 +12,9 @@ type Props = {
   modulePath: string;
   hasPassed: boolean;
   prevHref?: string;
-  prevLevelId?: number;
+  prevLevelId?: string;
   prevLevelPosition?: number;
-  nextLevelId?: number;
+  nextLevelId?: string;
   nextLevelPosition?: number;
   locale: string;
 };

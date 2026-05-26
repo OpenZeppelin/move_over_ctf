@@ -24,7 +24,7 @@ export function Header() {
   const { resolvedTheme } = useTheme();
   const hasHydrated = useSyncExternalStore(EMPTY_SUBSCRIBE, () => true, () => false);
   const isDark = hasHydrated ? resolvedTheme !== "light" : false;
-  const [solvedIds, setSolvedIds] = useState<Set<number>>(() => new Set());
+  const [solvedIds, setSolvedIds] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     const syncSolved = () => setSolvedIds(getSolvedIdsFromStorage());

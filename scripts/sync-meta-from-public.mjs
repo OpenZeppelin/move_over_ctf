@@ -8,6 +8,7 @@ const metaPath = path.join(root, "src", "data", "levels", "meta.ts");
 
 const VALID_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
 const MODULE_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const SLUG_RE = /^[a-z][a-z0-9_]*$/;
 
 function escapeTemplateLiteral(text) {
   return String(text)
@@ -56,10 +57,10 @@ async function run() {
   const entries = [];
 
   for (const item of config) {
-    const id = Number(item?.id);
+    const id = String(item?.id ?? "");
     const difficulty = String(item?.difficulty ?? "");
 
-    assert(Number.isInteger(id) && id >= 0, `Invalid id in meta.config.json: ${String(item?.id)}`);
+    assert(SLUG_RE.test(id), `Invalid id (must be snake_case slug) in meta.config.json: ${String(item?.id)}`);
     assert(!seenIds.has(id), `Duplicate level id in meta.config.json: ${id}`);
     seenIds.add(id);
 
@@ -81,12 +82,12 @@ async function run() {
     entries.push({ id, difficulty, contractCode: primaryContract.contractCode, contractModules });
   }
 
-  entries.sort((a, b) => a.id - b.id);
+  // Preserve insertion order from meta.config.json (entries already match it).
 
   const levelBlocks = entries
     .map(
       ({ id, difficulty, contractCode, contractModules }) => `  {
-    id: ${id},
+    id: ${JSON.stringify(id)},
     difficulty: "${difficulty}",
     contractCode: \`${escapeTemplateLiteral(contractCode)}\`,
     contractModules: [
@@ -106,7 +107,7 @@ ${contractModules
   const output = `import type { Difficulty } from "./types";
 
 interface LevelMeta {
-  id: number;
+  id: string;
   difficulty: Difficulty;
   contractCode: string;
   contractModules: Array<{

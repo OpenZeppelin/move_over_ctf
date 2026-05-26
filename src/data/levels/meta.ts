@@ -1,7 +1,7 @@
 import type { Difficulty } from "./types";
 
 interface LevelMeta {
-  id: number;
+  id: string;
   difficulty: Difficulty;
   contractCode: string;
   contractModules: Array<{
@@ -12,7 +12,7 @@ interface LevelMeta {
 
 export const LEVEL_META: LevelMeta[] = [
   {
-    id: 0,
+    id: "artifact",
     difficulty: "easy",
     contractCode: `module move_over::artifact;
 
@@ -73,7 +73,7 @@ public fun shatter(artifact: Artifact): ArtifactFlag {
     ],
   },
   {
-    id: 1,
+    id: "coin_collector",
     difficulty: "easy",
     contractCode: `module move_over::coin_collector;
 
@@ -162,7 +162,7 @@ public fun destroy_zero(token: Token) {
     ],
   },
   {
-    id: 3,
+    id: "sticky_treasure",
     difficulty: "easy",
     contractCode: `module move_over::sticky_treasure;
 
@@ -257,7 +257,7 @@ public fun solve(prize: Prize): StickyTreasureFlag {
     ],
   },
   {
-    id: 5,
+    id: "flash_vault",
     difficulty: "easy",
     contractCode: `module move_over::flash_vault;
 
@@ -468,7 +468,7 @@ public fun solve(vault: FlashVault): FlashVaultFlag {
     ],
   },
   {
-    id: 6,
+    id: "pool_party",
     difficulty: "medium",
     contractCode: `module move_over::pool_party;
 
@@ -739,7 +739,7 @@ public fun next_nonce(pool: &Pool): u64 {
     ],
   },
   {
-    id: 7,
+    id: "tick_tock",
     difficulty: "medium",
     contractCode: `module move_over::tick_tock;
 
@@ -912,7 +912,7 @@ public fun solve(pool: Pool): TickTockFlag {
     ],
   },
   {
-    id: 8,
+    id: "night_ledger",
     difficulty: "hard",
     contractCode: `module move_over::night_ledger;
 
@@ -1277,7 +1277,7 @@ public fun abs_diff(a: u128, b: u128): u128 {
     ],
   },
   {
-    id: 9,
+    id: "mailbox",
     difficulty: "medium",
     contractCode: `module move_over::mailbox;
 

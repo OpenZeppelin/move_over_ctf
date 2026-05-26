@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { HintsPanel } from "@/components/level-view/HintsPanel";
 
 type Props = {
-  levelId: number;
+  levelId: string;
   instructions: string;
   hints: string[];
   revealedHintCount: number;

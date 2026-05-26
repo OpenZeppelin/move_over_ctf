@@ -19,7 +19,7 @@ export async function generateStaticParams() {
   const params: { locale: string; id: string }[] = [];
   for (const locale of VALID_LOCALES) {
     for (const id of ids) {
-      params.push({ locale, id: String(id) });
+      params.push({ locale, id });
     }
   }
   return params;
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
   const loc = getSafeLocale(locale);
   const levels = getLevels(loc);
-  const level = getLevel(loc, Number(id)) ?? levels[0];
+  const level = getLevel(loc, id) ?? levels[0];
   const t = getTranslations(loc);
   const title = replaceTemplate(t("seo.levelTitle"), { id: level.position, name: level.name });
   const description = level.description;
@@ -71,12 +71,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LevelPage({ params }: Props) {
   const { locale, id } = await params;
   const loc = getSafeLocale(locale);
-  const numericId = Number(id);
-  const level = getLevel(loc, numericId);
   const levels = getLevels(loc);
+  const level = getLevel(loc, id);
 
   if (!level) {
-    redirect(`/${loc}/levels/0`);
+    redirect(`/${loc}/levels/${levels[0].id}`);
   }
 
   return (

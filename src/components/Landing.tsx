@@ -6,6 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { PanelCard } from "@/components/ui/PanelCard";
 import { Typography } from "@/components/ui/Typography";
 import { Footer } from "@/components/Footer";
+import { LEVEL_IDS } from "@/data/levels";
 
 const LETTERS_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -220,7 +221,7 @@ export function Landing() {
                   <Typography.Span className="opacity-80 group-hover:translate-x-1 transition-transform">→</Typography.Span>
                 </Link>
                 <Link
-                  href={`/${locale}/levels/0`}
+                  href={`/${locale}/levels/${LEVEL_IDS[0]}`}
                   className="inline-flex items-center justify-center h-11 px-6 sm:px-8 rounded-md border border-input bg-background text-foreground text-sm font-medium hover:bg-accent transition-colors"
                 >
                   {t("landing.cta")}

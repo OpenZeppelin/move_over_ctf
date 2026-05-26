@@ -6,7 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { replaceTemplate } from "@/i18n/utils";
 
 type Props = {
-  levelId: number;
+  levelId: string;
   hints: string[];
   revealedHintCount: number;
   onRevealNextHint: () => void;
