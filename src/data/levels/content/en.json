@@ -1,114 +1,82 @@
 {
-  "0": {
+  "artifact": {
     "name": "Artifact",
-    "description": "The goal of this level is to forge an artifact, charge it, and shatter it to capture the flag.",
-    "instructions": "# Level 0: Artifact\n\nThe goal of this level is to forge an artifact, charge it, and shatter it to capture the flag.\n\nThings that might help:\n\n- Sui objects and `TxContext`\n- Mutable references (`&mut`)\n- Move's ownership model: passing by value vs by reference",
+    "description": "Forge an artifact, charge it with energy, then shatter it once it reaches the right power to capture the flag.",
+    "instructions": "Forge an artifact, charge it with energy, then shatter it once it reaches the right power to capture the flag.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "Look at what `charge` actually does to an `Artifact`. Is there any guard on the energy value?",
-      "`shatter` requires `power == 100`. Everything you need to satisfy that check is right there in the public API."
-    ],
-    "explanation": "Level 0 is a warm-up that introduces Sui's object model. `forge` creates an `Artifact`, `charge` mutates it via `&mut`, and `shatter` consumes it by value. Notice how Move makes ownership explicit: you borrow an object mutably to change a field, but to destructure it you must move ownership. There is no real vulnerability here; the lesson is the API contract itself, including how the type signatures `&mut Artifact` vs `Artifact` describe what each function is allowed to do."
+    "explanation": "This level is a warm-up that introduces Sui's object model. `forge` creates an `Artifact`, `charge` mutates it via `&mut`, and `shatter` consumes it by value. Notice how Move makes ownership explicit: you borrow an object mutably to change a field, but to destructure it you must move ownership. There is no real vulnerability here; the lesson is the API contract itself, including how the type signatures `&mut Artifact` vs `Artifact` describe what each function is allowed to do."
   },
-  "1": {
+  "coin_collector": {
     "name": "Coin Collector",
-    "description": "The goal of this level is to buy the prize from the vending machine. The prize costs 1,000 tokens but the faucet only...",
-    "instructions": "# Level 1: Coin Collector\n\nThe goal of this level is to buy the prize from the vending machine. The prize costs 1,000 tokens but the faucet only gives you 100.\n\nThings that might help:\n\n- Sui's coin model: coins are objects, not balance mappings\n- `split` and `merge` operations",
+    "description": "Buy the prize at the vending machine and capture the flag. The faucet only dispenses tokens worth 100 — and the prize is supposed to cost 1,000.",
+    "instructions": "Buy the prize at the vending machine and capture the flag. The faucet only dispenses tokens worth 100 — and the prize is supposed to cost 1,000.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "What does `buy_prize` actually validate?",
-      "The function unpacks the `Token` and binds its `value` to `_`. Look at the order of operations: is anything compared against a price *before* that?"
-    ],
     "explanation": "`buy_prize` destructures the payment token but binds `value` to `_` and never reads it. The 'price' of 1,000 lives in the description, not in the code. Any `Token` redeems the prize, even the 100-token faucet output. This level teaches a recurring auditing pattern: a function's *behavior* is only what the code does, never what the comments, names, or descriptions claim. Always check which assertions are actually enforced and which are documentation pretending to be enforcement."
   },
-  "3": {
+  "sticky_treasure": {
     "name": "Sticky Treasure",
-    "description": "The goal of this level is to rescue the prize from the treasure chest and capture the flag.",
-    "instructions": "# Level 3: Sticky Treasure\n\nThe goal of this level is to rescue the prize from the treasure chest and capture the flag.\n\nThings that might help:\n\n- `sui::dynamic_field`\n- Orphaned fields\n- Order of operations",
+    "description": "Rescue the prize from the treasure chest and capture the flag. The chest stores it as a dynamic field.",
+    "instructions": "Rescue the prize from the treasure chest and capture the flag. The chest stores it as a dynamic field.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "List every public function that touches a `Chest`. Which ones operate on the dynamic field directly, and which destroy the chest?",
-      "`smash` consumes the chest but returns a hardcoded `Prize { value: 0 }`, throwing away whatever was stored. Is there a function that lifts the real prize out *before* you destroy the chest?"
-    ],
     "explanation": "Sticky Treasure exposes two paths against the chest. `smash` looks like the headline action but throws the stored prize away and hands you a zero-valued replacement. `extract_prize` quietly pulls the dynamic field out unmodified. In Move, every `public fun` is callable by anyone — names, comments, and intent do *not* gate access. When auditing, enumerate every public function on every public type and ask what each one allows independently, rather than assuming the 'happy path' is the only path."
   },
-  "4": {
-    "name": "Object Chest",
-    "description": "Rescue the prize from the chest and capture the flag—same idea as Sticky Treasure, but the prize is stored as a dynamic object field.",
-    "instructions": "# Level 4: Object Chest\n\nThe goal of this level is to rescue the prize from the treasure chest and capture the flag. The chest stores the prize as a **dynamic object field** (an object with `key`), so it remains discoverable by ID.\n\nThings that might help:\n\n- `sui::dynamic_object_field`\n- Same flow as Sticky Treasure: create, extract, solve\n- Order of operations",
-    "author": {
-      "name": "Kose",
-      "github": "https://github.com/kosedogus"
-    },
-    "hints": [
-      "This is Sticky Treasure with one twist: the `Prize` now has `key`, so it's stored as a `dynamic_object_field` instead of a `dynamic_field`. Does that change which functions are still callable?",
-      "Compare the public surface against the previous level. The storage primitive is different, but is the access story?"
-    ],
-    "explanation": "Dynamic object fields (`dynamic_object_field`) differ from plain dynamic fields (`dynamic_field`) in that child objects stay individually addressable by ID, supporting wallet-side discovery and explorer indexing. But that is a *storage* difference, not an access-control one. The vulnerability is identical to Level 3: `extract_prize` is still public and still bypasses `smash`. The takeaway is that swapping storage primitives without revisiting your function surface usually leaves the same hole wearing a different costume."
-  },
-  "5": {
+  "flash_vault": {
     "name": "Flash Vault",
-    "description": "Drain the vault completely and capture the flag.",
-    "instructions": "# Level 5: Flash Vault\n\nThe goal of this level is to drain the vault completely and capture the flag.\n\nThings that might help:\n\n- Move structs and their abilities\n- Flash loan invariants",
+    "description": "Drain the flash-loan vault completely and capture the flag. Every borrow produces a receipt that must be settled before the transaction ends.",
+    "instructions": "Drain the flash-loan vault completely and capture the flag. Every borrow produces a receipt that must be settled before the transaction ends.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "`Receipt` has no abilities — it's a hot potato that must be consumed before the transaction ends. List every function that consumes a `Receipt`.",
-      "There are two settlement paths: `repay` and `cancel`. Compare them side by side. Which inputs does each require, and which does each *not*?"
-    ],
     "explanation": "Flash loans rely on 'hot potato' receipts: structs with no abilities that must be unpacked in the same transaction. The pattern itself is sound — the receipt *forces* a settlement function to be called. But Flash Vault offers two settlement paths, and only `repay` actually requires the borrowed token to come back. `cancel` consumes the receipt without checking that liquidity was restored. The general lesson: the hot-potato pattern only enforces that *something* finalizes the receipt — every consumer of the hot-potato type has to preserve the protocol invariant on its own. An audit should enumerate every place a hot-potato type is unpacked and verify each one independently."
   },
-  "6": {
+  "pool_party": {
     "name": "Pool Party",
-    "description": "The goal of this level is to drain Pool A and capture the flag.",
-    "instructions": "# Level 6: Pool Party\n\nThe goal of this level is to drain Pool A and capture the flag. Three pools share the same flash-loan style API, but only Pool A holds the real treasury.\n\nThings that might help:\n\n- The flash-loan invariants from Flash Vault, applied across multiple pools\n- What `repay` actually proves about the receipt it consumes\n- Receipts are hot potatoes — they must be settled, but where?",
+    "description": "Drain Pool A's treasury and capture the flag. Three pools share the same flash-loan style API, but only Pool A holds real liquidity.",
+    "instructions": "Drain Pool A's treasury and capture the flag. Three pools share the same flash-loan style API, but only Pool A holds real liquidity.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "Three pools, one `repay`. Read `repay` carefully. Which arguments come from the caller, and which come from the pool being repaid?",
-      "The receipt stores `pool_id`, but `repay` compares it against the *caller-supplied* `receipt_pool_id` parameter — not against the actual pool's ID. Two values both controlled by the caller don't prove anything."
-    ],
     "explanation": "Pool Party's bug is a misplaced validation. `repay` checks that the receipt's stored `pool_id` matches a *caller-supplied* `receipt_pool_id` parameter, instead of matching it against the real ID of the pool being repaid (`object::id(&pool.id)`). When both sides of an equality check come from the caller, the constraint proves nothing — it's decorative. The only structural binding left is the nonce, but nonces are advanceable on any pool by issuing throwaway borrows. The general lesson: a check is only meaningful when one side comes from a trusted source. Always trace where each operand of a critical `assert!` originates."
   },
-  "7": {
+  "tick_tock": {
     "name": "Tick Tock",
-    "description": "The goal of this level is to drain at least 900,000 tokens from the pool and capture the flag.",
-    "instructions": "# Level 7: Tick Tock\n\nThe goal of this level is to drain at least 900,000 tokens from the pool and capture the flag. The pool prices liquidity using a tick-derived `sqrt_price`, and the cost of opening a position scales with that price.\n\nThings that might help:\n\n- Concentrated liquidity and tick-based pricing\n- Integer casts in Move: what happens when a `u64` is cast down to a `u8`\n- The relationship between deposited tokens, claimed liquidity, and pro-rata payouts",
+    "description": "Drain at least 900,000 tokens from the concentrated-liquidity pool and capture the flag. Positions are priced via a tick-derived `sqrt_price`, and the cost of opening one scales with that price.",
+    "instructions": "Drain at least 900,000 tokens from the concentrated-liquidity pool and capture the flag. Positions are priced via a tick-derived `sqrt_price`, and the cost of opening one scales with that price.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "Read `tick_to_sqrt_price`. What happens to `tick / 100` when the quotient is bigger than 255?",
-      "Move's `as u8` cast silently keeps only the low 8 bits. Find a tick value where `(tick / 100) % 256 == 0` — the shift collapses to zero and `sqrt_price` becomes 1."
-    ],
     "explanation": "Tick Tock's bug is a silent narrowing cast: `(tick / 100) as u8` discards every bit above the eighth. For any tick that is a multiple of 25,600, the shift collapses to zero, making `1u128 << 0 = 1` — the cheapest possible `sqrt_price`. Suddenly the deposit needed for arbitrary liquidity is effectively zero, and a tiny payment buys a position large enough to drain the pool through the pro-rata payout. The lesson: every cast from a wider integer to a narrower one is a potential overflow point, and Move (unlike Rust's `try_into`) does *not* abort on truncation. This exact bug pattern has shipped in production DEXes — audit cast sites the same way you audit arithmetic."
   },
-  "8": {
+  "night_ledger": {
     "name": "Night Ledger",
-    "description": "The goal of this level is to walk away with a margin note worth at least 10,000,000 — even though the faucet only mints a note worth 1.",
-    "instructions": "# Level 8: Night Ledger\n\nThe goal of this level is to capture the flag by redeeming a `MarginNote` worth at least 10,000,000, starting from a faucet that only mints a note worth 1.\n\nThe ledger quotes the required margin through a fixed-point math module that left-shifts intermediate values for precision. Open a position, close it, and inspect the resulting note.\n\nThings that might help:\n\n- Fixed-point math and shift-based scaling\n- Overflow checks: what the mask actually permits versus what the shift can survive\n- The gap between *required margin* and *payout from liquidity*",
+    "description": "Walk away with a `MarginNote` worth at least 10,000,000 and capture the flag. The faucet only mints a note worth 1, and the ledger quotes the required margin through a fixed-point math helper.",
+    "instructions": "Walk away with a `MarginNote` worth at least 10,000,000 and capture the flag. The faucet only mints a note worth 1, and the ledger quotes the required margin through a fixed-point math helper that left-shifts for precision.",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"
     },
-    "hints": [
-      "Compare `checked_shlw` and `checked_shlw_strict` in `blackbook_math`. They claim to do the same thing — do they?",
-      "The safe limit for an unsigned 32-bit left shift on a `u128` is `1 << 96`. Look at the mask that `checked_shlw` uses. Is it the same value?"
-    ],
     "explanation": "The challenge relies on a flawed overflow check in a fixed-width left-shift helper. The mask in `checked_shlw` is `0xffffffff << 96`, which permits values that are *larger* than the true safe limit of `1 << 96` for a 32-bit left shift. A large `liquidity` input can pass the check, lose its high bits during the precision shift, and silently truncate. That truncation collapses the required margin quote, so a faucet note worth 1 satisfies the margin requirement — while the position still records the full liquidity. On close, `payout_from_liquidity` returns `liquidity >> 28`, paying out a `MarginNote` worth millions. This is the Cetus-style overflow-check bug pattern: an off-by-thirty-two in a safety threshold that lets the underlying arithmetic wrap. Always validate that the bound used by a `checked_*` helper matches the actual width the operation can survive — and prefer the strict, single-bit limit (`1 << N`) over an `0xff...` mask."
+  },
+  "mailbox": {
+    "name": "Mailbox",
+    "description": "Walk off with a letter that wasn't addressed to you and capture the flag. Two modules — `mailbox` and `mailbox_relay` — sit on top of the post office.",
+    "instructions": "Walk off with a letter that wasn't addressed to you and capture the flag. Two modules — `mailbox` and `mailbox_relay` — sit on top of the post office.",
+    "author": {
+      "name": "km",
+      "github": "https://github.com/km631"
+    },
+    "explanation": "Mailbox is a 'trust by typed value' bug. The `mailbox` protocol accepts a `RelayHandle` from a partner module (`mailbox_relay`) as proof of recipient, on the implicit assumption that the relay vetted the holder before minting the handle. But `mailbox_relay::handle_for` has no on-chain check — it mints a handle with any `target` the caller names. The typed value isn't a proof; it's just a struct with the right shape.\n\n**The audit lesson:** a capability or typed-witness pattern is only as strong as its weakest minter. Every public `mint_*` / `issue_*` / `register_*` function across every module in scope is part of the security boundary. The runtime checks the type; the minter has to check the identity, and *every* minter site has to enforce it."
   }
 }

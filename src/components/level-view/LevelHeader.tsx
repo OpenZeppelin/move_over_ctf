@@ -12,8 +12,10 @@ type Props = {
   modulePath: string;
   hasPassed: boolean;
   prevHref?: string;
-  prevLevelId?: number;
-  nextLevelId?: number;
+  prevLevelId?: string;
+  prevLevelPosition?: number;
+  nextLevelId?: string;
+  nextLevelPosition?: number;
   locale: string;
 };
 
@@ -23,7 +25,9 @@ export function LevelHeader({
   hasPassed,
   prevHref,
   prevLevelId,
+  prevLevelPosition,
   nextLevelId,
+  nextLevelPosition,
   locale,
 }: Props) {
   const { t } = useLocale();
@@ -32,9 +36,9 @@ export function LevelHeader({
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <Typography.Span
           className="font-mono text-[10px] sm:text-xs uppercase tracking-widest px-2.5 py-1 rounded border border-border bg-background text-muted-foreground"
-          aria-label={replaceTemplate(t("level.levelAriaLabel"), { id: level.id })}
+          aria-label={replaceTemplate(t("level.levelAriaLabel"), { id: level.position })}
         >
-          Level {level.id}
+          Level {level.position}
         </Typography.Span>
         <Typography.H1
           variant="level"
@@ -47,8 +51,8 @@ export function LevelHeader({
             <Link
               href={prevHref}
               className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-foreground hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label={prevLevelId !== undefined ? replaceTemplate(t("level.goToLevel"), { id: prevLevelId }) : t("level.goToHowToPlay")}
-              title={prevLevelId !== undefined ? replaceTemplate(t("level.prevLevel"), { id: prevLevelId }) : t("sidebar.howToPlay")}
+              aria-label={prevLevelPosition !== undefined ? replaceTemplate(t("level.goToLevel"), { id: prevLevelPosition }) : t("level.goToHowToPlay")}
+              title={prevLevelPosition !== undefined ? replaceTemplate(t("level.prevLevel"), { id: prevLevelPosition }) : t("sidebar.howToPlay")}
             >
               ←
             </Link>
@@ -57,8 +61,8 @@ export function LevelHeader({
             <Link
               href={`/${locale}/levels/${nextLevelId}`}
               className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-foreground hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label={replaceTemplate(t("level.goToLevel"), { id: nextLevelId })}
-              title={replaceTemplate(t("level.nextLevel"), { id: nextLevelId })}
+              aria-label={replaceTemplate(t("level.goToLevel"), { id: nextLevelPosition ?? nextLevelId })}
+              title={replaceTemplate(t("level.nextLevel"), { id: nextLevelPosition ?? nextLevelId })}
             >
               →
             </Link>

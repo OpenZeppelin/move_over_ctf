@@ -8,7 +8,7 @@ type WorkerResponse =
   | { id: number; ok: false; error?: { code?: string; message?: string } };
 
 interface BrowserRunLevelInput {
-  levelId: number;
+  levelId: string;
   contractCode: string;
   contractModules?: Array<{
     module: string;

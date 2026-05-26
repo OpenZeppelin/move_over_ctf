@@ -1,114 +1,72 @@
 {
-  "0": {
+  "artifact": {
     "name": "Eser",
-    "description": "Bu seviyenin amacı bir eser dövüp şarj etmek ve bayrağı kapmak için onu paramparça etmek.",
-    "instructions": "# Seviye 0: Eser\n\nBu seviyenin amacı bir eser dövüp şarj etmek ve bayrağı kapmak için onu paramparça etmek.\n\nİşine yarayabilecek şeyler:\n\n- Sui nesneleri ve `TxContext`\n- Değişken referanslar (`&mut`)\n- Move'un sahiplik modeli: değerle ve referansla geçirme arasındaki fark",
+    "description": "Bir eser döv, onu enerjiyle şarj et ve doğru güce ulaştığında bayrağı kapmak için paramparça et.",
+    "instructions": "Bir eser döv, onu enerjiyle şarj et ve doğru güce ulaştığında bayrağı kapmak için paramparça et.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "`charge` fonksiyonunun bir `Artifact` üzerinde gerçekte ne yaptığına bak. Enerji değeri için herhangi bir koruma var mı?",
-      "`shatter` için `power == 100` olması gerekiyor. Bu koşulu sağlamak için ihtiyacın olan her şey public API'de duruyor."
-    ],
-    "explanation": "Seviye 0, Sui'nin nesne modelini tanıtan bir ısınma turu. `forge` bir `Artifact` üretir, `charge` onu `&mut` üzerinden değiştirir, `shatter` ise değer olarak alıp tüketir. Move'un sahipliği nasıl açıkça ifade ettiğine dikkat et: bir alanı değiştirmek için nesneyi değişken olarak ödünç alırsın, ama parçalamak için sahipliği taşımak zorundasın. Burada gerçek bir zafiyet yok; asıl ders API sözleşmesinin kendisi — yani `&mut Artifact` ile `Artifact` tip imzalarının her fonksiyonun ne yapmaya yetkili olduğunu nasıl anlattığı."
+    "explanation": "Bu seviye, Sui'nin nesne modelini tanıtan bir ısınma turu. `forge` bir `Artifact` üretir, `charge` onu `&mut` üzerinden değiştirir, `shatter` ise değer olarak alıp tüketir. Move'un sahipliği nasıl açıkça ifade ettiğine dikkat et: bir alanı değiştirmek için nesneyi değişken olarak ödünç alırsın, ama parçalamak için sahipliği taşımak zorundasın. Burada gerçek bir zafiyet yok; asıl ders API sözleşmesinin kendisi — yani `&mut Artifact` ile `Artifact` tip imzalarının her fonksiyonun ne yapmaya yetkili olduğunu nasıl anlattığı."
   },
-  "1": {
+  "coin_collector": {
     "name": "Sikke Toplayıcı",
-    "description": "Bu seviyenin amacı otomattan ödülü satın almak. Ödülün fiyatı 1.000 token ama musluk sana yalnızca...",
-    "instructions": "# Seviye 1: Sikke Toplayıcı\n\nBu seviyenin amacı otomattan ödülü satın almak. Ödülün fiyatı 1.000 token, ama musluk sana yalnızca 100 token veriyor.\n\nİşine yarayabilecek şeyler:\n\n- Sui'nin coin modeli: coin'ler bakiye eşlemeleri değil, birer nesnedir\n- `split` ve `merge` işlemleri",
+    "description": "Otomattan ödülü satın al ve bayrağı kap. Musluk yalnızca 100 değerinde token veriyor, oysa ödülün fiyatı 1.000 olarak belirtilmiş.",
+    "instructions": "Otomattan ödülü satın al ve bayrağı kap. Musluk yalnızca 100 değerinde token veriyor, oysa ödülün fiyatı 1.000 olarak belirtilmiş.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "`buy_prize` gerçekte neyi doğruluyor?",
-      "Fonksiyon `Token`'ı parçalıyor ve `value` alanını `_` ile bağlıyor. İşlem sırasına bak: bu adımdan *önce* herhangi bir şey fiyatla karşılaştırılıyor mu?"
-    ],
     "explanation": "`buy_prize` ödeme token'ını parçalıyor, ama `value` alanını `_` ile bağlıyor ve hiçbir zaman okumuyor. 1.000'lik 'fiyat' yalnızca açıklamada yaşıyor, kodda değil. Hangi `Token` verirsen ver ödülü alırsın — musluğun 100 token'lık çıktısı dahil. Bu seviye sürekli karşına çıkacak bir denetim örüntüsünü öğretiyor: bir fonksiyonun *davranışı* yalnızca kodun yaptığı şeydir; yorumların, isimlerin veya açıklamaların iddia ettiği şey değil. Her zaman hangi assert'lerin gerçekten uygulandığını, hangilerinin uygulama maskesi takmış birer dokümantasyon olduğunu kontrol et."
   },
-  "3": {
+  "sticky_treasure": {
     "name": "Yapışkan Hazine",
-    "description": "Bu seviyenin amacı hazine sandığındaki ödülü kurtarmak ve bayrağı kapmak.",
-    "instructions": "# Seviye 3: Yapışkan Hazine\n\nBu seviyenin amacı hazine sandığındaki ödülü kurtarmak ve bayrağı kapmak.\n\nİşine yarayabilecek şeyler:\n\n- `sui::dynamic_field`\n- Öksüz kalmış alanlar\n- İşlem sırası",
+    "description": "Hazine sandığındaki ödülü kurtar ve bayrağı kap. Sandık, ödülü bir dinamik alan olarak saklıyor.",
+    "instructions": "Hazine sandığındaki ödülü kurtar ve bayrağı kap. Sandık, ödülü bir dinamik alan olarak saklıyor.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "Bir `Chest`'e dokunan tüm public fonksiyonları listele. Hangileri doğrudan dinamik alan üzerinde çalışıyor, hangileri sandığı yok ediyor?",
-      "`smash` sandığı tüketiyor ama içeride saklanan ödülü çöpe atıp sabit kodlanmış bir `Prize { value: 0 }` döndürüyor. Sandığı yok etmeden *önce* gerçek ödülü dışarı çıkaran bir fonksiyon var mı?"
-    ],
     "explanation": "Yapışkan Hazine, sandığa karşı iki yol sunuyor. `smash` reklamı yapılan eylem gibi görünüyor ama içerideki ödülü çöpe atıp eline değeri sıfır olan bir yedek tutuşturuyor. `extract_prize` ise dinamik alanı hiç bozmadan sessizce dışarı çıkarıyor. Move'da her `public fun` herkes tarafından çağrılabilir — isimler, yorumlar ve niyet erişimi *kısıtlamaz*. Denetim yaparken her public tipin her public fonksiyonunu tek tek say ve her birinin neye izin verdiğini bağımsız olarak sor; 'mutlu yolun' tek yol olduğunu varsaymak yerine."
   },
-  "4": {
-    "name": "Nesne Sandığı",
-    "description": "Sandıktan ödülü kurtar ve bayrağı kap — Yapışkan Hazine ile aynı fikir, ama ödül bu kez dinamik nesne alanı olarak saklanıyor.",
-    "instructions": "# Seviye 4: Nesne Sandığı\n\nBu seviyenin amacı hazine sandığındaki ödülü kurtarmak ve bayrağı kapmak. Sandık ödülü bir **dinamik nesne alanı** (`key` yeteneğine sahip bir nesne) olarak saklıyor; bu sayede ID üzerinden hâlâ bulunabilir kalıyor.\n\nİşine yarayabilecek şeyler:\n\n- `sui::dynamic_object_field`\n- Yapışkan Hazine ile aynı akış: oluştur, çıkar, çöz\n- İşlem sırası",
-    "author": {
-      "name": "Kose",
-      "github": "https://github.com/kosedogus"
-    },
-    "hints": [
-      "Bu, tek bir farkla Yapışkan Hazine: `Prize` artık `key` yeteneğine sahip, dolayısıyla `dynamic_field` yerine `dynamic_object_field` olarak saklanıyor. Bu, hâlâ çağrılabilen fonksiyonları değiştiriyor mu?",
-      "Public yüzeyi bir önceki seviyeyle karşılaştır. Saklama ilkeli değişti — peki erişim hikâyesi değişti mi?"
-    ],
-    "explanation": "Dinamik nesne alanları (`dynamic_object_field`), düz dinamik alanlardan (`dynamic_field`) çocuk nesnelerin ayrı ayrı ID üzerinden adreslenebilir kalması açısından ayrılır; bu, cüzdan tarafında keşfi ve explorer indekslemesini kolaylaştırır. Ama bu bir *saklama* farkı, erişim kontrolü farkı değil. Zafiyet, Seviye 3'tekiyle aynı: `extract_prize` hâlâ public ve hâlâ `smash`'i baypas ediyor. Buradan çıkarılacak ders şu: fonksiyon yüzeyini gözden geçirmeden saklama ilkelini değiştirmek, genellikle aynı deliği başka bir kostüm içinde bırakır."
-  },
-  "5": {
+  "flash_vault": {
     "name": "Flaş Kasa",
-    "description": "Kasayı tamamen boşalt ve bayrağı kap.",
-    "instructions": "# Seviye 5: Flaş Kasa\n\nBu seviyenin amacı kasayı tamamen boşaltmak ve bayrağı kapmak.\n\nİşine yarayabilecek şeyler:\n\n- Move struct'ları ve yetenekleri (abilities)\n- Flaş kredi (flash loan) değişmezleri",
+    "description": "Flaş kredi kasasını tamamen boşalt ve bayrağı kap. Her ödünç alma, işlem bitmeden tasfiye edilmesi gereken bir makbuz üretir.",
+    "instructions": "Flaş kredi kasasını tamamen boşalt ve bayrağı kap. Her ödünç alma, işlem bitmeden tasfiye edilmesi gereken bir makbuz üretir.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "`Receipt`'in hiçbir yeteneği yok — yani işlem bitmeden tüketilmesi gereken bir sıcak patates (hot potato). `Receipt`'i tüketen tüm fonksiyonları listele.",
-      "İki kapatma yolu var: `repay` ve `cancel`. İkisini yan yana koy. Her biri hangi girdileri istiyor, daha da önemlisi hangilerini *istemiyor*?"
-    ],
     "explanation": "Flaş krediler 'sıcak patates' makbuzlarına dayanır: hiçbir yeteneği olmayan ve aynı işlem içinde mutlaka parçalanması gereken struct'lar. Örüntünün kendisi sağlamdır — makbuz, bir kapatma fonksiyonunun çağrılmasını *zorlar*. Ama Flaş Kasa iki kapatma yolu sunuyor ve yalnızca `repay` ödünç alınan token'ın geri gelmesini gerçekten talep ediyor. `cancel` makbuzu tüketiyor ama likiditenin geri konulduğunu doğrulamıyor. Genel ders: sıcak patates örüntüsü yalnızca *bir şeyin* makbuzu sonlandırmasını garanti eder — sıcak patates tipini tüketen her fonksiyonun protokol değişmezini kendi başına koruması gerekir. Bir denetimde, bir sıcak patates tipinin parçalandığı her yeri tek tek say ve her birini bağımsız olarak doğrula."
   },
-  "6": {
+  "pool_party": {
     "name": "Havuz Partisi",
-    "description": "Bu seviyenin amacı Havuz A'yı boşaltmak ve bayrağı kapmak.",
-    "instructions": "# Seviye 6: Havuz Partisi\n\nBu seviyenin amacı Havuz A'yı boşaltmak ve bayrağı kapmak. Üç havuz aynı flaş-kredi stili API'yi paylaşıyor, ama gerçek hazineyi yalnızca Havuz A tutuyor.\n\nİşine yarayabilecek şeyler:\n\n- Flaş Kasa'daki flaş kredi değişmezlerinin birden çok havuza uygulanması\n- `repay`'in tükettiği makbuz hakkında gerçekten neyi kanıtladığı\n- Makbuzlar birer sıcak patates — kapatılmaları şart, peki nerede?",
+    "description": "Havuz A'nın hazinesini boşalt ve bayrağı kap. Üç havuz aynı flaş kredi tarzı API'yi paylaşıyor, ama gerçek likiditeyi yalnızca Havuz A tutuyor.",
+    "instructions": "Havuz A'nın hazinesini boşalt ve bayrağı kap. Üç havuz aynı flaş kredi tarzı API'yi paylaşıyor, ama gerçek likiditeyi yalnızca Havuz A tutuyor.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "Üç havuz, tek bir `repay`. `repay`'i dikkatlice oku. Hangi argümanlar çağrıdan geliyor, hangileri kapatılan havuzdan?",
-      "Makbuz `pool_id` saklıyor, ama `repay` onu havuzun gerçek ID'siyle değil, *çağıran tarafından verilen* `receipt_pool_id` parametresiyle karşılaştırıyor. İki tarafı da çağıran kontrol ediyorsa eşitlik kontrolü hiçbir şey kanıtlamaz."
-    ],
     "explanation": "Havuz Partisi'nin hatası yanlış yere konmuş bir doğrulama. `repay`, makbuzdaki `pool_id`'yi kapatılan havuzun gerçek ID'sine (`object::id(&pool.id)`) karşı değil, *çağıran tarafından verilen* `receipt_pool_id` parametresine karşı kontrol ediyor. Bir eşitlik kontrolünün iki tarafı da çağırandan geliyorsa, kısıt hiçbir şey kanıtlamaz — yalnızca dekoratiftir. Geriye kalan tek yapısal bağ nonce, ama nonce'lar herhangi bir havuzda boş ödünçler vererek ilerletilebilir. Genel ders: bir kontrol yalnızca taraflarından biri güvenilen bir kaynaktan geldiğinde anlam taşır. Kritik bir `assert!`'in her operandının nereden geldiğini her zaman izle."
   },
-  "7": {
+  "tick_tock": {
     "name": "Tik Tak",
-    "description": "Bu seviyenin amacı havuzdan en az 900.000 token çekmek ve bayrağı kapmak.",
-    "instructions": "# Seviye 7: Tik Tak\n\nBu seviyenin amacı havuzdan en az 900.000 token çekmek ve bayrağı kapmak. Havuz, likiditeyi tick'ten türetilmiş bir `sqrt_price` ile fiyatlandırıyor ve pozisyon açma maliyeti bu fiyatla birlikte ölçekleniyor.\n\nİşine yarayabilecek şeyler:\n\n- Konsantre likidite ve tick tabanlı fiyatlama\n- Move'da integer cast'leri: bir `u64`, `u8`'e indirildiğinde ne olur?\n- Yatırılan token, talep edilen likidite ve pro-rata ödemeler arasındaki ilişki",
+    "description": "Yoğun likidite havuzundan en az 900.000 token çek ve bayrağı kap. Pozisyonlar, tick'ten türetilmiş bir `sqrt_price` ile fiyatlandırılır ve pozisyon açma maliyeti bu fiyatla doğru orantılıdır.",
+    "instructions": "Yoğun likidite havuzundan en az 900.000 token çek ve bayrağı kap. Pozisyonlar, tick'ten türetilmiş bir `sqrt_price` ile fiyatlandırılır ve pozisyon açma maliyeti bu fiyatla doğru orantılıdır.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "hints": [
-      "`tick_to_sqrt_price` fonksiyonunu oku. Bölüm 255'ten büyük olduğunda `tick / 100` ne oluyor?",
-      "Move'un `as u8` cast'i sessizce yalnızca düşük 8 biti tutar. `(tick / 100) % 256 == 0` olacak bir tick değeri bul — kaydırma sıfıra düşer ve `sqrt_price` 1 olur."
-    ],
     "explanation": "Tik Tak'in hatası sessiz bir daraltma cast'i: `(tick / 100) as u8`, sekizinciden yukarıdaki tüm bitleri atıyor. 25.600'ün katı olan herhangi bir tick için kaydırma sıfıra düşüyor ve `1u128 << 0 = 1` oluyor — yani mümkün olan en ucuz `sqrt_price`. Bir anda keyfi likidite için gerekli depozit pratikte sıfıra inip, küçücük bir ödeme havuzu pro-rata ödeme üzerinden tamamen boşaltacak kadar büyük bir pozisyon satın alabiliyor. Ders: geniş bir integer'dan dar bir integer'a yapılan her cast potansiyel bir taşma noktasıdır ve Move, Rust'ın `try_into`'sunun aksine, kırpma durumunda *abort etmez*. Bu hatanın tam olarak aynı örüntüsü üretim DEX'lerinde de görüldü — cast noktalarını aritmetiği denetlediğin gibi denetle."
   },
-  "8": {
+  "night_ledger": {
     "name": "Gece Defteri",
-    "description": "Bu seviyenin amacı en az 10.000.000 değerinde bir marjin notuyla çıkıp gitmek — musluk sana yalnızca 1 değerinde bir not bassa bile.",
-    "instructions": "# Seviye 8: Gece Defteri\n\nBu seviyenin amacı yalnızca 1 değerinde bir not basan bir musluktan yola çıkarak, en az 10.000.000 değerinde bir `MarginNote`'u bozdurarak bayrağı kapmak.\n\nDefter, gerekli marjini, ara değerleri hassasiyet için sola kaydıran bir sabit nokta (fixed-point) matematik modülü üzerinden hesaplıyor. Bir pozisyon aç, kapat ve ortaya çıkan notu incele.\n\nİşine yarayabilecek şeyler:\n\n- Sabit nokta matematik ve kaydırma tabanlı ölçekleme\n- Taşma kontrolleri: maskenin gerçekte neye izin verdiği ve kaydırmanın neye dayanabildiği arasındaki fark\n- *Gerekli marjin* ile *likiditeden gelen ödeme* arasındaki uçurum",
+    "description": "En az 10.000.000 değerinde bir `MarginNote` ile çıkıp git ve bayrağı kap. Musluk yalnızca 1 değerinde bir not basıyor ve defter, gerekli marjini sabit nokta matematik yardımcısı üzerinden hesaplıyor.",
+    "instructions": "En az 10.000.000 değerinde bir `MarginNote` ile çıkıp git ve bayrağı kap. Musluk yalnızca 1 değerinde bir not basıyor ve defter, gerekli marjini sabit nokta matematik yardımcısı üzerinden hesaplıyor ara değerleri hassasiyet için sola kaydırıyor.",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"
     },
-    "hints": [
-      "`blackbook_math` içindeki `checked_shlw` ve `checked_shlw_strict` fonksiyonlarını karşılaştır. İkisi de aynı şeyi yaptıklarını iddia ediyor — gerçekten öyle mi?",
-      "Bir `u128` üzerinde 32 bitlik bir sola kaydırmanın güvenli sınırı `1 << 96`. `checked_shlw`'nin kullandığı maskeye bak. Aynı değer mi?"
-    ],
     "explanation": "Bu meydan okuma, sabit genişlikteki bir sola kaydırma yardımcısındaki hatalı bir taşma kontrolüne dayanıyor. `checked_shlw`'deki maske `0xffffffff << 96`, yani 32 bitlik bir sola kaydırma için gerçek güvenli sınır olan `1 << 96`'dan *daha büyük* değerlere izin veriyor. Yeterince büyük bir `liquidity` girdisi kontrolden geçebilir, hassasiyet kaydırması sırasında yüksek bitlerini yitirip sessizce kırpılır. Bu kırpma, alıntılanan gerekli marjini bir anda çökertir — değeri 1 olan bir musluk notu marjin gereksinimini karşılar hâle gelir; oysa pozisyon hâlâ tüm likiditeyi kayıt altına alır. Kapatmada `payout_from_liquidity` `liquidity >> 28` döndürdüğü için milyonlar değerinde bir `MarginNote` ödenir. Bu, Cetus tarzı taşma kontrolü hata örüntüsü: bir güvenlik eşiğinde otuz iki bitlik bir kayma, altta yatan aritmetiğin sarmasına izin veriyor. Bir `checked_*` yardımcısının kullandığı sınırın, işlemin gerçekten dayanabileceği genişlikle eşleştiğini her zaman doğrula — ve `0xff...` maskesi yerine sıkı, tek bitlik sınırı (`1 << N`) tercih et."
   }
 }

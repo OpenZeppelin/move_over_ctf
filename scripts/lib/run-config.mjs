@@ -7,12 +7,14 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+const SLUG_RE = /^[a-z][a-z0-9_]*$/;
+
 /**
  * Parse LEVEL_RUN_CONFIG from runConfig.ts file content.
- * @returns {Record<number, { module: string, typeName: string, solutionModule: string, cleanupFunction?: string }>}
+ * @returns {Record<string, { module: string, typeName: string, solutionModule: string, cleanupFunction?: string }>}
  */
 export function parseRunConfigMap(fileText) {
-  const marker = "export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = ";
+  const marker = "export const LEVEL_RUN_CONFIG: Record<string, LevelRunConfig> = ";
   const markerIndex = fileText.indexOf(marker);
   assert(markerIndex >= 0, "Could not find LEVEL_RUN_CONFIG in runConfig.ts.");
 
@@ -44,8 +46,8 @@ export function parseRunConfigMap(fileText) {
 
   const out = {};
   for (const [key, raw] of Object.entries(parsed)) {
-    const id = Number(key);
-    assert(Number.isInteger(id) && id >= 0, `Invalid runConfig key '${key}'.`);
+    const id = String(key);
+    assert(SLUG_RE.test(id), `Invalid runConfig key '${key}' (must be snake_case slug).`);
     assert(raw && typeof raw === "object", `Invalid runConfig entry for id ${id}.`);
     out[id] = {
       module: String(raw.module ?? ""),
@@ -59,14 +61,11 @@ export function parseRunConfigMap(fileText) {
 
 /**
  * Render runConfig.ts file content from a config map.
- * @param {Record<number, { module: string, typeName: string, solutionModule: string, cleanupFunction?: string }>} configMap
+ * @param {Record<string, { module: string, typeName: string, solutionModule: string, cleanupFunction?: string }>} configMap
  * @returns {string}
  */
 export function renderRunConfigFile(configMap) {
-  const ids = Object.keys(configMap)
-    .map(Number)
-    .filter((id) => Number.isInteger(id) && id >= 0)
-    .sort((a, b) => a - b);
+  const ids = Object.keys(configMap).filter((id) => SLUG_RE.test(id));
 
   const entries = ids
     .map((id) => {
@@ -87,19 +86,19 @@ export function renderRunConfigFile(configMap) {
 
   return `/**
  * Config for the browser level runner: module and return type per level.
- * Each level has its own solution module: move_over::level_N_solution.
+ * Each level has its own solution module: move_over::<slug>_solution.
  */
 
 export interface LevelRunConfig {
   module: string;
   typeName: string;
-  /** Solution module name (e.g. level_0_solution) for building/writing the solution file. */
+  /** Solution module name (e.g. artifact_solution) for building/writing the solution file. */
   solutionModule: string;
   /** Cleanup function called inside browser verifier. Defaults to "delete". */
   cleanupFunction?: string;
 }
 
-export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
+export const LEVEL_RUN_CONFIG: Record<string, LevelRunConfig> = {
 ${entries}
 };
 `;

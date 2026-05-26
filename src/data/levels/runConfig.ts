@@ -1,56 +1,56 @@
 /**
  * Config for the browser level runner: module and return type per level.
- * Each level has its own solution module: move_over::level_N_solution.
+ * Each level has its own solution module: move_over::<slug>_solution.
  */
 
 export interface LevelRunConfig {
   module: string;
   typeName: string;
-  /** Solution module name (e.g. level_0_solution) for building/writing the solution file. */
+  /** Solution module name (e.g. artifact_solution) for building/writing the solution file. */
   solutionModule: string;
   /** Cleanup function called inside browser verifier. Defaults to "delete". */
   cleanupFunction?: string;
 }
 
-export const LEVEL_RUN_CONFIG: Record<number, LevelRunConfig> = {
-  0: {
+export const LEVEL_RUN_CONFIG: Record<string, LevelRunConfig> = {
+  artifact: {
     module: "artifact",
     typeName: "ArtifactFlag",
-    solutionModule: "level_0_solution",
+    solutionModule: "artifact_solution",
   },
-  1: {
+  coin_collector: {
     module: "coin_collector",
     typeName: "CoinCollectorFlag",
-    solutionModule: "level_1_solution",
+    solutionModule: "coin_collector_solution",
   },
-  3: {
+  sticky_treasure: {
     module: "sticky_treasure",
     typeName: "StickyTreasureFlag",
-    solutionModule: "level_3_solution",
+    solutionModule: "sticky_treasure_solution",
   },
-  4: {
-    module: "sticky_treasure_dof",
-    typeName: "ObjectChestFlag",
-    solutionModule: "level_4_solution",
-  },
-  5: {
+  flash_vault: {
     module: "flash_vault",
     typeName: "FlashVaultFlag",
-    solutionModule: "level_5_solution",
+    solutionModule: "flash_vault_solution",
   },
-  6: {
+  pool_party: {
     module: "pool_party",
     typeName: "PoolPartyFlag",
-    solutionModule: "level_6_solution",
+    solutionModule: "pool_party_solution",
   },
-  7: {
+  tick_tock: {
     module: "tick_tock",
     typeName: "TickTockFlag",
-    solutionModule: "level_7_solution",
+    solutionModule: "tick_tock_solution",
   },
-  8: {
-    module: "blackbook",
-    typeName: "BlackbookFlag",
-    solutionModule: "level_8_solution",
+  night_ledger: {
+    module: "night_ledger",
+    typeName: "NightLedgerFlag",
+    solutionModule: "night_ledger_solution",
+  },
+  mailbox: {
+    module: "mailbox",
+    typeName: "MailboxFlag",
+    solutionModule: "mailbox_solution",
   },
 };

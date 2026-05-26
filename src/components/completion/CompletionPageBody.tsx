@@ -10,6 +10,7 @@ import {
   getSolvedIdsFromStorage,
 } from "@/lib/progressStorage";
 import { replaceTemplate } from "@/i18n/utils";
+import { LEVEL_IDS } from "@/data/levels";
 import { CompletionShare } from "./CompletionShare";
 
 type Props = {
@@ -51,7 +52,7 @@ export function CompletionPageBody({ levelsTotal }: Props) {
         </Typography.P>
         <div className="mt-6">
           <Link
-            href={`/${locale}/levels/0`}
+            href={`/${locale}/levels/${LEVEL_IDS[0]}`}
             className="inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background hover:bg-foreground/90 transition-colors"
           >
             {t("completion.continueCta")}

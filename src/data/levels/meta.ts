@@ -1,7 +1,7 @@
 import type { Difficulty } from "./types";
 
 interface LevelMeta {
-  id: number;
+  id: string;
   difficulty: Difficulty;
   contractCode: string;
   contractModules: Array<{
@@ -12,7 +12,7 @@ interface LevelMeta {
 
 export const LEVEL_META: LevelMeta[] = [
   {
-    id: 0,
+    id: "artifact",
     difficulty: "easy",
     contractCode: `module move_over::artifact;
 
@@ -73,7 +73,7 @@ public fun shatter(artifact: Artifact): ArtifactFlag {
     ],
   },
   {
-    id: 1,
+    id: "coin_collector",
     difficulty: "easy",
     contractCode: `module move_over::coin_collector;
 
@@ -162,7 +162,7 @@ public fun destroy_zero(token: Token) {
     ],
   },
   {
-    id: 3,
+    id: "sticky_treasure",
     difficulty: "easy",
     contractCode: `module move_over::sticky_treasure;
 
@@ -257,128 +257,7 @@ public fun solve(prize: Prize): StickyTreasureFlag {
     ],
   },
   {
-    id: 4,
-    difficulty: "easy",
-    contractCode: `module move_over::sticky_treasure_dof;
-
-use sui::dynamic_object_field as dof;
-
-public struct Chest has key {
-    id: UID,
-}
-
-/// Key for the dynamic object field (struct key instead of a bare byte string).
-public struct PrizeKey has copy, drop, store {
-    name: vector<u8>,
-}
-
-public struct Prize has key, store {
-    id: UID,
-    value: u64,
-}
-
-public struct ObjectChestFlag has copy, drop {}
-
-fun prize_key(): PrizeKey {
-    PrizeKey { name: b"prize" }
-}
-
-public fun create(ctx: &mut TxContext): Chest {
-    let mut chest = Chest { id: object::new(ctx) };
-    let prize = Prize { id: object::new(ctx), value: 2000 };
-    dof::add(&mut chest.id, prize_key(), prize);
-    chest
-}
-
-public fun smash(chest: Chest, ctx: &mut TxContext): Prize {
-    let Chest { id } = chest;
-    id.delete();
-    Prize { id: object::new(ctx), value: 0 }
-}
-
-public fun has_prize(chest: &Chest): bool {
-    dof::exists_(&chest.id, prize_key())
-}
-
-public fun extract_prize(chest: &mut Chest): Prize {
-    dof::remove(&mut chest.id, prize_key())
-}
-
-public fun discard(chest: Chest) {
-    let Chest { id } = chest;
-    id.delete();
-}
-
-public fun solve(prize: Prize): ObjectChestFlag {
-    assert!(prize.value == 2000, 0);
-    let Prize { id, value: _ } = prize;
-    id.delete();
-    ObjectChestFlag {}
-}`,
-    contractModules: [
-      {
-        module: "sticky_treasure_dof",
-        contractCode: `module move_over::sticky_treasure_dof;
-
-use sui::dynamic_object_field as dof;
-
-public struct Chest has key {
-    id: UID,
-}
-
-/// Key for the dynamic object field (struct key instead of a bare byte string).
-public struct PrizeKey has copy, drop, store {
-    name: vector<u8>,
-}
-
-public struct Prize has key, store {
-    id: UID,
-    value: u64,
-}
-
-public struct ObjectChestFlag has copy, drop {}
-
-fun prize_key(): PrizeKey {
-    PrizeKey { name: b"prize" }
-}
-
-public fun create(ctx: &mut TxContext): Chest {
-    let mut chest = Chest { id: object::new(ctx) };
-    let prize = Prize { id: object::new(ctx), value: 2000 };
-    dof::add(&mut chest.id, prize_key(), prize);
-    chest
-}
-
-public fun smash(chest: Chest, ctx: &mut TxContext): Prize {
-    let Chest { id } = chest;
-    id.delete();
-    Prize { id: object::new(ctx), value: 0 }
-}
-
-public fun has_prize(chest: &Chest): bool {
-    dof::exists_(&chest.id, prize_key())
-}
-
-public fun extract_prize(chest: &mut Chest): Prize {
-    dof::remove(&mut chest.id, prize_key())
-}
-
-public fun discard(chest: Chest) {
-    let Chest { id } = chest;
-    id.delete();
-}
-
-public fun solve(prize: Prize): ObjectChestFlag {
-    assert!(prize.value == 2000, 0);
-    let Prize { id, value: _ } = prize;
-    id.delete();
-    ObjectChestFlag {}
-}`,
-      },
-    ],
-  },
-  {
-    id: 5,
+    id: "flash_vault",
     difficulty: "easy",
     contractCode: `module move_over::flash_vault;
 
@@ -589,7 +468,7 @@ public fun solve(vault: FlashVault): FlashVaultFlag {
     ],
   },
   {
-    id: 6,
+    id: "pool_party",
     difficulty: "medium",
     contractCode: `module move_over::pool_party;
 
@@ -860,7 +739,7 @@ public fun next_nonce(pool: &Pool): u64 {
     ],
   },
   {
-    id: 7,
+    id: "tick_tock",
     difficulty: "medium",
     contractCode: `module move_over::tick_tock;
 
@@ -1033,11 +912,11 @@ public fun solve(pool: Pool): TickTockFlag {
     ],
   },
   {
-    id: 8,
+    id: "night_ledger",
     difficulty: "hard",
-    contractCode: `module move_over::blackbook;
+    contractCode: `module move_over::night_ledger;
 
-use move_over::blackbook_math;
+use move_over::night_ledger_math;
 
 const EINSUFFICIENT_MARGIN: u64 = 0;
 const EMULTIPLICATION_OVERFLOW: u64 = 1;
@@ -1068,7 +947,7 @@ public struct Position has key, store {
     epoch: u64,
 }
 
-public struct BlackbookFlag has copy, drop {}
+public struct NightLedgerFlag has copy, drop {}
 
 fun root_price_0(): u128 {
     1u128 << 60
@@ -1130,7 +1009,7 @@ public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxC
     } = position;
     id.delete();
 
-    let payout = blackbook_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
+    let payout = night_ledger_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
     assert!(ledger.reserve >= payout, EINSUFFICIENT_RESERVE);
     ledger.reserve = ledger.reserve - payout;
 
@@ -1140,11 +1019,11 @@ public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxC
     }
 }
 
-public fun solve(note: MarginNote): BlackbookFlag {
+public fun solve(note: MarginNote): NightLedgerFlag {
     let MarginNote { id, value } = note;
     assert!(value >= TARGET_VALUE, EINSUFFICIENT_VALUE);
     id.delete();
-    BlackbookFlag {}
+    NightLedgerFlag {}
 }
 
 public fun discard_ledger(ledger: Ledger) {
@@ -1162,7 +1041,7 @@ public fun value(note: &MarginNote): u64 {
 
 fun required_margin(liquidity: u128): u64 {
     let (required, overflowing) =
-        blackbook_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
+        night_ledger_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
     if (overflowing) {
         abort EMULTIPLICATION_OVERFLOW
     };
@@ -1170,10 +1049,10 @@ fun required_margin(liquidity: u128): u64 {
 }`,
     contractModules: [
       {
-        module: "blackbook",
-        contractCode: `module move_over::blackbook;
+        module: "night_ledger",
+        contractCode: `module move_over::night_ledger;
 
-use move_over::blackbook_math;
+use move_over::night_ledger_math;
 
 const EINSUFFICIENT_MARGIN: u64 = 0;
 const EMULTIPLICATION_OVERFLOW: u64 = 1;
@@ -1204,7 +1083,7 @@ public struct Position has key, store {
     epoch: u64,
 }
 
-public struct BlackbookFlag has copy, drop {}
+public struct NightLedgerFlag has copy, drop {}
 
 fun root_price_0(): u128 {
     1u128 << 60
@@ -1266,7 +1145,7 @@ public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxC
     } = position;
     id.delete();
 
-    let payout = blackbook_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
+    let payout = night_ledger_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
     assert!(ledger.reserve >= payout, EINSUFFICIENT_RESERVE);
     ledger.reserve = ledger.reserve - payout;
 
@@ -1276,11 +1155,11 @@ public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxC
     }
 }
 
-public fun solve(note: MarginNote): BlackbookFlag {
+public fun solve(note: MarginNote): NightLedgerFlag {
     let MarginNote { id, value } = note;
     assert!(value >= TARGET_VALUE, EINSUFFICIENT_VALUE);
     id.delete();
-    BlackbookFlag {}
+    NightLedgerFlag {}
 }
 
 public fun discard_ledger(ledger: Ledger) {
@@ -1298,7 +1177,7 @@ public fun value(note: &MarginNote): u64 {
 
 fun required_margin(liquidity: u128): u64 {
     let (required, overflowing) =
-        blackbook_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
+        night_ledger_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
     if (overflowing) {
         abort EMULTIPLICATION_OVERFLOW
     };
@@ -1306,8 +1185,8 @@ fun required_margin(liquidity: u128): u64 {
 }`,
       },
       {
-        module: "blackbook_math",
-        contractCode: `module move_over::blackbook_math;
+        module: "night_ledger_math",
+        contractCode: `module move_over::night_ledger_math;
 
 const SHIFT_BITS: u8 = 32;
 const HIGH_BITS_OFFSET: u8 = 96;
@@ -1393,6 +1272,238 @@ public fun abs_diff(a: u128, b: u128): u128 {
     } else {
         b - a
     }
+}`,
+      },
+    ],
+  },
+  {
+    id: "mailbox",
+    difficulty: "medium",
+    contractCode: `module move_over::mailbox;
+
+use sui::dynamic_object_field as dof;
+use move_over::mailbox_relay::{Self, RelayHandle};
+
+const TARGET: u64 = 1_000_000;
+const ADMIN: address = @0xAD3171;
+
+const ENO_SUCH_LETTER: u64 = 0;
+const ENOT_ENOUGH: u64 = 1;
+const EWRONG_RECIPIENT: u64 = 2;
+
+public struct PostOffice has key {
+    id: UID,
+    /// Publicly indexed: the id of the letter currently waiting inside.
+    /// Mirrors what a Sui explorer or RPC would show for a parent's children.
+    indexed: ID,
+}
+
+/// A \`Letter\` parked at the post office. The envelope records the intended
+/// recipient; only the addressee should be able to receive it.
+public struct Letter has key, store {
+    id: UID,
+    addressee: address,
+    payload: u64,
+}
+
+public struct MailboxFlag has copy, drop {}
+
+/// Setup: a juicy letter, addressed to the admin, is already waiting in the
+/// office.
+public fun open_office(ctx: &mut TxContext): PostOffice {
+    let letter = Letter {
+        id: object::new(ctx),
+        addressee: ADMIN,
+        payload: TARGET,
+    };
+    let letter_id = object::id(&letter.id);
+    let mut office = PostOffice {
+        id: object::new(ctx),
+        indexed: letter_id,
+    };
+    dof::add(&mut office.id, letter_id, letter);
+    office
+}
+
+/// Direct claim path: only the addressee themselves can pull their letter.
+public fun claim(office: &mut PostOffice, letter_id: ID, ctx: &TxContext): Letter {
+    assert!(dof::exists_(&office.id, letter_id), ENO_SUCH_LETTER);
+    let letter = dof::remove<ID, Letter>(&mut office.id, letter_id);
+    assert!(letter.addressee == tx_context::sender(ctx), EWRONG_RECIPIENT);
+    letter
+}
+
+/// Delegated claim path. The protocol accepts a \`RelayHandle\` as proof of
+/// recipient: it trusts the relay to have authenticated the holder off-chain
+/// before issuing the handle. On-chain, we only need to check that the
+/// envelope's addressee matches the handle's \`target\`.
+public fun claim_via(
+    office: &mut PostOffice,
+    letter_id: ID,
+    handle: &RelayHandle,
+): Letter {
+    assert!(dof::exists_(&office.id, letter_id), ENO_SUCH_LETTER);
+    let letter = dof::remove<ID, Letter>(&mut office.id, letter_id);
+    assert!(letter.addressee == mailbox_relay::target(handle), EWRONG_RECIPIENT);
+    letter
+}
+
+/// What the explorer would tell you: the id of the next letter inside.
+public fun next_letter(office: &PostOffice): ID {
+    office.indexed
+}
+
+public fun payload(letter: &Letter): u64 {
+    letter.payload
+}
+
+public fun addressee(letter: &Letter): address {
+    letter.addressee
+}
+
+public fun close_office(office: PostOffice) {
+    let PostOffice { id, indexed: _ } = office;
+    id.delete();
+}
+
+/// Hand in the letter itself. \`Letter\` has no public constructor outside this
+/// module, so the only way to satisfy this is to actually hold the envelope.
+public fun solve(letter: Letter): MailboxFlag {
+    let Letter { id, addressee: _, payload } = letter;
+    id.delete();
+    assert!(payload >= TARGET, ENOT_ENOUGH);
+    MailboxFlag {}
+}`,
+    contractModules: [
+      {
+        module: "mailbox",
+        contractCode: `module move_over::mailbox;
+
+use sui::dynamic_object_field as dof;
+use move_over::mailbox_relay::{Self, RelayHandle};
+
+const TARGET: u64 = 1_000_000;
+const ADMIN: address = @0xAD3171;
+
+const ENO_SUCH_LETTER: u64 = 0;
+const ENOT_ENOUGH: u64 = 1;
+const EWRONG_RECIPIENT: u64 = 2;
+
+public struct PostOffice has key {
+    id: UID,
+    /// Publicly indexed: the id of the letter currently waiting inside.
+    /// Mirrors what a Sui explorer or RPC would show for a parent's children.
+    indexed: ID,
+}
+
+/// A \`Letter\` parked at the post office. The envelope records the intended
+/// recipient; only the addressee should be able to receive it.
+public struct Letter has key, store {
+    id: UID,
+    addressee: address,
+    payload: u64,
+}
+
+public struct MailboxFlag has copy, drop {}
+
+/// Setup: a juicy letter, addressed to the admin, is already waiting in the
+/// office.
+public fun open_office(ctx: &mut TxContext): PostOffice {
+    let letter = Letter {
+        id: object::new(ctx),
+        addressee: ADMIN,
+        payload: TARGET,
+    };
+    let letter_id = object::id(&letter.id);
+    let mut office = PostOffice {
+        id: object::new(ctx),
+        indexed: letter_id,
+    };
+    dof::add(&mut office.id, letter_id, letter);
+    office
+}
+
+/// Direct claim path: only the addressee themselves can pull their letter.
+public fun claim(office: &mut PostOffice, letter_id: ID, ctx: &TxContext): Letter {
+    assert!(dof::exists_(&office.id, letter_id), ENO_SUCH_LETTER);
+    let letter = dof::remove<ID, Letter>(&mut office.id, letter_id);
+    assert!(letter.addressee == tx_context::sender(ctx), EWRONG_RECIPIENT);
+    letter
+}
+
+/// Delegated claim path. The protocol accepts a \`RelayHandle\` as proof of
+/// recipient: it trusts the relay to have authenticated the holder off-chain
+/// before issuing the handle. On-chain, we only need to check that the
+/// envelope's addressee matches the handle's \`target\`.
+public fun claim_via(
+    office: &mut PostOffice,
+    letter_id: ID,
+    handle: &RelayHandle,
+): Letter {
+    assert!(dof::exists_(&office.id, letter_id), ENO_SUCH_LETTER);
+    let letter = dof::remove<ID, Letter>(&mut office.id, letter_id);
+    assert!(letter.addressee == mailbox_relay::target(handle), EWRONG_RECIPIENT);
+    letter
+}
+
+/// What the explorer would tell you: the id of the next letter inside.
+public fun next_letter(office: &PostOffice): ID {
+    office.indexed
+}
+
+public fun payload(letter: &Letter): u64 {
+    letter.payload
+}
+
+public fun addressee(letter: &Letter): address {
+    letter.addressee
+}
+
+public fun close_office(office: PostOffice) {
+    let PostOffice { id, indexed: _ } = office;
+    id.delete();
+}
+
+/// Hand in the letter itself. \`Letter\` has no public constructor outside this
+/// module, so the only way to satisfy this is to actually hold the envelope.
+public fun solve(letter: Letter): MailboxFlag {
+    let Letter { id, addressee: _, payload } = letter;
+    id.delete();
+    assert!(payload >= TARGET, ENOT_ENOUGH);
+    MailboxFlag {}
+}`,
+      },
+      {
+        module: "mailbox_relay",
+        contractCode: `module move_over::mailbox_relay;
+
+/// Proof-of-recipient issued by the relay. Holding a \`RelayHandle\` with
+/// \`target = X\` is meant to certify that the relay has verified, off-chain,
+/// that the holder is authorized to receive mail addressed to \`X\`.
+///
+/// The protocol (\`mailbox::claim_via\`) trusts that promise on-chain.
+public struct RelayHandle has key, store {
+    id: UID,
+    target: address,
+}
+
+/// "Onboarding": the relay issues a handle for the supplied target address.
+/// In production this is supposed to follow off-chain KYC of the requester.
+/// On-chain, there is no constraint that ties \`target\` to the caller.
+public fun handle_for(target: address, ctx: &mut TxContext): RelayHandle {
+    RelayHandle {
+        id: object::new(ctx),
+        target,
+    }
+}
+
+public fun target(handle: &RelayHandle): address {
+    handle.target
+}
+
+public fun consume(handle: RelayHandle) {
+    let RelayHandle { id, target: _ } = handle;
+    id.delete();
 }`,
       },
     ],

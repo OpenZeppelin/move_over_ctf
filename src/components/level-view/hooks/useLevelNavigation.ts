@@ -4,7 +4,7 @@ import type { LevelContractModule } from "@/data/levels/types";
 import { parseModulePath } from "@/lib/contractCode";
 
 type Input = {
-  levelId: number;
+  levelId: string;
   locale: string;
   contractCode: string;
   contractModules: LevelContractModule[];
@@ -83,6 +83,7 @@ export function useLevelNavigation({
 
   const levelIndex = LEVEL_IDS.indexOf(levelId);
   const prevLevelId = levelIndex > 0 ? LEVEL_IDS[levelIndex - 1] : undefined;
+  const prevLevelPosition = prevLevelId !== undefined ? levelIndex : undefined;
   const prevHref =
     levelIndex === 0
       ? `/${locale}/levels/how-to-play`
@@ -90,6 +91,7 @@ export function useLevelNavigation({
         ? `/${locale}/levels/${prevLevelId}`
         : undefined;
   const nextLevelId = levelIndex >= 0 ? LEVEL_IDS[levelIndex + 1] : undefined;
+  const nextLevelPosition = nextLevelId !== undefined ? levelIndex + 2 : undefined;
 
   return {
     contractModules: normalizedContractModules,
@@ -98,7 +100,9 @@ export function useLevelNavigation({
     activeContractCode,
     modulePath,
     prevLevelId,
+    prevLevelPosition,
     prevHref,
     nextLevelId,
+    nextLevelPosition,
   };
 }

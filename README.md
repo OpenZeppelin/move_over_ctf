@@ -67,8 +67,7 @@ The app uses [@openzeppelin/ui-builder-ui](https://www.npmjs.com/package/@openze
 | `npm run lint` | Run ESLint |
 | `npm run sync:meta` | Regenerate `src/data/levels/meta.ts` from `public/contracts` |
 | `npm run create:level` | Interactive flow to add a new level |
-| `npm run delete:level` | Interactive flow to remove a level and reindex ids |
-| `npm run sync:contracts` | Legacy: sync from `move_over/sources` into `public/contracts` |
+| `npm run delete:level` | Interactive flow to remove a level |
 
 ## Adding levels
 
@@ -82,7 +81,7 @@ You’ll be prompted for name, difficulty, instructions, and Move code. The scri
 
 ## Deleting levels
 
-To remove a level and reindex higher ids:
+To remove a level:
 
 ```bash
 npm run delete:level

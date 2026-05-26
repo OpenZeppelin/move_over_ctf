@@ -20,7 +20,7 @@ import { replaceTemplate } from "@/i18n/utils";
 type RunResult = { success: boolean; output: string } | null;
 
 type Props = {
-  levelId: number;
+  levelId: string;
   runConfig: LevelRunConfig;
   hasPassed: boolean;
   runLoading: boolean;

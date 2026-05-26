@@ -20,3 +20,23 @@ export const DIFFICULTY_BADGE_CLASS: Record<Difficulty, string> = {
   medium: "bg-warning/20 text-warning",
   hard: "bg-red-500/20 text-red-400",
 };
+
+/** Display rank: easy < medium < hard. Used to sort levels for the UI. */
+export const DIFFICULTY_RANK: Record<Difficulty, number> = {
+  easy: 0,
+  medium: 1,
+  hard: 2,
+};
+
+/**
+ * Canonical level ordering for the UI: easy → medium → hard. Within a
+ * difficulty, insertion order in `meta.config.json` is preserved (JS sort is
+ * stable). `id` is the slug used in URLs and storage; display position is
+ * derived from the sorted index.
+ */
+export function compareLevels(
+  a: { difficulty: Difficulty },
+  b: { difficulty: Difficulty }
+): number {
+  return DIFFICULTY_RANK[a.difficulty] - DIFFICULTY_RANK[b.difficulty];
+}

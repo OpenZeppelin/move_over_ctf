@@ -1,4 +1,5 @@
 import type { Locale } from "@/i18n/types";
+import { compareLevels } from "./difficulty";
 import { LEVEL_META } from "./meta";
 import type { Level, LevelContent } from "./types";
 import enContent from "./content/en.json";
@@ -31,13 +32,20 @@ const contentByLocale: Record<Locale, Record<string, LevelContent>> = {
 };
 
 /**
- * Get all levels with translated content for a locale.
+ * Canonical display ordering: easy → medium → hard, then by id within a
+ * difficulty. Computed once so navigation order, sidebar, and completion page
+ * agree without each consumer needing to sort.
+ */
+const SORTED_META = [...LEVEL_META].sort(compareLevels);
+
+/**
+ * Get all levels with translated content for a locale, in display order.
  * Falls back to English if a level is missing in the locale.
  */
 export function getLevels(locale: Locale): Level[] {
   const content = contentByLocale[locale] ?? contentByLocale.en;
   const fallback = contentByLocale.en;
-  return LEVEL_META.map((meta) => {
+  return SORTED_META.map((meta, index) => {
     const localeEntry = content[String(meta.id)];
     const fallbackEntry = fallback[String(meta.id)];
     if (!fallbackEntry) throw new Error(`Missing fallback level content for level ${meta.id}`);
@@ -48,11 +56,15 @@ export function getLevels(locale: Locale): Level[] {
     if (!c.name || !c.description || !c.instructions) {
       throw new Error(`Missing level content for level ${meta.id} and locale ${locale}`);
     }
+    const position = index + 1;
+    const bodyHeading = `# Level ${position}: ${c.name}\n\n`;
+    const strippedInstructions = c.instructions.replace(/^#[^\n]*\n+/, "");
     return {
       ...meta,
+      position,
       name: c.name,
       description: c.description,
-      instructions: c.instructions,
+      instructions: bodyHeading + strippedInstructions,
       explanation: typeof c.explanation === "string" && c.explanation.trim() ? c.explanation.trim() : undefined,
       author: c.author,
       hints: Array.isArray(c.hints)
@@ -65,15 +77,15 @@ export function getLevels(locale: Locale): Level[] {
 }
 
 /**
- * Get a single level by id and locale. Returns null if id is invalid.
+ * Get a single level by id (slug) and locale. Returns null if id is invalid.
  */
-export function getLevel(locale: Locale, id: number): Level | null {
+export function getLevel(locale: Locale, id: string): Level | null {
   const levels = getLevels(locale);
   return levels.find((l) => l.id === id) ?? null;
 }
 
-/** Level ids in order (for generateStaticParams, sitemap, etc.) */
-export const LEVEL_IDS = LEVEL_META.map((m) => m.id);
+/** Level ids in display order. Drives prev/next navigation and sitemap order. */
+export const LEVEL_IDS = SORTED_META.map((m) => m.id);
 
 export type { Level };
 export { DIFFICULTY_DOTS, DIFFICULTY_TEXT_CLASS, DIFFICULTY_BADGE_CLASS } from "./difficulty";

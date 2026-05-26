@@ -7,7 +7,7 @@ const MODULE_REGEX = /module\s+(\S+)/;
 
 /**
  * Extract the module path from the first line of Move contract code.
- * Example: "module move_over::genesis {" => "move_over::genesis"
+ * Example: "module move_over::artifact;" => "move_over::artifact"
  */
 export function parseModulePath(contractCode: string): string {
   const firstLine = contractCode.trim().split("\n")[0];

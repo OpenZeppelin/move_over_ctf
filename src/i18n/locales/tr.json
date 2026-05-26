@@ -19,7 +19,7 @@
   "landing": {
     "title": "Sui üzerinde Move için bir wargame",
     "description": "Move-over, Ethernaut ve overthewire.org'dan ilham alan, Sui blok zincirinde oynanan Web3/Move tabanlı bir wargame. Her seviye 'hacklenmesi' gereken bir akıllı sözleşme. Oyun %100 açık kaynak ve tüm seviyeler diğer oyuncuların katkılarıyla geliyor. İlginç bir fikrin mi var? PR'lar her zaman hoş geldi.",
-    "cta": "Seviye 0'a geç",
+    "cta": "Seviye 1'a geç",
     "subtitle": "Tarayıcıda çalışan Move güvenlik wargame'i",
     "intro": "Move-over, Move güvenliği için tarayıcı odaklı bir CTF. Zafiyetli sözleşmeleri oku, `run()` istismar yolunu yaz ve her seviyeyi geçmek için doğru `*Flag`'i döndür.",
     "introMuted": "Move-over açık kaynak. Koda göz at:",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "`*Flag`'i döndür",
     "feedTitle": "Canlı güvenlik akışı",
     "feedLine1": "[00:00:01] move-over tarayıcı çalışma ortamı başlatılıyor...",
-    "feedLine2": "[00:00:02] seviye seti yükleniyor: genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] seviye seti yükleniyor: artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] hedef saptandı: level::Flag döndür",
     "feedLine4": "[00:00:04] run() şablonu ayrıştırılıyor... hazır",
     "feedLine5": "[00:00:05] cüzdan istenmedi, ağ gerekmiyor",
@@ -51,7 +51,7 @@
     "coreSkill2": "Kontrollü bir tarayıcı ortamında istismar odaklı mantık yaz.",
     "coreSkill3": "Kanıt nesnelerini doğru döndür ve deterministik sonuçları doğrula.",
     "recommendedTitle": "Önerilen başlangıç yolu",
-    "recommendedBody": "Temeller için Genesis ile başla, nesne manipülasyonu örüntüleri için Lockbox ile devam et, ardından daha derin istismar mantığı için Fallout'a geç. Bu sıra, pratik Move güvenlik sezgini adım adım inşa eder.",
+    "recommendedBody": "Temeller için Artifact ile başla, nesne manipülasyonu örüntüleri için Sticky Treasure ile devam et, ardından daha derin istismar mantığı için Flash Vault'a geç. Bu sıra, pratik Move güvenlik sezgini adım adım inşa eder.",
     "startHowToPlay": "Nasıl oynanır ile başla",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "Kopyalandı!",
     "runSuccess": "Tüm testler geçti!",
     "runError": "Testler başarısız",
-    "runNotSupported": "Bu seviye henüz tarayıcı içi koşucu tarafından desteklenmiyor. Sui CLI'yi kurup seviyeyi yerelde çalıştırabilir ya da Seviye 0 ile başlayabilirsin.",
-    "solutionPlaceholder": "// örn. let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "Bu seviye henüz tarayıcı içi koşucu tarafından desteklenmiyor. Sui CLI'yi kurup seviyeyi yerelde çalıştırabilir ya da Seviye 1 ile başlayabilirsin.",
+    "solutionPlaceholder": "// örn. let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "Bayrak yakalandı. Bu seviye resmen geçildi.",
     "explanationTitle": "Bu seviyenin öğrettikleri",
     "contractLabel": "Sözleşme:",
@@ -123,7 +123,7 @@
     "addLevelTitle": "Seviye eklemek ister misin?",
     "addLevelBody": "Move-over açık kaynak ve herkes katkı verebilir. Yeni bir seviye oluşturmak istersen, seviye ekleme kılavuzunu izle ve bir PR aç:",
     "addLevelLink": "GitHub'da yeni seviye nasıl eklenir",
-    "startLevel0": "Seviye 0'ı başlat →"
+    "startLevel0": "Seviye 1'ı başlat →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "Seviye seç",

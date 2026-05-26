@@ -1,0 +1,51 @@
+name: "CodeQL"
+
+# Repo-level configuration that overrides GitHub's default code scanning.
+# The default setup was pinning codeql-action@v4 to a SHA that returns 404
+# from upstream (https://codeload.github.com/github/codeql-action/...); this
+# workflow uses a known-stable @v3 reference instead.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "32 8 * * 3"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  Analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["actions", "javascript-typescript"]
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

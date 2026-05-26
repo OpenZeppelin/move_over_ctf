@@ -1,6 +1,6 @@
-module move_over::blackbook;
+module move_over::night_ledger;
 
-use move_over::blackbook_math;
+use move_over::night_ledger_math;
 
 const EINSUFFICIENT_MARGIN: u64 = 0;
 const EMULTIPLICATION_OVERFLOW: u64 = 1;
@@ -31,7 +31,7 @@ public struct Position has key, store {
     epoch: u64,
 }
 
-public struct BlackbookFlag has copy, drop {}
+public struct NightLedgerFlag has copy, drop {}
 
 fun root_price_0(): u128 {
     1u128 << 60
@@ -93,7 +93,7 @@ public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxC
     } = position;
     id.delete();
 
-    let payout = blackbook_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
+    let payout = night_ledger_math::payout_from_liquidity(liquidity, PAYOUT_SHIFT);
     assert!(ledger.reserve >= payout, EINSUFFICIENT_RESERVE);
     ledger.reserve = ledger.reserve - payout;
 
@@ -103,11 +103,11 @@ public fun close_position(ledger: &mut Ledger, position: Position, ctx: &mut TxC
     }
 }
 
-public fun solve(note: MarginNote): BlackbookFlag {
+public fun solve(note: MarginNote): NightLedgerFlag {
     let MarginNote { id, value } = note;
     assert!(value >= TARGET_VALUE, EINSUFFICIENT_VALUE);
     id.delete();
-    BlackbookFlag {}
+    NightLedgerFlag {}
 }
 
 public fun discard_ledger(ledger: Ledger) {
@@ -125,7 +125,7 @@ public fun value(note: &MarginNote): u64 {
 
 fun required_margin(liquidity: u128): u64 {
     let (required, overflowing) =
-        blackbook_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
+        night_ledger_math::quote_required_margin(root_price_0(), root_price_1(), liquidity, true);
     if (overflowing) {
         abort EMULTIPLICATION_OVERFLOW
     };

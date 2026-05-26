@@ -19,7 +19,7 @@
   "landing": {
     "title": "Sui上のMoveで遊ぶウォーゲーム",
     "description": "Move-overは、Ethernautやoverthewire.orgに着想を得たWeb3/Moveベースのウォーゲームで、Suiブロックチェーン上でプレイします。各レベルは「ハック」すべきスマートコントラクトとして用意されており、すべてのコードは100%オープンソース、レベルもプレイヤーからのコントリビューションで成り立っています。面白いアイデアがあれば、ぜひPRをお送りください。",
-    "cta": "Move-over：レベル0へ",
+    "cta": "Move-over：レベル1へ",
     "subtitle": "ブラウザで遊べるMoveセキュリティのウォーゲーム",
     "intro": "Move-overは、Moveのセキュリティをブラウザだけで学べるCTFです。脆弱なコントラクトを読み解き、`run()`にエクスプロイトを書いて、各レベルが要求する`*Flag`を返せばクリアです。",
     "introMuted": "Move-overはオープンソースです。コードは",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "`*Flag`を返す",
     "feedTitle": "ライブセキュリティフィード",
     "feedLine1": "[00:00:01] move-overブラウザランタイムを起動中…",
-    "feedLine2": "[00:00:02] チャレンジセットを読み込み中: genesis, lockbox, fallout",
+    "feedLine2": "[00:00:02] チャレンジセットを読み込み中: artifact, coin_collector, sticky_treasure",
     "feedLine3": "[00:00:03] 目標を検出: level::Flag を返す",
     "feedLine4": "[00:00:04] run() テンプレートを解析中… 準備完了",
     "feedLine5": "[00:00:05] ウォレット不要・ネットワーク接続不要",
@@ -51,7 +51,7 @@
     "coreSkill2": "ブラウザ上の安全な環境で、エクスプロイト指向のロジックを書く力",
     "coreSkill3": "証明オブジェクトを正しく返し、決定的な結果を検証する力",
     "recommendedTitle": "おすすめの進め方",
-    "recommendedBody": "まずはGenesisで基礎を押さえ、次にLockboxでオブジェクト操作のパターンに慣れ、最後にFalloutでより踏み込んだエクスプロイトの考え方に挑戦するのがおすすめです。この順番で取り組むと、Moveセキュリティの感覚が段階的に身についていきます。",
+    "recommendedBody": "まずはArtifactで基礎を押さえ、次にSticky Treasureでオブジェクト操作のパターンに慣れ、最後にFlash Vaultでより踏み込んだエクスプロイトの考え方に挑戦するのがおすすめです。この順番で取り組むと、Moveセキュリティの感覚が段階的に身についていきます。",
     "startHowToPlay": "遊び方から始める",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "コピーしました！",
     "runSuccess": "すべてのテストに合格しました！",
     "runError": "テストに失敗しました",
-    "runNotSupported": "このレベルはブラウザ内ランナーにまだ対応していません。Sui CLIをインストールしてローカルで実行するか、レベル0をお試しください。",
-    "solutionPlaceholder": "// 例: let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "このレベルはブラウザ内ランナーにまだ対応していません。Sui CLIをインストールしてローカルで実行するか、レベル1をお試しください。",
+    "solutionPlaceholder": "// 例: let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "フラグを取得しました。このレベルはクリアです。",
     "explanationTitle": "このレベルで学べること",
     "contractLabel": "コントラクト:",
@@ -123,7 +123,7 @@
     "addLevelTitle": "レベルを追加したい方へ",
     "addLevelBody": "Move-overはオープンソースで、どなたでもコントリビューション歓迎です。新しいチャレンジを作りたい場合は、レベル追加ガイドに従ってPRを送ってください。",
     "addLevelLink": "GitHubで新しいレベルを追加する方法",
-    "startLevel0": "レベル0を始める →"
+    "startLevel0": "レベル1を始める →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "レベルを選択",
