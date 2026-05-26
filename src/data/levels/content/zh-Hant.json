@@ -2,17 +2,17 @@
   "artifact": {
     "name": "神器",
     "description": "鍛造一件神器，為它充能，當它達到正確的能量時將其擊碎以奪得旗標。",
-    "instructions": "# Level 0: 神器\n\n鍛造一件神器，為它充能，當它達到正確的能量時將其擊碎以奪得旗標。",
+    "instructions": "鍛造一件神器，為它充能，當它達到正確的能量時將其擊碎以奪得旗標。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "explanation": "第 0 關是熱身關卡，用來介紹 Sui 的物件模型。`forge` 建立一個 `Artifact`，`charge` 透過 `&mut` 修改它，`shatter` 則以按值傳遞的方式消耗它。請留意 Move 如何把所有權表達得相當明確：你以可變方式借用物件就能改寫欄位，但要解構它就必須移轉所有權。這一關沒有真正的漏洞，重點在於 API 合約本身——也就是 `&mut Artifact` 與 `Artifact` 這兩種型別簽章如何描述每個函式被允許做什麼。"
+    "explanation": "本關是熱身關卡，用來介紹 Sui 的物件模型。`forge` 建立一個 `Artifact`，`charge` 透過 `&mut` 修改它，`shatter` 則以按值傳遞的方式消耗它。請留意 Move 如何把所有權表達得相當明確：你以可變方式借用物件就能改寫欄位，但要解構它就必須移轉所有權。這一關沒有真正的漏洞，重點在於 API 合約本身——也就是 `&mut Artifact` 與 `Artifact` 這兩種型別簽章如何描述每個函式被允許做什麼。"
   },
   "coin_collector": {
     "name": "集幣者",
     "description": "在販賣機買下獎品以奪得旗標。水龍頭一次只發價值 100 的代幣，而獎品標價 1,000。",
-    "instructions": "# Level 1: 集幣者\n\n在販賣機買下獎品以奪得旗標。水龍頭一次只發價值 100 的代幣，而獎品標價 1,000。",
+    "instructions": "在販賣機買下獎品以奪得旗標。水龍頭一次只發價值 100 的代幣，而獎品標價 1,000。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -22,7 +22,7 @@
   "sticky_treasure": {
     "name": "黏滯寶藏",
     "description": "把獎品從寶箱裡救出來奪得旗標。寶箱將獎品存放為動態欄位。",
-    "instructions": "# Level 3: 黏滯寶藏\n\n把獎品從寶箱裡救出來奪得旗標。寶箱將獎品存放為動態欄位。",
+    "instructions": "把獎品從寶箱裡救出來奪得旗標。寶箱將獎品存放為動態欄位。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -32,7 +32,7 @@
   "flash_vault": {
     "name": "閃電金庫",
     "description": "把閃電貸金庫榨乾以奪得旗標。每一次借出都會產生一張必須在本次交易內結清的收據。",
-    "instructions": "# Level 5: 閃電金庫\n\n把閃電貸金庫榨乾以奪得旗標。每一次借出都會產生一張必須在本次交易內結清的收據。",
+    "instructions": "把閃電貸金庫榨乾以奪得旗標。每一次借出都會產生一張必須在本次交易內結清的收據。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -42,7 +42,7 @@
   "pool_party": {
     "name": "資金池派對",
     "description": "抽乾 Pool A 的金庫以奪得旗標。三個資金池共用同一套閃電貸風格的 API，但只有 Pool A 持有真正的流動性。",
-    "instructions": "# Level 6: 資金池派對\n\n抽乾 Pool A 的金庫以奪得旗標。三個資金池共用同一套閃電貸風格的 API，但只有 Pool A 持有真正的流動性。",
+    "instructions": "抽乾 Pool A 的金庫以奪得旗標。三個資金池共用同一套閃電貸風格的 API，但只有 Pool A 持有真正的流動性。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -52,7 +52,7 @@
   "tick_tock": {
     "name": "滴答時鐘",
     "description": "從集中流動性池抽走至少 900,000 代幣以奪得旗標。倉位由從 tick 推導出的 `sqrt_price` 定價，而開倉成本隨該價格變化。",
-    "instructions": "# Level 7: 滴答時鐘\n\n從集中流動性池抽走至少 900,000 代幣以奪得旗標。倉位由從 tick 推導出的 `sqrt_price` 定價，而開倉成本隨該價格變化。",
+    "instructions": "從集中流動性池抽走至少 900,000 代幣以奪得旗標。倉位由從 tick 推導出的 `sqrt_price` 定價，而開倉成本隨該價格變化。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -62,7 +62,7 @@
   "night_ledger": {
     "name": "暗夜帳本",
     "description": "帶走一張面額至少 10,000,000 的 `MarginNote` 以奪得旗標。水龍頭只能鑄造一張面額為 1 的票據，帳本則透過一個定點運算輔助函式來計算所需的保證金。",
-    "instructions": "# Level 8: 暗夜帳本\n\n帶走一張面額至少 10,000,000 的 `MarginNote` 以奪得旗標。水龍頭只能鑄造一張面額為 1 的票據，帳本則透過一個定點運算輔助函式來計算所需的保證金。，該函式會對中間值進行左位移以提升精度。",
+    "instructions": "帶走一張面額至少 10,000,000 的 `MarginNote` 以奪得旗標。水龍頭只能鑄造一張面額為 1 的票據，帳本則透過一個定點運算輔助函式來計算所需的保證金。，該函式會對中間值進行左位移以提升精度。",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"

@@ -84,11 +84,13 @@ Create `public/contracts/<module>.move` with your Move module (following the con
 
 ### 2. Register in meta config
 
-Append an entry to `src/data/levels/meta.config.json`:
+Append an entry to `src/data/levels/meta.config.json`. The `id` is the
+snake_case slug used as the URL segment and storage key — by convention it
+matches the primary `module` name:
 
 ```json
 {
-  "id": 3,
+  "id": "my_level",
   "difficulty": "easy",
   "module": "my_level"
 }
@@ -98,13 +100,13 @@ For levels that use multiple modules, you can add a `modules` array; the primary
 
 ### 3. Add runner config
 
-Add an entry in `src/data/levels/runConfig.ts`:
+Add an entry in `src/data/levels/runConfig.ts` keyed by the slug:
 
 ```ts
-3: {
+my_level: {
   module: "my_level",
   typeName: "MyLevelFlag",
-  solutionModule: "level_3_solution",
+  solutionModule: "my_level_solution",
 },
 ```
 
@@ -112,23 +114,22 @@ Add an entry in `src/data/levels/runConfig.ts`:
 
 ### 4. Add level content
 
-In `src/data/levels/content/en.json`, add a key for the level id (e.g. `"3"`):
+In `src/data/levels/content/en.json`, add a key for the level slug:
 
 ```json
-"3": {
+"my_level": {
   "name": "My Level",
   "description": "Short teaser.",
-  "instructions": "# Level 3: My Level\n\nYour mission...",
+  "instructions": "Your mission...",
   "author": {
     "name": "OpenZeppelin",
     "github": "https://github.com/OpenZeppelin"
-  },
-  "hints": [
-    "Hint 1",
-    "Hint 2"
-  ]
+  }
 }
 ```
+
+The runtime renderer prepends `# Level {position}: {name}` to the instructions
+body, so do not include an `# Level N:` H1 in the JSON.
 
 You can add the same key to other locale files or rely on English fallback.
 
@@ -154,5 +155,4 @@ Then run `npm run build` to ensure the production build works.
 
 ## Notes
 
-- The optional `move_over/` directory and `npm run sync:contracts` are legacy; the current flow uses `public/contracts` and `sync:meta` only.
 - After adding a level, consider adding or updating translations in `src/data/levels/content/<locale>.json` for other languages.

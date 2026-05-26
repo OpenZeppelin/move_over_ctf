@@ -2,17 +2,17 @@
   "artifact": {
     "name": "神器",
     "description": "锻造一件神器，为其充能，待其达到正确的能量值时将其击碎以夺取旗标。",
-    "instructions": "# Level 0: 神器\n\n锻造一件神器，为其充能，待其达到正确的能量值时将其击碎以夺取旗标。",
+    "instructions": "锻造一件神器，为其充能，待其达到正确的能量值时将其击碎以夺取旗标。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
     },
-    "explanation": "第 0 关是一道热身题，目的是让你熟悉 Sui 的对象模型。`forge` 创建一个 `Artifact`，`charge` 通过 `&mut` 修改它，`shatter` 则按值消耗它。注意 Move 是如何把所有权显式化的：你以可变借用的方式去修改字段，但要解构对象时必须移动所有权。这里并没有真正意义上的漏洞，重点在于 API 契约本身——`&mut Artifact` 与 `Artifact` 这两种类型签名直接告诉你每个函数被允许做什么。"
+    "explanation": "本关是一道热身题，目的是让你熟悉 Sui 的对象模型。`forge` 创建一个 `Artifact`，`charge` 通过 `&mut` 修改它，`shatter` 则按值消耗它。注意 Move 是如何把所有权显式化的：你以可变借用的方式去修改字段，但要解构对象时必须移动所有权。这里并没有真正意义上的漏洞，重点在于 API 契约本身——`&mut Artifact` 与 `Artifact` 这两种类型签名直接告诉你每个函数被允许做什么。"
   },
   "coin_collector": {
     "name": "集币者",
     "description": "在自动售货机买下奖品以夺取旗标。水龙头一次只发价值 100 的代币，而奖品标价 1,000。",
-    "instructions": "# Level 1: 集币者\n\n在自动售货机买下奖品以夺取旗标。水龙头一次只发价值 100 的代币，而奖品标价 1,000。",
+    "instructions": "在自动售货机买下奖品以夺取旗标。水龙头一次只发价值 100 的代币，而奖品标价 1,000。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -22,7 +22,7 @@
   "sticky_treasure": {
     "name": "黏滞宝藏",
     "description": "把奖品从宝箱里救出来夺取旗标。宝箱将奖品存放为动态字段。",
-    "instructions": "# Level 3: 黏滞宝藏\n\n把奖品从宝箱里救出来夺取旗标。宝箱将奖品存放为动态字段。",
+    "instructions": "把奖品从宝箱里救出来夺取旗标。宝箱将奖品存放为动态字段。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -32,7 +32,7 @@
   "flash_vault": {
     "name": "闪电金库",
     "description": "把闪电贷金库榨干以夺取旗标。每一次借出都会产生一张必须在本次交易内结清的回执。",
-    "instructions": "# Level 5: 闪电金库\n\n把闪电贷金库榨干以夺取旗标。每一次借出都会产生一张必须在本次交易内结清的回执。",
+    "instructions": "把闪电贷金库榨干以夺取旗标。每一次借出都会产生一张必须在本次交易内结清的回执。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -42,7 +42,7 @@
   "pool_party": {
     "name": "资金池派对",
     "description": "抽干 Pool A 的金库以夺取旗标。三个资金池共享同一套闪电贷风格的 API，但只有 Pool A 拥有真正的流动性。",
-    "instructions": "# Level 6: 资金池派对\n\n抽干 Pool A 的金库以夺取旗标。三个资金池共享同一套闪电贷风格的 API，但只有 Pool A 拥有真正的流动性。",
+    "instructions": "抽干 Pool A 的金库以夺取旗标。三个资金池共享同一套闪电贷风格的 API，但只有 Pool A 拥有真正的流动性。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -52,7 +52,7 @@
   "tick_tock": {
     "name": "滴答时钟",
     "description": "从集中流动性池中抽走至少 900,000 代币以夺取旗标。仓位由从 tick 推导出的 `sqrt_price` 定价，而开仓成本随该价格变化。",
-    "instructions": "# Level 7: 滴答时钟\n\n从集中流动性池中抽走至少 900,000 代币以夺取旗标。仓位由从 tick 推导出的 `sqrt_price` 定价，而开仓成本随该价格变化。",
+    "instructions": "从集中流动性池中抽走至少 900,000 代币以夺取旗标。仓位由从 tick 推导出的 `sqrt_price` 定价，而开仓成本随该价格变化。",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -62,7 +62,7 @@
   "night_ledger": {
     "name": "暗夜账本",
     "description": "带走一张价值至少 10,000,000 的 `MarginNote` 以夺取旗标。水龙头只能铸造一张价值 1 的票据，账本则通过一个定点运算辅助函数来核算所需保证金。",
-    "instructions": "# Level 8: 暗夜账本\n\n带走一张价值至少 10,000,000 的 `MarginNote` 以夺取旗标。水龙头只能铸造一张价值 1 的票据，账本则通过一个定点运算辅助函数来核算所需保证金。，该函数会对中间值进行左移以提升精度。",
+    "instructions": "带走一张价值至少 10,000,000 的 `MarginNote` 以夺取旗标。水龙头只能铸造一张价值 1 的票据，账本则通过一个定点运算辅助函数来核算所需保证金。，该函数会对中间值进行左移以提升精度。",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"

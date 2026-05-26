@@ -152,8 +152,8 @@ export const CompletionCard = forwardRef<SVGSVGElement, Props>(function Completi
       {/* ───── Bottom-left: terminal output ───────────────────────── */}
 
       <g transform="translate(60, 540)" fontFamily={FONT_FAMILY} fontSize="14" fill={p.muted}>
-        <text x="0" y="0">&gt; level_8::solve(margin_note)</text>
-        <text x="0" y="22">BlackbookFlag {`{ }`}</text>
+        <text x="0" y="0">&gt; night_ledger::solve(margin_note)</text>
+        <text x="0" y="22">NightLedgerFlag {`{ }`}</text>
         <text x="0" y="44">completed: {date}</text>
       </g>
 

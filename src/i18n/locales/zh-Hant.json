@@ -19,7 +19,7 @@
   "landing": {
     "title": "Sui 上的 Move 戰爭遊戲",
     "description": "Move-over 是一款受 Ethernaut 與 overthewire.org 啟發的 Web3／Move 戰爭遊戲，跑在 Sui 區塊鏈上。每一關都是一份等著被「打穿」的智能合約。專案 100% 開源，所有關卡都由其他玩家貢獻而來。有有趣的點子？歡迎開 PR。",
-    "cta": "前往 Move-over 第 0 關",
+    "cta": "前往 Move-over 第 1 關",
     "subtitle": "瀏覽器端的 Move 安全戰爭遊戲",
     "intro": "Move-over 是一款以瀏覽器為主的 Move 安全 CTF。閱讀有漏洞的合約，寫出 `run()` 攻擊路徑，並回傳正確的 `*Flag` 來通過每一關。",
     "introMuted": "Move-over 為開源專案，原始碼公開於",
@@ -32,7 +32,7 @@
     "cardValueReturnFlag": "回傳 `*Flag`",
     "feedTitle": "即時安全動態",
     "feedLine1": "[00:00:01] 正在啟動 move-over 瀏覽器執行環境……",
-    "feedLine2": "[00:00:02] 載入關卡集：genesis、lockbox、fallout",
+    "feedLine2": "[00:00:02] 載入關卡集：artifact、coin_collector、sticky_treasure",
     "feedLine3": "[00:00:03] 偵測到目標：回傳 level::Flag",
     "feedLine4": "[00:00:04] 解析 run() 樣板…… 就緒",
     "feedLine5": "[00:00:05] 不需要錢包，也不需要連網",
@@ -51,7 +51,7 @@
     "coreSkill2": "在受控的瀏覽器環境中寫出攻擊導向的邏輯。",
     "coreSkill3": "正確回傳證明物件，並驗證結果的確定性。",
     "recommendedTitle": "推薦入門路線",
-    "recommendedBody": "建議先從 Genesis 打好基本功，再用 Lockbox 熟悉物件操作模式，接著挑戰 Fallout，做更深一層的攻擊推理。照這個順序走，可以一步一步建立起 Move 安全的實戰直覺。",
+    "recommendedBody": "建議先從 Artifact 打好基本功，再用 Sticky Treasure 熟悉物件操作模式，接著挑戰 Flash Vault，做更深一層的攻擊推理。照這個順序走，可以一步一步建立起 Move 安全的實戰直覺。",
     "startHowToPlay": "先看玩法說明",
     "landingUrl": "move-over://landing",
     "footerGitHub": "GitHub",
@@ -74,8 +74,8 @@
     "runLocallyCopied": "已複製！",
     "runSuccess": "所有測試都通過了！",
     "runError": "測試失敗",
-    "runNotSupported": "這一關目前還不支援瀏覽器內執行器。請安裝 Sui CLI 並在本機跑這一關，或先回頭試試第 0 關。",
-    "solutionPlaceholder": "// 例如：let mut flag = genesis::create(t); genesis::solve(&mut flag); flag",
+    "runNotSupported": "這一關目前還不支援瀏覽器內執行器。請安裝 Sui CLI 並在本機跑這一關，或先回頭試試第 1 關。",
+    "solutionPlaceholder": "// 例如：let mut a = artifact::forge(t); artifact::charge(&mut a, 100); artifact::shatter(a)",
     "passedMessage": "已奪得旗標，這一關正式通過。",
     "explanationTitle": "本關的重點觀念",
     "contractLabel": "合約：",
@@ -123,7 +123,7 @@
     "addLevelTitle": "想新增一關嗎？",
     "addLevelBody": "Move-over 為開源專案，歡迎所有人一起貢獻。如果你想設計新挑戰，可以照著新增關卡指南操作，再提交一個 PR：",
     "addLevelLink": "在 GitHub 上看如何新增關卡",
-    "startLevel0": "從第 0 關開始 →"
+    "startLevel0": "從第 1 關開始 →"
   },
   "mobilePicker": {
     "selectLevelAriaLabel": "選擇關卡",
