@@ -11,8 +11,8 @@
   },
   "coin_collector": {
     "name": "Coin Collector",
-    "description": "Buy the prize at the vending machine and capture the flag. The faucet only dispenses tokens worth 100 — and the prize is supposed to cost 1,000.",
-    "instructions": "Buy the prize at the vending machine and capture the flag. The faucet only dispenses tokens worth 100 — and the prize is supposed to cost 1,000.",
+    "description": "Buy the prize at the vending machine and capture the flag. The faucet only dispenses tokens worth 100, and the prize is supposed to cost 1,000.",
+    "instructions": "Buy the prize at the vending machine and capture the flag. The faucet only dispenses tokens worth 100, and the prize is supposed to cost 1,000.",
     "author": {
       "name": "Kose",
       "github": "https://github.com/kosedogus"
@@ -71,8 +71,8 @@
   },
   "mailbox": {
     "name": "Mailbox",
-    "description": "Walk off with a letter that wasn't addressed to you and capture the flag. Two modules — `mailbox` and `mailbox_relay` — sit on top of the post office.",
-    "instructions": "Walk off with a letter that wasn't addressed to you and capture the flag. Two modules — `mailbox` and `mailbox_relay` — sit on top of the post office.",
+    "description": "Walk off with a letter that wasn't addressed to you and capture the flag. Two modules, `mailbox` and `mailbox_relay`, sit on top of the post office.",
+    "instructions": "Walk off with a letter that wasn't addressed to you and capture the flag. Two modules, `mailbox` and `mailbox_relay`, sit on top of the post office.",
     "author": {
       "name": "km",
       "github": "https://github.com/km631"

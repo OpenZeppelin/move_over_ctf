@@ -20,6 +20,7 @@ interface BrowserRunLevelInput {
   solutionBody: string;
   verifierModule: string;
   cleanupFunction?: string;
+  extraImports?: string[];
 }
 
 let worker: Worker | null = null;
@@ -34,7 +35,7 @@ const pending = new Map<
 >();
 
 const WORKER_TIMEOUT_MS = 120_000;
-const WORKER_URL = "/workers/move_runner.worker.js?v=20260306_symbolic_unpack";
+const WORKER_URL = "/workers/move_runner.worker.js?v=20260527_extra_imports";
 
 function getWorker(): Worker {
   if (typeof window === "undefined") {
