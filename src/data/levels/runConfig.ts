@@ -10,6 +10,12 @@ export interface LevelRunConfig {
   solutionModule: string;
   /** Cleanup function called inside browser verifier. Defaults to "delete". */
   cleanupFunction?: string;
+  /**
+   * Additional sibling modules (besides `module`) that the solution scaffold
+   * should `use move_over::<name>;` — required when a level ships more than one
+   * in-scope module and the exploit reaches across them.
+   */
+  extraImports?: string[];
 }
 
 export const LEVEL_RUN_CONFIG: Record<string, LevelRunConfig> = {
@@ -52,5 +58,6 @@ export const LEVEL_RUN_CONFIG: Record<string, LevelRunConfig> = {
     module: "mailbox",
     typeName: "MailboxFlag",
     solutionModule: "mailbox_solution",
+    extraImports: ["mailbox_relay"],
   },
 };

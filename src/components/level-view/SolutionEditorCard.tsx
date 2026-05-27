@@ -138,7 +138,9 @@ export function SolutionEditorCard({
         >
           {`module move_over::${runConfig.solutionModule};
 
-use move_over::${runConfig.module};
+${[runConfig.module, ...(runConfig.extraImports ?? [])]
+  .map((name) => `use move_over::${name};`)
+  .join("\n")}
 
 public fun run(t: &mut tx_context::TxContext): ${runConfig.module}::${runConfig.typeName} {`}
         </SyntaxHighlighter>

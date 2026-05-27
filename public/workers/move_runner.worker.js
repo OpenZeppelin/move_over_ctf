@@ -1070,9 +1070,15 @@
           .map((line) => `    ${line.trim()}`)
           .join("\n")
       : "";
+    const extraImports = Array.isArray(payload && payload.extraImports)
+      ? payload.extraImports.filter((name) => typeof name === "string" && name.trim())
+      : [];
+    const imports = [payload.module, ...extraImports]
+      .map((name) => `use move_over::${name};`)
+      .join("\n");
     return `module move_over::${payload.solutionModule} {
 
-use move_over::${payload.module};
+${imports}
 
 public fun run(t: &mut tx_context::TxContext): ${payload.module}::${payload.typeName} {
 ${body}

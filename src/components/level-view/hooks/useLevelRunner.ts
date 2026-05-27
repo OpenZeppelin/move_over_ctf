@@ -136,6 +136,7 @@ export function useLevelRunner({
         solutionBody: solutionCode,
         verifierModule: `level_${levelId}_verifier`,
         cleanupFunction: runConfig.cleanupFunction,
+        extraImports: runConfig.extraImports,
       });
       setState({
         levelId,
